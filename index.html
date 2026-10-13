@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Do Eunha × Woo Yeoneun</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<style>
+/* ───────── 색 토큰 (여기 바꾸면 전체 톤 바뀜) ───────── */
+:root {
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --text: #0A0A0A;
+  --text-2: #86868B;
+  --text-3: #C7C7CC;
+  --border: #E5E5EA;
+  --blue: #0066FF;
+  --blue-pale: #E6EEFF;
+  --sw-track: #C8E0FF;
+  --shadow: 0 4px 24px rgba(0,0,0,0.05);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.10);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --font: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+}
+[data-theme="dark"] {
+  --bg: #000;
+  --card: #1C1C1E;
+  --text: #FFFFFF;
+  --text-2: #8E8E93;
+  --text-3: #48484A;
+  --border: #38383A;
+  --blue: #4D9EFF;
+  --blue-pale: rgba(77,158,255,0.14);
+  --sw-track: #1E3A66;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { color-scheme: light; }
+[data-theme="dark"] html { color-scheme: dark; }
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  padding: 20px 16px 80px;
+  display: flex;
+  justify-content: center;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.wrap { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ───────── 상단 바 ───────── */
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 6px 8px;
+}
+.topbar .logo { font-weight: 800; font-size: 13px; letter-spacing: 0.1em; }
+.topbar .date { font-size: 12px; color: var(--text-2); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+.topbar .theme-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--card); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text); font-size: 15px;
+  transition: transform 0.15s ease;
+}
+.topbar .theme-btn:hover { transform: scale(1.08); }
+.topbar .theme-btn:active { transform: scale(0.92); }
+
+/* ───────── 기본 카드 ───────── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  padding: 26px;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+.label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 0.18em;
+  color: var(--text-2); text-transform: uppercase; font-weight: 700;
+  margin-bottom: 18px;
+}
+.label::before { content: ''; width: 6px; height: 6px; background: var(--blue); border-radius: 50%; }
+
+/* ───────── MEET US (히어로) ───────── */
+.hero { min-height: 420px; display: flex; flex-direction: column; justify-content: space-between; }
+.hero h1 { font-size: 56px; line-height: 0.95; letter-spacing: -0.04em; font-weight: 800; }
+.hero .time { color: var(--text-3); font-size: 15px; font-weight: 600; margin-top: 10px; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+.hero .bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+.hero .loc { display: flex; align-items: center; gap: 10px; }
+.hero .pins { display: flex; }
+.hero .pin { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--card); margin-left: -10px; background-size: cover; background-position: center; }
+.hero .pin:first-child { margin-left: 0; background: linear-gradient(135deg, #0066FF, #002b80); }
+.hero .pin:last-child { background: linear-gradient(135deg, #0A0A0A, #3a3a3a); }
+.hero .loc p { font-size: 14px; line-height: 1.35; display: flex; align-items: center; gap: 4px; }
+.hero .loc .pin-ico { color: var(--text); }
+.hero .plus {
+  background: var(--text); color: var(--card);
+  width: 48px; height: 48px; border-radius: 50%;
+  border: none; font-size: 24px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.25s ease, background 0.2s ease;
+}
+.hero .plus:hover { transform: rotate(90deg); background: var(--blue); }
+
+/* ───────── 페어 이름 카드 ───────── */
+.pair-card { text-align: center; padding: 36px 24px; }
+.pair-card .sub { font-size: 11px; color: var(--text-2); letter-spacing: 0.2em; font-weight: 600; margin-bottom: 20px; }
+.pair-card .names { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.pair-card .amp { font-size: 48px; font-weight: 300; color: var(--blue); line-height: 1; margin: 6px 0; font-family: Georgia, 'Times New Roman', serif; font-style: italic; }
+
+/* ───────── 캐릭터 섹션 (탭) ───────── */
+.tabs {
+  display: flex; background: var(--bg); border-radius: 999px;
+  padding: 4px; gap: 4px; margin-bottom: 24px;
+}
+.tab {
+  flex: 1; padding: 10px; border: none; background: transparent;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  color: var(--text-2); border-radius: 999px;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.tab.active { background: var(--card); color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+
+.char { display: flex; flex-direction: column; gap: 18px; }
+.char.hidden { display: none; }
+.char-head { display: flex; align-items: center; gap: 14px; }
+.avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 22px;
+  background: var(--blue-pale); color: var(--blue);
+  border: 2px solid var(--blue-pale);
+}
+.avatar.b { background: var(--text); color: var(--card); border-color: var(--text); }
+.char-info h2 { font-size: 26px; letter-spacing: -0.03em; font-weight: 800; line-height: 1.1; }
+.char-info .major { font-size: 13px; color: var(--text-2); margin-top: 4px; }
+.bio { font-size: 14.5px; line-height: 1.7; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: transparent;
+  font-size: 13px; color: var(--text); font-weight: 500;
+  cursor: pointer; transition: all 0.15s ease; font-family: inherit;
+}
+.chip:hover { border-color: var(--blue); color: var(--blue); }
+.chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* ───────── 스위치 리스트 (하루 루틴) ───────── */
+.sw-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0; border-bottom: 1px solid var(--border);
+}
+.sw-row:last-child { border-bottom: none; padding-bottom: 0; }
+.sw-row:first-of-type { padding-top: 0; }
+.sw-text { display: flex; align-items: baseline; gap: 10px; }
+.sw-time { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.sw-desc { font-size: 13px; color: var(--text-2); line-height: 1.3; }
+.switch {
+  position: relative; width: 54px; height: 32px;
+  background: var(--sw-track); border-radius: 999px;
+  cursor: pointer; border: none; padding: 0; flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+.switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 28px; height: 28px; background: var(--text);
+  border-radius: 50%;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.switch.on::after { transform: translateX(22px); }
+.switch.on { background: var(--blue); }
+
+/* ───────── 프롬프트 카드 ───────── */
+.prompt-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.prompt-head h3 { font-size: 17px; letter-spacing: -0.02em; font-weight: 700; }
+.copy-btn {
+  background: var(--text); color: var(--card); border: none;
+  padding: 8px 14px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 600; cursor: pointer;
+  font-family: inherit; display: flex; align-items: center; gap: 6px;
+  transition: all 0.15s ease;
+}
+.copy-btn:hover { background: var(--blue); transform: translateY(-1px); }
+.copy-btn.copied { background: var(--blue); }
+.prompt-body {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 18px;
+  font-family: ui-monospace, 'SF Mono', Menlo, 'Pretendard Variable', monospace;
+  font-size: 12.5px; line-height: 1.75; color: var(--text);
+  white-space: pre-wrap; word-break: break-word;
+}
+
+/* ───────── 스택 링크 카드 ───────── */
+.stack { position: relative; height: 220px; margin-top: 4px; }
+.stack-item {
+  position: absolute; left: 0; right: 0;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; text-decoration: none; color: var(--text);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.stack-item:nth-child(1) { top: 0; z-index: 3; }
+.stack-item:nth-child(2) { top: 60px; z-index: 2; transform: scale(0.96); opacity: 0.85; }
+.stack-item:nth-child(3) { top: 120px; z-index: 1; transform: scale(0.92); opacity: 0.65; }
+.stack:hover .stack-item:nth-child(1) { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.stack:hover .stack-item:nth-child(2) { transform: scale(0.98) translateY(-3px); opacity: 1; }
+.stack:hover .stack-item:nth-child(3) { transform: scale(0.95); opacity: 0.85; }
+.stack-item strong { display: block; font-size: 15px; font-weight: 700; }
+.stack-item span { font-size: 12px; color: var(--text-2); }
+.stack-arrow {
+  background: var(--text); color: var(--card);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.stack-arrow svg { width: 14px; height: 14px; }
+
+/* ───────── 리스트 카드 (한 줄 항목) ───────── */
+.list-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.list-row:last-child { border-bottom: none; padding-bottom: 0; }
+.list-row:first-child { padding-top: 0; }
+.list-row .k { font-size: 13.5px; color: var(--text-2); }
+.list-row .v { font-size: 14px; font-weight: 600; }
+
+/* ───────── 토스트 ───────── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text); color: var(--card);
+  padding: 12px 20px; border-radius: 999px;
+  font-size: 13.5px; font-weight: 600;
+  opacity: 0; transition: all 0.3s ease;
+  pointer-events: none; z-index: 50;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.footer { text-align: center; font-size: 11px; color: var(--text-3); padding: 24px 0 0; letter-spacing: 0.15em; }
+
+@media (max-width: 420px) {
+  .hero h1 { font-size: 48px; }
+  .char-info h2 { font-size: 22px; }
+  .sw-time { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ─── 상단 바 ─── -->
+  <header class="topbar">
+    <div class="logo">E × Y</div>
+    <div class="date" id="now-date">—</div>
+    <button class="theme-btn" id="theme-btn" aria-label="테마 전환">◐</button>
+  </header>
+
+  <!-- ─── MEET US 카드 ─── -->
+  <section class="card hero">
+    <div>
+      <h1>Meet<br>Us</h1>
+      <div class="time" id="now-time">00:00 P.M</div>
+    </div>
+    <div class="bottom">
+      <div class="loc">
+        <div class="pins"><div class="pin"></div><div class="pin"></div></div>
+        <p>
+          <span class="pin-ico">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7zm0 9.5A2.5 2.5 0 1 0 12 6.5a2.5 2.5 0 0 0 0 5z"/></svg>
+          </span>
+          <strong>Seoul,</strong>&nbsp;South Korea
+        </p>
+      </div>
+      <button class="plus" id="plus-btn" aria-label="아래로 이동">+</button>
+    </div>
+  </section>
+
+  <!-- ─── 페어 이름 카드 ─── -->
+  <section class="card pair-card">
+    <div class="sub">OC PAIR · EST. 20XX</div>
+    <div class="names">Do Eunha</div>
+    <div class="amp">&amp;</div>
+    <div class="names">Woo Yeoneun</div>
+  </section>
+
+  <!-- ─── 캐릭터 프로필 (탭 전환) ─── -->
+  <section class="card">
+    <div class="label">PROFILE · 캐릭터</div>
+    <div class="tabs">
+      <button class="tab active" data-target="char-a">Do Eunha</button>
+      <button class="tab" data-target="char-b">Woo Yeoneun</button>
+    </div>
+
+    <!-- 캐릭터 A -->
+    <div class="char" id="char-a">
+      <div class="char-head">
+        <div class="avatar">E</div>
+        <div class="char-info">
+          <h2>Do Eunha</h2>
+          <div class="major">코딩 겜공과 · Game Dev · F · 21</div>
+        </div>
+      </div>
+      <p class="bio">
+        밤을 지새우며 콘솔 로그를 쫓는 사람. 말보다는 커밋 메세지로 마음을 전하는 편.
+        누군가의 코드 리뷰보다 자기 코드의 조용한 오류를 더 두려워한다.
+      </p>
+      <div class="chips">
+        <button class="chip active">INFP</button>
+        <button class="chip active">Night Owl</button>
+        <button class="chip">Introverted</button>
+        <button class="chip">Caffeine</button>
+        <button class="chip">Lo-fi</button>
+      </div>
+    </div>
+
+    <!-- 캐릭터 B -->
+    <div class="char hidden" id="char-b">
+      <div class="char-head">
+        <div class="avatar b">Y</div>
+        <div class="char-info">
+          <h2>Woo Yeoneun</h2>
+          <div class="major">패션디자인과 · Fashion · M · 22</div>
+        </div>
+      </div>
+      <p class="bio">
+        옷자락을 접는 손끝에 자기만의 리듬이 있는 사람.
+        디테일에 집착하지만 그걸 티내지 않는, 조용한 완벽주의자.
+      </p>
+      <div class="chips">
+        <button class="chip active">ENFJ</button>
+        <button class="chip">Perfectionist</button>
+        <button class="chip active">Aesthetic</button>
+        <button class="chip">Vintage</button>
+        <button class="chip">Morning</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 성향 리스트 (한 줄 항목) ─── -->
+  <section class="card">
+    <div class="label">PERSONALITY · 성향 메모</div>
+    <div class="list-row"><span class="k">말투</span><span class="v">짧고 담담함</span></div>
+    <div class="list-row"><span class="k">관계</span><span class="v">조용한 공존형</span></div>
+    <div class="list-row"><span class="k">갈등</span><span class="v">회피 → 글로 정리</span></div>
+    <div class="list-row"><span class="k">공통점</span><span class="v">야행성 · 흑백 선호</span></div>
+    <div class="list-row"><span class="k">BGM</span><span class="v">Blue Valentine</span></div>
+  </section>
+
+  <!-- ─── 하루 루틴 (스위치 리스트) ─── -->
+  <section class="card">
+    <div class="label">DAILY · 하루 루틴</div>
+    <div class="sw-row">
+      <div class="sw-text">
+        <span class="sw-time">6:20</span>
+        <span class="sw-desc">yeoneun<br>wakes</span>
+      </div>
+      <button class="switch on" aria-label="toggle"></button>
+    </div>
+    <div class="sw-row">
+      <div class="sw-text">
+        <span class="sw-time">6:25</span>
+        <span class="sw-desc">coffee<br>brewed</span>
+      </div>
+      <button class="switch on" aria-label="toggle"></button>
+    </div>
+    <div class="sw-row">
+      <div class="sw-text">
+        <span class="sw-time">13:40</span>
+        <span class="sw-desc">lunch<br>together</span>
+      </div>
+      <button class="switch" aria-label="toggle"></button>
+    </div>
+    <div class="sw-row">
+      <div class="sw-text">
+        <span class="sw-time">22:30</span>
+        <span class="sw-desc">yeoneun<br>sleeps</span>
+      </div>
+      <button class="switch" aria-label="toggle"></button>
+    </div>
+    <div class="sw-row">
+      <div class="sw-text">
+        <span class="sw-time">03:00</span>
+        <span class="sw-desc">eunha<br>still coding</span>
+      </div>
+      <button class="switch on" aria-label="toggle"></button>
+    </div>
+  </section>
+
+  <!-- ─── 프롬프트 카드 ─── -->
+  <section class="card">
+    <div class="prompt-head">
+      <h3>PROMPT</h3>
+      <button class="copy-btn" id="copy-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        Copy
+      </button>
+    </div>
+    <pre class="prompt-body" id="prompt-text">A pair of two college students in Seoul.
+Do Eunha, 21, female, game-development major: long dark hair, dark eyes, oversized hoodie, laptop light on her face.
+Woo Yeoneun, 22, male, fashion-design major: sharp features, monochrome layered outfit, measuring tape around his neck.
+Minimalist aesthetic, muted palette, soft daylight, cinematic composition.</pre>
+  </section>
+
+  <!-- ─── 링크 (스택 카드) ─── -->
+  <section class="card">
+    <div class="label">LINKS · 더 보기</div>
+    <div class="stack">
+      <a class="stack-item" href="#" onclick="return false;">
+        <div>
+          <strong>Portfolio</strong>
+          <span>작업물 모음</span>
+        </div>
+        <div class="stack-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
+      </a>
+      <a class="stack-item" href="#" onclick="return false;">
+        <div>
+          <strong>Playlist</strong>
+          <span>Lo-fi · Night drive</span>
+        </div>
+        <div class="stack-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
+      </a>
+      <a class="stack-item" href="#" onclick="return false;">
+        <div>
+          <strong>Moodboard</strong>
+          <span>참고 이미지</span>
+        </div>
+        <div class="stack-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">© 20XX · DO EUNHA / WOO YEONEUN</footer>
+</div>
+
+<div class="toast" id="toast">복사되었습니다</div>
+
+<script>
+// 시계 + 날짜
+function updateClock() {
+  const d = new Date();
+  const h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const ampm = h >= 12 ? 'P.M' : 'A.M';
+  const hh = String(((h + 11) % 12) + 1).padStart(2, '0');
+  document.getElementById('now-time').textContent = `${hh}:${m} ${ampm}`;
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('now-date').textContent = `${months[d.getMonth()]} ${String(d.getDate()).padStart(2,'0')}`;
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// 테마 토글
+const themeBtn = document.getElementById('theme-btn');
+try {
+  const saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+} catch(e) {}
+themeBtn.addEventListener('click', () => {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e) {}
+});
+
+// 성향 chip 토글
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => c.classList.toggle('active'));
+});
+
+// 스위치 토글
+document.querySelectorAll('.switch').forEach(s => {
+  s.addEventListener('click', () => s.classList.toggle('on'));
+});
+
+// 캐릭터 탭 전환
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const target = t.dataset.target;
+    document.querySelectorAll('.char').forEach(c => c.classList.add('hidden'));
+    document.getElementById(target).classList.remove('hidden');
+  });
+});
+
+// 프롬프트 복사
+const copyBtn = document.getElementById('copy-btn');
+const copyIconDefault = copyBtn.innerHTML;
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('prompt-text').textContent);
+    copyBtn.classList.add('copied');
+    copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied';
+    showToast();
+    setTimeout(() => {
+      copyBtn.classList.remove('copied');
+      copyBtn.innerHTML = copyIconDefault;
+    }, 1800);
+  } catch(e) {
+    showToast('복사 실패');
+  }
+});
+
+// + 버튼 → 맨 아래로
+document.getElementById('plus-btn').addEventListener('click', () => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+});
+
+// 토스트
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (msg) t.textContent = msg;
+  else t.textContent = '복사되었습니다';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1600);
+}
+</script>
+</body>
+</html>
