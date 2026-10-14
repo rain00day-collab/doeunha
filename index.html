@@ -8,25 +8,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #F4F5F7;
-  --grid: rgba(60, 90, 180, 0.06);
+  --grid: rgba(60, 90, 180, 0.08);
   --text: #0A0A0A;
   --text-2: #6E6E74;
   --text-3: #B5B7BE;
-  --text-mute: #D4D6DD;
   --blue: #1E3FFF;
-  --blue-soft: #4D6BFF;
-  --blue-pale: #C5D1FF;
-  --blue-dot: #4F9CFF;
+  --blue-sky: #7BAEFF;        /* 하늘색 포인트 점 */
+  --blue-light: #BCCDFF;
   --card: #FFFFFF;
   --border: #E5E6EB;
   --font: 'Pretendard Variable', 'Pretendard', -apple-system, system-ui, sans-serif;
   --font-sans: 'Inter', 'Pretendard Variable', -apple-system, system-ui, sans-serif;
   --font-serif: 'Times New Roman', Georgia, serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --font-hand: 'Caveat', cursive;
 }
 
@@ -37,18 +34,6 @@ body.modal-open { overflow: hidden; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; padding: 0; }
 
-/* ──────── Grid background ──────── */
-.grid-bg {
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 32px 32px;
-  background-position: -1px -1px;
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* ──────── Canvas ──────── */
 .canvas {
   position: relative;
@@ -56,132 +41,173 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   min-height: 100dvh;
   padding: 2% 3%;
   z-index: 1;
+  overflow: hidden;
 }
 
-/* Faint curves background (top-right, replacing mannequin) */
-.curves-bg {
+/* 좌하단에만 모눈 */
+.grid-bottom-left {
   position: absolute;
-  top: 0; right: 0;
-  width: 48%;
-  height: 60%;
+  bottom: 0; left: 0;
+  width: 42%;
+  height: 48%;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.35;
+  -webkit-mask-image: linear-gradient(to top right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 85%);
+          mask-image: linear-gradient(to top right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 85%);
 }
-.curves-bg svg { width: 100%; height: 100%; }
-.curves-bg path { fill: none; stroke: #C9CDD6; stroke-width: 0.6; }
 
-/* Blue dot indicator (hint for clickable area) */
+/* 우상단 마네킹 곡선 */
+.mannequin {
+  position: absolute;
+  top: 0; right: 0;
+  width: 44%;
+  height: 72%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.3;
+}
+.mannequin svg { width: 100%; height: 100%; }
+.mannequin path, .mannequin ellipse, .mannequin line { fill: none; stroke: #9BA3B2; stroke-width: 0.4; }
+
+/* 하늘색 점 — 단색 원 */
 .hot-dot {
   display: inline-block;
-  width: 6px; height: 6px;
+  width: 7px; height: 7px;
   border-radius: 50%;
-  background: var(--blue-dot);
-  margin-right: 6px;
-  vertical-align: middle;
-  box-shadow: 0 0 0 3px rgba(79, 156, 255, 0.15);
+  background: var(--blue-sky);
 }
 
-/* ──────── 1. Top-left: CALENDAR 스케줄 ──────── */
+/* ──────── 1. 좌상단 CALENDAR ──────── */
 .calendar {
   position: absolute;
-  top: 3%; left: 11%;
-  width: clamp(260px, 24vw, 360px);
+  top: 2.5%; left: 12%;
+  width: clamp(300px, 25vw, 400px);
   font-family: var(--font-sans);
-  font-size: clamp(7px, 0.65vw, 9px);
-  line-height: 1.3;
+  font-size: clamp(6.5px, 0.6vw, 8.5px);
+  line-height: 1.25;
   color: var(--text);
+  z-index: 2;
 }
-.calendar .cal-top { border-top: 1px solid var(--text); padding-top: 4px; display: grid; grid-template-columns: 1fr 2fr 1.4fr; gap: 8px; font-size: 1em; }
-.calendar .cal-top h4 { font-weight: 800; font-size: 1.1em; letter-spacing: 0.02em; }
-.calendar .cal-top .cat { line-height: 1.5; }
-.calendar .cal-top .main { font-weight: 700; }
-.calendar .pub { font-size: 0.85em; margin-top: 2px; grid-column: 3; text-align: right; color: var(--text-2); }
-.calendar .site { font-size: 0.9em; margin-top: 6px; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 3px; font-weight: 600; }
-.calendar .days { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 6px; gap: 4px; border-top: 1px solid var(--text); padding-top: 4px; font-weight: 800; font-size: 1em; }
-.calendar .day h5 { font-size: 1em; }
-.calendar .day h5 small { display: block; font-size: 0.85em; font-weight: 500; }
-.calendar .rows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 4px; }
-.calendar .row { padding: 2px 3px; font-size: 0.95em; line-height: 1.25; border-bottom: 1px solid var(--border); }
-.calendar .row .time { font-weight: 700; font-size: 0.9em; }
-.calendar .row .brand { font-weight: 700; }
-.calendar .row .addr { color: var(--text-2); font-size: 0.9em; }
-.calendar .row.hl { background: #C7D5FF; }
+.calendar .head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  padding-top: 3px;
+  border-top: 1px solid var(--text);
+}
+.calendar .head .ttl {
+  font-weight: 800;
+  font-size: 1.1em;
+  letter-spacing: 0.02em;
+}
+.calendar .head .mid { font-weight: 800; font-size: 1em; line-height: 1.3; }
+.calendar .head .cat { font-size: 0.95em; line-height: 1.4; font-weight: 500; }
+.calendar .pub { text-align: right; font-size: 0.9em; margin-top: 2px; font-weight: 400; }
+.calendar .site {
+  display: flex; justify-content: space-between;
+  padding: 2px 0;
+  margin-top: 3px;
+  border-top: 1px solid var(--text);
+  border-bottom: 1px solid var(--text);
+  font-weight: 600;
+  font-size: 0.95em;
+}
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+  margin-top: 2px;
+}
+.calendar th, .calendar td {
+  padding: 2px 3px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #d0d2d8;
+  line-height: 1.2;
+}
+.calendar th {
+  font-weight: 800;
+  font-size: 1em;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--text);
+}
+.calendar th small { display: block; font-weight: 500; font-size: 0.85em; }
+.calendar td .t { font-weight: 700; font-size: 0.9em; display: block; }
+.calendar td .b { font-weight: 700; font-size: 0.95em; display: block; }
+.calendar td .a { color: var(--text-2); font-size: 0.9em; display: block; }
+.calendar td.hl { background: #B6C9FF; }
 
-/* CRITIC rotated label */
+/* ──────── CRITIC (가로 + 좌우반전 bold) ──────── */
 .critic {
   position: absolute;
-  top: 37%; left: 12%;
+  top: 29%; left: 24%;
   font-family: var(--font-sans);
+  z-index: 2;
 }
 .critic .cr-big {
-  font-size: clamp(14px, 1.6vw, 20px);
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  transform: rotate(-90deg) translateX(-100%);
-  transform-origin: top left;
-  position: absolute;
-  top: -4px; left: 0;
+  display: inline-block;
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  transform: scaleX(-1);        /* 좌우반전 */
+  margin-bottom: 2px;
 }
 .critic .cr-text {
-  margin-left: clamp(22px, 2.4vw, 32px);
   font-size: clamp(8px, 0.75vw, 10px);
-  line-height: 1.45;
+  line-height: 1.4;
   color: var(--text);
 }
 .critic .cr-text strong { font-weight: 700; }
 
-/* ──────── 2. Top-center nav: ABOUT / LIST ──────── */
+/* ──────── 2. 상단 네비 ABOUT / LIST ──────── */
 .top-nav {
   position: absolute;
-  top: 4.5%; left: 44%;
+  top: 4.5%; left: 48%;
   display: flex;
-  gap: clamp(20px, 2.5vw, 36px);
+  gap: clamp(26px, 3vw, 46px);
   font-family: var(--font-sans);
-  font-size: clamp(14px, 1.3vw, 17px);
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
   z-index: 10;
 }
 .top-nav button {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 6px;
   color: var(--text);
   font-family: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit;
   transition: color 0.15s ease;
 }
+.top-nav button.active { font-weight: 700; }
 .top-nav button:hover { color: var(--blue); }
 
-/* "I would die for you" — repeating staggered */
-.die-stack {
+/* ──────── I would die for you (이미지) ──────── */
+.die-for-you {
   position: absolute;
-  top: 8%; right: 24%;
-  font-family: var(--font);
-  font-size: clamp(9px, 0.9vw, 12px);
-  color: var(--text);
-  line-height: 1.1;
-  text-align: left;
+  top: 8%; right: 23%;
+  width: clamp(140px, 15vw, 220px);
   pointer-events: none;
+  z-index: 2;
 }
-.die-stack .d {
-  display: block;
-  letter-spacing: 0.01em;
-}
-.die-stack .d:nth-child(1) { transform: translateX(0); }
-.die-stack .d:nth-child(2) { transform: translateX(10%); }
-.die-stack .d:nth-child(3) { transform: translateX(4%); }
-.die-stack .d:nth-child(4) { transform: translateX(14%); }
-.die-stack .d:nth-child(5) { transform: translateX(8%); }
-.die-stack .d:nth-child(6) { transform: translateX(18%); }
-.die-stack .d:nth-child(7) { transform: translateX(12%); }
+.die-for-you img { width: 100%; height: auto; display: block; }
 
-/* ──────── 3. Right-top: 3 hanging tags ──────── */
+/* ──────── 3. 우상단 3 태그 ──────── */
+.tags-indicator {
+  position: absolute;
+  top: 11%; right: 18.5%;
+  z-index: 3;
+}
 .tags-wrap {
   position: absolute;
-  top: 18%; right: 11%;
+  top: 17%; right: 10%;
   display: flex;
-  gap: clamp(10px, 1.4vw, 18px);
+  gap: clamp(8px, 1vw, 14px);
   align-items: flex-start;
-  z-index: 6;
+  z-index: 5;
 }
 .tag {
   position: relative;
@@ -189,6 +215,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   color: inherit;
   transition: transform 0.2s ease;
   display: block;
+  cursor: pointer;
 }
 .tag:hover { transform: translateY(2px); }
 .tag::before {
@@ -196,117 +223,124 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   position: absolute;
   top: -14px; left: 50%;
   width: 1px; height: 14px;
-  background: var(--text);
+  background: #333;
 }
 .tag::after {
   content: '';
   position: absolute;
-  top: -16px; left: 50%;
+  top: -17px; left: 50%;
   transform: translateX(-50%);
-  width: 4px; height: 4px;
+  width: 5px; height: 5px;
   border-radius: 50%;
-  background: var(--text);
+  background: #333;
 }
-/* Tag 1: Wind Wind Wind (white with blue text + barcode) */
+/* Wind 태그 — 파란 세로 긴 라벨 */
 .tag-wind {
-  width: clamp(60px, 7vw, 88px);
-  padding: 10px 8px 6px;
-  background: #FFFFFF;
-  border: 1px solid var(--text);
-  border-radius: 4px;
+  width: clamp(44px, 5vw, 62px);
+  padding: 10px 6px 8px;
+  background: var(--blue);
+  border-radius: 3px;
+  color: #fff;
   text-align: center;
-  transform: rotate(-4deg);
+  transform: rotate(-5deg);
+  min-height: clamp(120px, 14vw, 170px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 .tag-wind .ww {
   font-family: var(--font-sans);
   font-weight: 800;
-  color: var(--blue);
-  font-size: clamp(10px, 1vw, 13px);
-  line-height: 1;
+  font-size: clamp(11px, 1.2vw, 15px);
+  line-height: 1.1;
   letter-spacing: -0.02em;
+  text-align: left;
+  width: 100%;
+  padding-left: 4px;
 }
-.tag-wind .barcode { margin-top: 8px; display: flex; justify-content: center; gap: 1px; height: 14px; align-items: center; }
-.tag-wind .barcode span { width: 1px; height: 100%; background: #000; display: inline-block; }
+.tag-wind .barcode { display: flex; justify-content: center; gap: 1px; height: 12px; align-items: center; width: 100%; }
+.tag-wind .barcode span { background: #fff; display: inline-block; height: 100%; width: 1px; }
 .tag-wind .barcode span.w { width: 2px; }
 .tag-wind .barcode span.ww { width: 3px; }
 
-/* Tag 2: Savior (black tag with blue S logo) */
+/* Savior 태그 — 검정 세로 긴 라벨 */
 .tag-sav {
-  width: clamp(56px, 6.5vw, 82px);
-  padding: 12px 8px 10px;
+  width: clamp(44px, 5vw, 62px);
+  min-height: clamp(120px, 14vw, 170px);
+  padding: 10px 6px;
   background: #0A0A0A;
   color: #fff;
-  border-radius: 4px;
+  border-radius: 3px;
   text-align: center;
-  transform: rotate(5deg);
+  transform: rotate(6deg);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 .tag-sav::before, .tag-sav::after { background: #0A0A0A; }
 .tag-sav .side {
-  position: absolute; top: 50%; left: -22px;
+  position: absolute;
+  top: 55%; left: -4px;
   transform: translateY(-50%) rotate(-90deg);
   transform-origin: center;
   font-family: var(--font-sans);
-  font-size: 7px;
-  font-weight: 600;
-  color: var(--text);
+  font-size: 5.5px;
+  font-weight: 500;
+  color: var(--text-2);
   white-space: nowrap;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 .tag-sav .logo {
-  width: clamp(26px, 3vw, 36px);
-  height: clamp(26px, 3vw, 36px);
-  margin: 0 auto;
+  width: clamp(28px, 3.2vw, 40px);
+  height: clamp(28px, 3.2vw, 40px);
   background: var(--blue);
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   border-radius: 4px;
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: clamp(14px, 1.5vw, 18px);
+  font-size: clamp(16px, 1.7vw, 22px);
+  margin-top: 4px;
 }
 .tag-sav .name {
-  margin-top: 6px;
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: clamp(9px, 0.9vw, 11px);
-  letter-spacing: 0.04em;
+  font-size: clamp(10px, 1vw, 13px);
+  letter-spacing: 0.03em;
 }
 
-/* Tag 3: Heart Boils Over (handwritten) */
+/* Heart Boils Over — 손글씨 (이미지로 교체 예정) */
 .tag-heart {
-  width: clamp(68px, 7.5vw, 92px);
-  padding: 10px 6px;
+  width: clamp(54px, 6vw, 76px);
+  min-height: clamp(80px, 9vw, 110px);
+  padding: 8px 4px;
   background: #0A0A0A;
-  color: #fff;
-  border-radius: 4px;
+  color: #D7D1EA;
+  border-radius: 3px;
   text-align: center;
-  transform: rotate(-6deg);
+  transform: rotate(-7deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .tag-heart::before, .tag-heart::after { background: #0A0A0A; }
 .tag-heart .script {
   font-family: var(--font-hand);
   font-weight: 700;
   font-size: clamp(14px, 1.6vw, 20px);
-  line-height: 1;
-  color: #CFCAE0;
+  line-height: 0.95;
   letter-spacing: 0.01em;
-  /* 자리 표시용 — 네가 손글씨 이미지 보내주면 교체 */
+  /* 손글씨 이미지 받으면 .tag-heart 내부 교체 */
 }
 
-.tags-indicator { position: absolute; top: 14%; right: 18%; }
-.tags-indicator .hot-dot { animation: pulse-dot 2.4s ease-in-out infinite; }
-@keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(79, 156, 255, 0.18); }
-  50% { box-shadow: 0 0 0 7px rgba(79, 156, 255, 0.04); }
-}
-
-/* ──────── 4. Center title: do. Reserved Sanctuary + 바늘 ──────── */
+/* ──────── 4. 중앙 타이틀 + 바늘 ──────── */
 .center-title {
   position: absolute;
-  top: 44%; left: 50%;
+  top: 45%; left: 50%;
   transform: translate(-50%, -50%);
-  text-align: left;
   z-index: 3;
   user-select: none;
 }
@@ -316,50 +350,54 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .center-title .do {
   position: absolute;
-  top: -2%; left: -14%;
+  top: -4%; left: -8%;
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(26px, 3vw, 38px);
-  color: var(--text-3);
-  letter-spacing: -0.01em;
+  font-size: clamp(24px, 2.6vw, 36px);
+  color: #B0B4BE;
+  letter-spacing: -0.02em;
+  z-index: 4;
 }
 .center-title h1 {
   font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: clamp(54px, 7.5vw, 108px);
-  line-height: 0.92;
-  letter-spacing: -0.045em;
+  font-weight: 600;
+  font-size: clamp(58px, 7.5vw, 112px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
   color: var(--text);
+  position: relative;
+  z-index: 3;
+  margin: 0;
 }
 .center-title h1 .sanctuary {
   color: var(--blue);
+  font-weight: 600;
   display: block;
 }
-/* 바늘 SVG — Reserved와 Sanctuary 사이를 뚫고 t 뒤에 숨음 */
 .needle-svg {
   position: absolute;
   top: 50%; left: 50%;
-  transform: translate(-50%, -42%);
-  width: clamp(240px, 36vw, 540px);
-  height: clamp(260px, 40vw, 580px);
+  transform: translate(-50%, -48%);
+  width: clamp(220px, 32vw, 460px);
+  height: clamp(300px, 44vw, 620px);
   pointer-events: none;
   z-index: 2;
 }
-.center-title h1 { position: relative; z-index: 3; }
 
-/* ──────── 5. Left middle: Banner area (Luv3r 자리) ──────── */
+/* ──────── 5. Banner 영역 (좌중) ──────── */
+.banner-indicator { position: absolute; top: 45%; left: 11%; z-index: 5; }
 .banner-area {
   position: absolute;
-  top: 46%; left: 12%;
+  top: 48%; left: 12%;
   display: grid;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px;
   z-index: 4;
 }
 .banner-area .b-item {
-  width: clamp(44px, 4.5vw, 60px);
-  height: clamp(44px, 4.5vw, 60px);
+  width: clamp(50px, 5vw, 68px);
+  height: clamp(50px, 5vw, 68px);
   border-radius: 10px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -369,78 +407,87 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-weight: 600;
   color: var(--text-2);
   box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  overflow: hidden;
 }
-.banner-area .b-item.filled { background: linear-gradient(135deg, #B8C8FF, #7B91E8); color: transparent; }
 .banner-area .b-item.dark { background: #0A0A0A; color: #FFF; }
-.banner-area-indicator { position: absolute; top: 44%; left: 11%; z-index: 5; }
+.banner-area .b-item img { width: 100%; height: 100%; object-fit: cover; }
 
-/* ──────── 6. Center-left scattered: 0, 8, savior circle ──────── */
-.deco-0 { position: absolute; top: 61%; left: 30%; font-family: var(--font-sans); font-size: clamp(14px, 1.4vw, 18px); font-weight: 700; color: var(--text); }
-.deco-8 { position: absolute; top: 63%; left: 38%; font-family: var(--font-sans); font-size: clamp(14px, 1.4vw, 18px); font-weight: 700; color: var(--text); }
+/* ──────── 6. 중앙 스캐터 ──────── */
+.deco-0, .deco-8 {
+  position: absolute;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--text);
+}
+.deco-0 { top: 66%; left: 36%; font-size: clamp(16px, 1.6vw, 22px); }
+.deco-8 { top: 67%; left: 44%; font-size: clamp(16px, 1.6vw, 22px); }
+
 .circle-savior {
   position: absolute;
-  top: 65%; left: 21%;
-  display: flex; align-items: center; gap: 12px;
+  top: 70%; left: 24%;
+  display: flex; align-items: center; gap: 10px;
+  z-index: 2;
 }
 .circle-savior .circ {
-  width: clamp(110px, 12vw, 160px);
-  height: clamp(110px, 12vw, 160px);
+  width: clamp(90px, 10vw, 140px);
+  height: clamp(90px, 10vw, 140px);
   border: 1px solid var(--text);
   border-radius: 50%;
 }
 .circle-savior .savior-txt {
   font-family: var(--font-sans);
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: clamp(11px, 1vw, 13px);
   color: var(--text);
 }
 
-/* ──────── 7. Bottom-left: Boutique definition ──────── */
+/* ──────── 7. Boutique ──────── */
 .boutique {
   position: absolute;
   bottom: 7%; left: 11%;
   max-width: 240px;
   font-family: var(--font-sans);
   font-size: clamp(9px, 0.85vw, 11px);
-  line-height: 1.5;
+  line-height: 1.45;
   color: var(--text);
+  z-index: 2;
 }
-.boutique h4 { font-weight: 700; font-size: 1.15em; margin-bottom: 2px; }
-.boutique p { color: var(--text); font-weight: 400; }
+.boutique h4 { font-weight: 700; font-size: 1.15em; margin-bottom: 1px; }
 
-/* ──────── 8. Bottom-center: lyrics ──────── */
+/* ──────── 8. 가사 ──────── */
 .lyrics {
   position: absolute;
-  bottom: 14%; left: 50%;
-  transform: translateX(-28%);
+  bottom: 14%; left: 46%;
   font-family: var(--font-sans);
   font-size: clamp(10px, 0.95vw, 13px);
   line-height: 1.5;
   color: var(--text);
-  text-align: right;
+  z-index: 2;
 }
-.lyrics .verse { }
-.lyrics .list { margin-top: 10px; text-align: left; display: inline-block; }
+.lyrics .verse { text-align: right; }
+.lyrics .list { margin-top: 8px; text-align: left; display: inline-block; }
 .lyrics .list .li { padding-left: 18px; text-indent: -18px; }
 
-/* ──────── 9. Bottom-right: Workspace / 12 / pill / prompt ──────── */
+/* ──────── 9. Workspace / 12 / pill ──────── */
 .workspace {
   position: absolute;
-  bottom: 42%; right: 24%;
+  top: 48%; right: 25%;
   font-family: var(--font-sans);
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: clamp(12px, 1.1vw, 15px);
   color: var(--text);
+  z-index: 2;
 }
 .twelve {
   position: absolute;
   bottom: 8%; right: 15%;
   font-family: var(--font-sans);
-  font-size: clamp(14px, 1.4vw, 18px);
+  font-size: clamp(16px, 1.5vw, 20px);
   font-weight: 700;
   color: var(--text);
+  z-index: 2;
 }
 .pill-area {
   position: absolute;
-  bottom: 25%; right: 7%;
+  top: 58%; right: 8%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -449,7 +496,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .pill-area .above-dot {
   position: absolute;
-  top: -14px; left: -10px;
+  top: -16px; left: -10px;
 }
 .pill-toggle {
   position: relative;
@@ -463,7 +510,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: clamp(12px, 1.1vw, 14px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   user-select: none;
 }
 .pill-toggle .opt {
@@ -491,12 +538,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-family: var(--font-sans);
   font-size: clamp(10px, 0.9vw, 12px);
   color: var(--text-2);
-  letter-spacing: 0.08em;
-  text-transform: lowercase;
+  letter-spacing: 0.05em;
   margin-top: 2px;
 }
 
-/* ──────── MODAL (사진 2 — Prompt 카드) ──────── */
+/* ──────── MODAL ──────── */
 .modal {
   position: fixed; inset: 0;
   background: rgba(0, 0, 0, 0.4);
@@ -516,7 +562,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   color: var(--text);
   border-radius: 24px;
   width: 100%;
-  max-width: 520px;
+  max-width: 640px;    /* 한 줄 탭 들어가게 넓게 */
   max-height: 90dvh;
   overflow: hidden;
   position: relative;
@@ -534,40 +580,38 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   transition: background 0.15s ease, color 0.15s ease;
 }
 .modal-close:hover { background: var(--text); color: var(--card); }
-.modal-body { padding: 48px 32px 24px; overflow-y: auto; flex: 1; }
+.modal-body { padding: 44px 32px 20px; overflow-y: auto; flex: 1; }
 
 .char-tabs {
   display: flex;
+  flex-wrap: nowrap;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: clamp(10px, 1.6vw, 20px);
-  padding: 10px 18px;
+  align-items: center;
+  gap: clamp(8px, 1.4vw, 18px);
+  padding: 9px 18px;
   border: 1px solid var(--text);
   border-radius: 999px;
   font-family: var(--font-sans);
-  font-size: clamp(13px, 1.3vw, 16px);
+  font-size: clamp(12px, 1.15vw, 15px);
   margin: 0 auto 28px;
   width: fit-content;
   max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .char-tabs .ct {
   position: relative;
   padding: 2px 2px;
   color: var(--text);
   font-weight: 400;
+  flex-shrink: 0;
   transition: color 0.15s ease;
 }
 .char-tabs .ct.active { font-weight: 700; }
 .char-tabs .ct sup { font-size: 0.6em; font-weight: 400; margin-left: 1px; }
 
-.prompt-block {
-  position: relative;
-  padding: 0 2px;
-}
-.prompt-row {
-  position: relative;
-  margin-bottom: 20px;
-}
+.prompt-block { padding: 0 2px; }
+.prompt-row { position: relative; margin-bottom: 20px; }
 .prompt-row .copy-mini {
   position: absolute; top: 0; right: 0;
   font-family: var(--font-sans);
@@ -582,10 +626,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .prompt-row:hover .copy-mini { opacity: 1; }
 .prompt-row .copy-mini.copied { background: var(--blue); opacity: 1; }
-
 .prompt-text {
   font-family: var(--font-sans);
-  font-size: clamp(14px, 1.3vw, 17px);
+  font-size: clamp(14px, 1.25vw, 17px);
   line-height: 1.65;
   letter-spacing: -0.005em;
   white-space: pre-wrap;
@@ -602,7 +645,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .prompt-text.secondary { color: #9DA0A8; }
 
 .modal-footer {
-  padding: 10px 28px 16px;
+  padding: 10px 28px 14px;
   display: flex;
   align-items: flex-start;
   gap: 14px;
@@ -612,29 +655,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .pr-pt {
   display: flex; gap: 8px; align-items: flex-start;
   font-family: var(--font-sans);
-  font-size: 10px;
-  line-height: 1.4;
   flex: 1;
 }
 .pr-pt .ab {
-  font-weight: 800;
-  font-size: 16px;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  flex-shrink: 0;
-  padding-top: 2px;
+  font-weight: 800; font-size: 18px; line-height: 1;
+  letter-spacing: -0.02em; flex-shrink: 0; padding-top: 2px;
 }
 .pr-pt .ab span { display: block; }
-.pr-pt .desc { color: var(--text-2); font-size: 9px; line-height: 1.45; max-width: 240px; }
+.pr-pt .desc { color: var(--text-2); font-size: 9px; line-height: 1.45; max-width: 260px; }
 .barcode-sm { display: flex; gap: 1px; height: 32px; align-items: center; flex-shrink: 0; }
 .barcode-sm span { width: 1px; height: 100%; background: #000; }
 .barcode-sm span.w { width: 2px; }
 .barcode-sm span.ww { width: 3px; }
-
 .home-indicator {
-  width: 70%;
-  max-width: 240px;
-  height: 24px;
+  width: 70%; max-width: 240px; height: 22px;
   background: #0A0A0A;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
@@ -654,61 +688,94 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ──────── 모바일 반응형 ──────── */
+/* ──────── 모바일 ──────── */
 @media (max-width: 900px) {
-  .calendar { top: 2%; left: 4%; width: 46%; font-size: 8px; }
-  .critic { top: 24%; left: 5%; }
+  .calendar { top: 2%; left: 4%; width: 46%; font-size: 7px; }
+  .critic { top: 26%; left: 6%; }
   .top-nav { top: 2%; right: 4%; left: auto; }
-  .die-stack { top: 7%; right: 5%; }
-  .tags-wrap { top: 32%; right: 6%; gap: 10px; }
-  .tags-indicator { top: 29%; right: 20%; }
+  .die-for-you { top: 7%; right: 5%; width: 130px; }
+  .tags-indicator { top: 24%; right: 20%; }
+  .tags-wrap { top: 28%; right: 5%; gap: 8px; }
   .center-title { top: 50%; }
-  .banner-area { top: 60%; left: 5%; }
-  .banner-area-indicator { top: 58%; left: 4%; }
-  .deco-0 { top: 71%; left: 42%; }
-  .deco-8 { top: 73%; left: 52%; }
+  .banner-indicator { top: 60%; left: 4%; }
+  .banner-area { top: 62%; left: 5%; }
+  .deco-0 { top: 72%; left: 42%; }
+  .deco-8 { top: 72%; left: 52%; }
   .circle-savior { top: 72%; left: 30%; }
   .circle-savior .circ { width: 80px; height: 80px; }
-  .workspace { bottom: 36%; right: 6%; }
-  .pill-area { bottom: 20%; right: 50%; transform: translateX(50%); }
+  .workspace { top: 60%; right: 5%; }
+  .pill-area { top: 66%; right: 50%; transform: translateX(50%); }
   .twelve { bottom: 4%; right: 10%; }
-  .boutique { bottom: 3%; left: 5%; max-width: 180px; }
-  .lyrics { bottom: 10%; left: 50%; transform: translateX(-50%); font-size: 10px; text-align: center; }
-  .curves-bg { width: 70%; height: 40%; }
+  .boutique { bottom: 3%; left: 4%; max-width: 180px; }
+  .lyrics { bottom: 20%; left: 50%; transform: translateX(-50%); font-size: 10px; text-align: center; }
+  .mannequin { width: 60%; height: 40%; }
+  .grid-bottom-left { width: 55%; height: 35%; }
 }
 @media (max-width: 560px) {
-  .top-nav { font-size: 13px; gap: 14px; }
-  .calendar { font-size: 6.5px; width: 50%; }
-  .die-stack { font-size: 8px; right: 6%; top: 9%; }
-  .tags-wrap { top: 34%; gap: 6px; }
+  .top-nav { font-size: 14px; gap: 16px; }
+  .calendar { font-size: 6px; width: 52%; }
   .tag { transform: scale(0.85); }
+  .char-tabs { font-size: 11px; gap: 10px; padding: 7px 12px; }
 }
 </style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
-
 <div class="canvas">
 
-  <!-- 희미한 곡선 (우상단 배경, 마네킹 대체) -->
-  <div class="curves-bg" aria-hidden="true">
-    <svg viewBox="0 0 600 500" preserveAspectRatio="none">
-      <path d="M 100 480 C 140 380, 180 320, 220 240 S 320 100, 420 60"/>
-      <path d="M 140 490 C 180 400, 220 340, 260 250 S 360 110, 460 70"/>
-      <path d="M 60 480 C 100 400, 160 320, 240 220 S 440 80, 560 40"/>
-      <path d="M 200 500 C 240 420, 280 360, 320 280 S 420 150, 520 100"/>
-      <path d="M 380 500 C 400 460, 440 400, 500 340 S 580 200, 600 160"/>
-      <path d="M 20 480 Q 180 300, 320 180 T 580 20"/>
-      <path d="M 50 500 Q 220 320, 360 200 T 600 60"/>
+  <!-- 좌하단 모눈 -->
+  <div class="grid-bottom-left" aria-hidden="true"></div>
+
+  <!-- 우상단 마네킹 3D 선화 -->
+  <div class="mannequin" aria-hidden="true">
+    <svg viewBox="0 0 600 800" preserveAspectRatio="xMaxYMin meet">
+      <!-- Head (여러 겹 contour) -->
+      <ellipse cx="400" cy="90" rx="42" ry="55"/>
+      <ellipse cx="400" cy="90" rx="38" ry="51"/>
+      <ellipse cx="400" cy="90" rx="30" ry="43"/>
+      <ellipse cx="400" cy="90" rx="22" ry="35"/>
+      <!-- Neck -->
+      <path d="M 380 144 L 378 180 L 422 180 L 420 144"/>
+      <path d="M 384 148 L 384 178 L 416 178 L 416 148"/>
+      <!-- Shoulders -->
+      <path d="M 260 215 Q 400 185, 540 215"/>
+      <path d="M 270 223 Q 400 195, 530 223"/>
+      <path d="M 285 232 Q 400 208, 515 232"/>
+      <!-- Torso sides left -->
+      <path d="M 268 220 Q 250 320, 258 420 Q 262 470, 280 500"/>
+      <path d="M 282 232 Q 268 330, 274 420 Q 278 470, 295 500"/>
+      <path d="M 296 240 Q 286 335, 292 420 Q 296 470, 310 500"/>
+      <!-- Torso sides right -->
+      <path d="M 532 220 Q 550 320, 542 420 Q 538 470, 520 500"/>
+      <path d="M 518 232 Q 532 330, 526 420 Q 522 470, 505 500"/>
+      <path d="M 504 240 Q 514 335, 508 420 Q 504 470, 490 500"/>
+      <!-- Chest contour horizontal -->
+      <path d="M 290 290 Q 400 310, 510 290"/>
+      <path d="M 290 320 Q 400 340, 510 320"/>
+      <path d="M 285 370 Q 400 390, 515 370"/>
+      <path d="M 285 420 Q 400 440, 515 420"/>
+      <!-- Waist/hip -->
+      <path d="M 290 470 Q 400 495, 510 470"/>
+      <path d="M 310 505 Q 400 525, 490 505"/>
+      <!-- Lower -->
+      <path d="M 320 530 Q 400 548, 480 530"/>
+      <path d="M 330 555 Q 400 570, 470 555"/>
+      <path d="M 345 580 Q 400 590, 455 580"/>
+      <!-- Vertical center lines -->
+      <line x1="400" y1="200" x2="400" y2="590"/>
+      <path d="M 360 250 Q 365 400, 370 580"/>
+      <path d="M 440 250 Q 435 400, 430 580"/>
+      <!-- Arms hinted -->
+      <path d="M 260 220 Q 230 320, 240 440"/>
+      <path d="M 540 220 Q 570 320, 560 440"/>
     </svg>
   </div>
 
-  <!-- ─── 1. 좌상단 CALENDAR 스케줄 ─── -->
-  <div class="calendar" aria-label="Fashion show calendar">
-    <div class="cal-top">
-      <h4>CALENDAR</h4>
-      <div class="main">16/20 JANUARY 2026<br>MEN'S COLLECTION<br>FALL/WINTER 2026/2027</div>
+  <!-- ─── 1. CALENDAR ─── -->
+  <div class="calendar">
+    <div class="head">
+      <div class="ttl">CALENDAR</div>
+      <div class="mid">16/20 JANUARY 2026<br>MEN'S COLLECTION<br>FALL/WINTER 2026/2027</div>
       <div>
         <div class="cat">FASHION SHOWS<br>PRESENTATIONS<br>DIGITAL CONTENTS</div>
         <div class="pub">Final Calendar<br>Published On 10/12/</div>
@@ -718,54 +785,67 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <span>MILANOFASHIONWEEK.CAMERAMODA.IT</span>
       <span>CAMERAMODA.IT</span>
     </div>
-    <div class="days">
-      <div class="day"><h5>FRIDAY<small>16 JANUARY 2026</small></h5></div>
-      <div class="day"><h5>SATURDAY<small>17 JANUARY 2026</small></h5></div>
-      <div class="day"><h5>SUNDAY<small>18 JANUARY 2026</small></h5></div>
-    </div>
-    <div class="rows">
-      <!-- Friday -->
-      <div class="row"><span class="time">10:00/15:00</span> <span class="brand">K-WAY **</span><br><span class="addr">Via Dell'Aprica, 12</span></div>
-      <div class="row"><span class="time">10:00/13:00</span> <span class="brand">KITON *</span><br><span class="addr">Via Portaccio, 21</span></div>
-      <div class="row"><span class="time">10:00</span> <span class="brand">SIMON CRACKER **</span><br><span class="addr">Via Bovisasca, 87</span></div>
-
-      <div class="row"><span class="time">11:00/19:00</span> <span class="brand">MARCELLO PIPITONE - BONOLA **</span><br><span class="addr">Via Bovisasca, 87</span></div>
-      <div class="row"><span class="time">10:00/14:00</span> <span class="brand">LARDINI *</span><br><span class="addr">Via Dell'Annunciata, 23</span></div>
-      <div class="row"><span class="time">10:00/12:00</span> <span class="brand">MOARINO **</span><br><span class="addr">Via Bovisasca, 87</span></div>
-
-      <div class="row"><span class="time">11:00/20:00</span> <span class="brand">BIKKEMBERGS *</span><br><span class="addr">Via Stendhal, 36</span></div>
-      <div class="row"><span class="time">10:00/16:00</span> <span class="brand">CHURCH'S *</span><br><span class="addr">Via Vivaio, 7</span></div>
-      <div class="row"><span class="time">10:00/12:00</span> <span class="brand">ELEVENTY **</span><br><span class="addr">Via Visconti Di Modrone, 11</span></div>
-
-      <div class="row"><span class="time">14:00/20:00</span> <span class="brand">BOGLIOLI *</span><br><span class="addr">Via Plinio, 13</span></div>
-      <div class="row"><span class="time">10:00/16:00</span> <span class="brand">BRIONI *</span><br><span class="addr">Via Monte Di Pieta, 10</span></div>
-      <div class="row"><span class="time">12:00</span> <span class="brand">OASHI *</span><br><span class="addr">Via Tortona, 27</span></div>
-
-      <div class="row"><span class="time">15:00</span> <span class="brand">ZEGNA **</span><br><span class="addr">Location In This Invitation</span></div>
-      <div class="row"><span class="time">10:00/18:00</span> <span class="brand">TEN C *</span><br><span class="addr">Via Uberti, 4</span></div>
-      <div class="row"><span class="time">12:00</span> <span class="brand">VICTOR HART *</span><br><span class="addr">Location Tbc</span></div>
-
-      <div class="row">&nbsp;</div>
-      <div class="row hl"><span class="time">11:00</span> <span class="brand">SETCHU *</span><br><span class="addr">Via Private Pezze, 2</span></div>
-      <div class="row hl"><span class="time">14:00</span> <span class="brand">PRADA **</span><br><span class="addr">Via Goito, 7</span></div>
-
-      <div class="row">&nbsp;</div>
-      <div class="row"><span class="time">11:00/15:00</span> <span class="brand">MARAGNO *</span><br><span class="addr">Via Bovisasca, 87</span></div>
-      <div class="row"><span class="time">14:30/19:30</span> <span class="brand">VIAPIAVE33 **</span><br><span class="addr">Via Lamprese, 14</span></div>
-
-      <div class="row">&nbsp;</div>
-      <div class="row"><span class="time">12:30</span> <span class="brand">DOLCE&amp;GABBANA *</span><br><span class="addr">Viale Piave, 24</span></div>
-      <div class="row"><span class="time">15:00</span> <span class="brand">LATORRE *</span><br><span class="addr">Via Manzoni, 23</span></div>
-
-      <div class="row">&nbsp;</div>
-      <div class="row"><span class="time">13:00/17:00</span> <span class="brand">BALLY *</span><br><span class="addr">Viale Piave, 42</span></div>
-      <div class="row"><span class="time">15:00</span> <span class="brand">SAUL NASH **</span><br><span class="addr">Via Petracarbo, 16</span></div>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>FRIDAY<small>16 JANUARY 2026</small></th>
+          <th>SATURDAY<small>17 JANUARY 2026</small></th>
+          <th>SUNDAY<small>18 JANUARY 2026</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="t">10:00/15:00</span><span class="b">K-WAY **</span><span class="a">Via Dell'Aprica, 12</span></td>
+          <td><span class="t">10:00/13:00</span><span class="b">KITON *</span><span class="a">Via Portaccio, 21</span></td>
+          <td><span class="t">10:00</span><span class="b">SIMON CRACKER **</span><span class="a">Via Bovisasca, 87</span></td>
+        </tr>
+        <tr>
+          <td><span class="t">11:00/19:00</span><span class="b">MARCELLO PIPITONE - BONOLA **</span><span class="a">Via Bovisasca, 87</span></td>
+          <td><span class="t">10:00/14:00</span><span class="b">LARDINI *</span><span class="a">Via Dell'Annunciata, 23</span></td>
+          <td><span class="t">10:00/12:00</span><span class="b">MOARINO **</span><span class="a">Via Bovisasca, 87</span></td>
+        </tr>
+        <tr>
+          <td><span class="t">11:00/20:00</span><span class="b">BIKKEMBERGS *</span><span class="a">Via Stendhal, 36</span></td>
+          <td><span class="t">10:00/16:00</span><span class="b">CHURCH'S *</span><span class="a">Via Vivaio, 7</span></td>
+          <td><span class="t">10:00/12:00</span><span class="b">ELEVENTY **</span><span class="a">Via Visconti Di Modrone, 11</span></td>
+        </tr>
+        <tr>
+          <td><span class="t">14:00/20:00</span><span class="b">BOGLIOLI *</span><span class="a">Via Plinio, 13</span></td>
+          <td><span class="t">10:00/16:00</span><span class="b">BRIONI *</span><span class="a">Via Monte Di Pieta, 10</span></td>
+          <td><span class="t">12:00</span><span class="b">OASHI *</span><span class="a">Via Tortona, 27</span></td>
+        </tr>
+        <tr>
+          <td><span class="t">15:00</span><span class="b">ZEGNA **</span><span class="a">Location In This Invitation</span></td>
+          <td><span class="t">10:00/18:00</span><span class="b">TEN C *</span><span class="a">Via Uberti, 4</span></td>
+          <td><span class="t">12:00</span><span class="b">VICTOR HART *</span><span class="a">Location Tbc</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="hl"><span class="t">11:00</span><span class="b">SETCHU *</span><span class="a">Via Private Pezze, 2</span></td>
+          <td class="hl"><span class="t">14:00</span><span class="b">PRADA **</span><span class="a">Via Goito, 7</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><span class="t">11:00/15:00</span><span class="b">MARAGNO *</span><span class="a">Via Bovisasca, 87</span></td>
+          <td><span class="t">14:30/19:30</span><span class="b">VIAPIAVE33 **</span><span class="a">Via Lamprese, 14</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><span class="t">12:30</span><span class="b">DOLCE&amp;GABBANA *</span><span class="a">Viale Piave, 24</span></td>
+          <td><span class="t">15:00</span><span class="b">LATORRE *</span><span class="a">Via Manzoni, 23</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><span class="t">13:00/17:00</span><span class="b">BALLY *</span><span class="a">Viale Piave, 42</span></td>
+          <td><span class="t">15:00</span><span class="b">SAUL NASH **</span><span class="a">Via Petracarbo, 16</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- CRITIC 세로 라벨 -->
+  <!-- CRITIC (가로 + 좌우반전) -->
   <div class="critic">
-    <span class="cr-big">CRITIC</span>
+    <div class="cr-big">CRITIC</div>
     <div class="cr-text">
       <strong>fashion design process</strong><br>
       critic &amp; technical<br>
@@ -773,24 +853,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </div>
   </div>
 
-  <!-- ─── 2. 상단 네비: ABOUT / LIST ─── -->
+  <!-- ─── 2. 상단 네비 ABOUT / LIST ─── -->
   <nav class="top-nav">
-    <button data-anchor="about" aria-label="ABOUT 열기"><span class="hot-dot"></span>ABOUT</button>
-    <button data-anchor="list" aria-label="LIST 열기"><span class="hot-dot"></span>LIST</button>
+    <button data-anchor="about" class="active"><span class="hot-dot"></span>&nbsp;ABOUT</button>
+    <button data-anchor="list"><span class="hot-dot"></span>&nbsp;LIST</button>
   </nav>
 
-  <!-- I would die for you (반복) -->
-  <div class="die-stack" aria-hidden="true">
-    <span class="d">I would die for you</span>
-    <span class="d">I would die for you</span>
-    <span class="d">I would die for you</span>
-    <span class="d">I would die for you</span>
-    <span class="d">I would die for you</span>
-    <span class="d">I would die for you</span>
-    <span class="d">I would die for you</span>
+  <!-- I would die for you (이미지) -->
+  <div class="die-for-you" aria-hidden="true">
+    <img src="assets/die-for-you.png" alt="I would die for you">
   </div>
 
-  <!-- ─── 3. 우상단 3개 태그 (외부 링크) ─── -->
+  <!-- ─── 3. 우상단 3 태그 ─── -->
   <div class="tags-indicator" aria-hidden="true"><span class="hot-dot"></span></div>
   <div class="tags-wrap">
     <a class="tag tag-wind" href="#" target="_blank" rel="noopener" data-tag="wind">
@@ -816,58 +890,61 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <div class="wrap">
       <span class="do">do.</span>
 
-      <!-- 바늘 + 반짝이 SVG (텍스트 뒤) -->
-      <svg class="needle-svg" viewBox="0 0 400 440" aria-hidden="true">
+      <!-- 바늘 + 실 + 반짝이 SVG -->
+      <svg class="needle-svg" viewBox="0 0 400 540" aria-hidden="true">
         <defs>
-          <!-- 바늘구멍 그라데이션 -->
           <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#1E3FFF" stop-opacity="0"/>
-            <stop offset="40%" stop-color="#1E3FFF" stop-opacity="0.15"/>
-            <stop offset="70%" stop-color="#1E3FFF" stop-opacity="0.55"/>
-            <stop offset="100%" stop-color="#1E3FFF" stop-opacity="0.95"/>
+            <stop offset="55%" stop-color="#1E3FFF" stop-opacity="0.08"/>
+            <stop offset="85%" stop-color="#1E3FFF" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#1E3FFF" stop-opacity="0.9"/>
           </radialGradient>
-          <!-- 바늘구멍 내부 점 패턴 -->
-          <pattern id="dots" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="0.8" fill="#1E3FFF" opacity="0.75"/>
+          <pattern id="dots" x="0" y="0" width="3.5" height="3.5" patternUnits="userSpaceOnUse">
+            <circle cx="1.75" cy="1.75" r="0.6" fill="#1E3FFF" opacity="0.5"/>
           </pattern>
         </defs>
 
-        <!-- 가로 shine 라인 -->
-        <path d="M 20 220 Q 200 215, 380 220" stroke="#1E3FFF" stroke-width="2" fill="none" opacity="0.85"/>
+        <!-- 가로 shine -->
+        <path d="M 10 280 Q 200 275, 390 280" stroke="#1E3FFF" stroke-width="2" fill="none" opacity="0.9"/>
         <!-- 대각 shine (살짝) -->
-        <path d="M 80 60 Q 200 220, 320 380" stroke="#1E3FFF" stroke-width="1" fill="none" opacity="0.5"/>
-        <path d="M 320 60 Q 200 220, 80 380" stroke="#1E3FFF" stroke-width="1" fill="none" opacity="0.5"/>
+        <path d="M 50 90 Q 200 280, 350 470" stroke="#1E3FFF" stroke-width="1" fill="none" opacity="0.45"/>
+        <path d="M 350 90 Q 200 280, 50 470" stroke="#1E3FFF" stroke-width="1" fill="none" opacity="0.45"/>
 
-        <!-- 바늘 본체 (세로, 길쭉, 끝이 뾰족) -->
-        <path d="M 198 90 L 202 90 L 206 420 L 194 420 Z" fill="#1E3FFF"/>
-        <!-- 바늘 하단 뾰족한 끝 (여유있게) -->
-        <path d="M 194 420 L 206 420 L 200 436 Z" fill="#1E3FFF"/>
+        <!-- 바늘 본체 (슬림, 세로, 뾰족한 끝) -->
+        <path d="M 198 120 L 202 120 L 206 500 L 194 500 Z" fill="#1E3FFF"/>
+        <path d="M 194 500 L 206 500 L 200 530 Z" fill="#1E3FFF"/>
 
-        <!-- 바늘구멍 (eye, 상단 원형 — 그라데이션 + 점) -->
-        <ellipse cx="200" cy="55" rx="38" ry="48" fill="url(#eyeGrad)"/>
-        <ellipse cx="200" cy="55" rx="22" ry="30" fill="url(#dots)" opacity="0.9"/>
-        <ellipse cx="200" cy="55" rx="38" ry="48" fill="none" stroke="#1E3FFF" stroke-width="1.5"/>
-        <!-- 바늘 몸통과 눈 연결 -->
-        <path d="M 198 100 L 202 100 L 200 90 Z" fill="#1E3FFF"/>
+        <!-- 바늘구멍 eye (상단 oval) -->
+        <ellipse cx="200" cy="75" rx="30" ry="42" fill="url(#eyeGrad)"/>
+        <ellipse cx="200" cy="75" rx="18" ry="28" fill="url(#dots)"/>
+        <ellipse cx="200" cy="75" rx="30" ry="42" fill="none" stroke="#1E3FFF" stroke-width="2"/>
+        <!-- 바늘 상단 끝과 eye 연결 -->
+        <path d="M 196 115 L 204 115 L 200 95 Z" fill="#1E3FFF"/>
+
+        <!-- 실 (thread) — eye를 통해 나와 좌측 상단으로 뻗음 -->
+        <path d="M 10 10 Q 90 40, 140 60 Q 170 70, 185 75"
+              stroke="#2A2A2A" stroke-width="1.2" fill="none" opacity="0.85"/>
+        <!-- 실 반대쪽 (eye 통과해서 우측 아래로 내려감, 짧게) -->
+        <path d="M 215 75 Q 240 85, 260 100"
+              stroke="#2A2A2A" stroke-width="1.2" fill="none" opacity="0.85"/>
+        <!-- 실 끝 매듭 느낌 -->
+        <circle cx="10" cy="10" r="2" fill="#2A2A2A" opacity="0.85"/>
       </svg>
 
-      <h1>
-        Reserved<br>
-        <span class="sanctuary">Sanctuary</span>
-      </h1>
+      <h1>Reserved<br><span class="sanctuary">Sanctuary</span></h1>
     </div>
   </div>
 
-  <!-- ─── 5. 좌중 Banner 영역 (러버미용 placeholder) ─── -->
-  <div class="banner-area-indicator" aria-hidden="true"><span class="hot-dot"></span></div>
-  <div class="banner-area" aria-label="러버미 배너 자리">
+  <!-- ─── 5. Banner (좌중) ─── -->
+  <div class="banner-indicator" aria-hidden="true"><span class="hot-dot"></span></div>
+  <div class="banner-area">
     <div class="b-item">Banner</div>
-    <div class="b-item filled"></div>
-    <div class="b-item filled"></div>
+    <div class="b-item"><img src="assets/banner-2.png" alt=""></div>
+    <div class="b-item"><img src="assets/banner-3.png" alt=""></div>
     <div class="b-item dark">Banner</div>
   </div>
 
-  <!-- ─── 6. 중앙 스캐터: 0, 8, savior ─── -->
+  <!-- ─── 6. 중앙 스캐터 ─── -->
   <span class="deco-0">0</span>
   <span class="deco-8">8</span>
   <div class="circle-savior">
@@ -875,7 +952,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <span class="savior-txt">savior</span>
   </div>
 
-  <!-- ─── 7. Boutique 정의 ─── -->
+  <!-- ─── 7. Boutique ─── -->
   <div class="boutique">
     <h4>Boutique</h4>
     <p>a small retail shop or business<br>that sells fashionable clothes,<br>shoes, jewelry, gifts, or specialized<br>luxury item</p>
@@ -897,7 +974,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </div>
   </div>
 
-  <!-- ─── 9. Workspace / 12 / Pill 토글 ─── -->
+  <!-- ─── 9. Workspace / 12 / Pill ─── -->
   <div class="workspace">Workspace</div>
   <div class="twelve">12</div>
 
@@ -913,13 +990,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 </div><!-- /canvas -->
 
-<!-- ─────────── MODAL (사진 2 — Prompt 카드) ─────────── -->
+<!-- ─────────── MODAL ─────────── -->
 <div class="modal" id="modal-prompt" role="dialog" aria-modal="true" aria-label="Prompt 카드">
   <div class="modal-card">
     <button class="modal-close" aria-label="닫기">×</button>
 
     <div class="modal-body">
-      <!-- 캐릭터 탭 -->
       <div class="char-tabs" id="char-tabs">
         <button class="ct active" data-char="winter">Winter</button>
         <button class="ct" data-char="hydro">Hydro</button>
@@ -930,7 +1006,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         <button class="ct" data-char="yeoneun">Yeoneun</button>
       </div>
 
-      <!-- 프롬프트 2문단 (편집·복사 가능) -->
       <div class="prompt-block">
         <div class="prompt-row">
           <button class="copy-mini" data-copy="p1">Copy</button>
@@ -943,7 +1018,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       </div>
     </div>
 
-    <!-- 아래 꾸밈 (PR/PT + 바코드) -->
     <div class="modal-footer">
       <div class="pr-pt">
         <div class="ab"><span>PR</span><span>PT</span></div>
@@ -965,8 +1039,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 <div class="toast" id="toast">복사되었습니다</div>
 
 <script>
-// ─── 캐릭터별 프롬프트 데이터 (각자 2문단, 네가 수정 가능) ───
-// 지금 Winter에만 내용 넣어두고, 나머지는 비어있음 — 모달에서 직접 쳐서 수정 가능
 const prompts = {
   winter: {
     p1: "girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, expressionless, flat chest,",
@@ -984,11 +1056,8 @@ const p1 = document.getElementById('p1');
 const p2 = document.getElementById('p2');
 let currentChar = 'winter';
 
-// 탭 전환 — 프롬프트만 바뀜
 function switchChar(name) {
-  // 현재 캐릭터 내용 저장
   prompts[currentChar] = { p1: p1.textContent, p2: p2.textContent };
-  // 새 캐릭터로 전환
   currentChar = name;
   p1.textContent = prompts[name].p1 || '';
   p2.textContent = prompts[name].p2 || '';
@@ -1001,7 +1070,6 @@ document.querySelectorAll('#char-tabs .ct').forEach(t => {
   t.addEventListener('click', () => switchChar(t.dataset.char));
 });
 
-// ─── 모달 열기/닫기 (pill 토글이 모달 토글) ───
 const modal = document.getElementById('modal-prompt');
 const pill = document.getElementById('pill');
 let modalOpen = false;
@@ -1021,16 +1089,11 @@ function closeModal() {
   pill.querySelectorAll('.opt').forEach((o, i) => o.classList.toggle('active', i === 0));
 }
 
-pill.addEventListener('click', () => {
-  if (modalOpen) closeModal(); else openModal();
-});
-
-// 모달 밖/닫기 버튼
+pill.addEventListener('click', () => { if (modalOpen) closeModal(); else openModal(); });
 modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 modal.querySelector('.modal-close').addEventListener('click', closeModal);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOpen) closeModal(); });
 
-// ─── pill 스와이프 (좌우 드래그로도 열기/닫기) ───
 let startX = null;
 pill.addEventListener('pointerdown', (e) => { startX = e.clientX; });
 pill.addEventListener('pointerup', (e) => {
@@ -1043,14 +1106,14 @@ pill.addEventListener('pointerup', (e) => {
   startX = null;
 });
 
-// ─── 상단 ABOUT / LIST (아직 액션 미정 — 토스트만) ───
 document.querySelectorAll('.top-nav button').forEach(b => {
   b.addEventListener('click', () => {
-    showToast(b.dataset.anchor.toUpperCase() + ' 섹션 (추후 추가)');
+    document.querySelectorAll('.top-nav button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    showToast(b.dataset.anchor.toUpperCase() + ' (추후 액션 지정)');
   });
 });
 
-// ─── 복사 버튼 ───
 document.querySelectorAll('.copy-mini').forEach(btn => {
   btn.addEventListener('click', async (e) => {
     e.stopPropagation();
@@ -1061,13 +1124,10 @@ document.querySelectorAll('.copy-mini').forEach(btn => {
       btn.classList.add('copied');
       showToast('복사되었습니다');
       setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
-    } catch(err) {
-      showToast('복사 실패');
-    }
+    } catch(err) { showToast('복사 실패'); }
   });
 });
 
-// ─── Toast ───
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg || '복사되었습니다';
