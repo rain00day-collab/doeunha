@@ -270,8 +270,7 @@ body:has(#char-eunha:target) .mi-prompt,
 body:has(#char-yeoneun:target) .mi-prompt,
 body:has(#char-papico:target) .mi-prompt,
 body:has(#char-happy1:target) .mi-prompt,
-body:has(#char-happy2:target) .mi-prompt,
-body:has(#banner:target) .mi-banner { background: #D8E0F2; }
+body:has(#char-happy2:target) .mi-prompt { background: #D8E0F2; }
 
 /* 아무것도 안 선택되면 PICK 디폴트 */
 .mi-pick { background: #D8E0F2; }
@@ -283,13 +282,11 @@ body:has(#char-eunha:target) .mi-pick,
 body:has(#char-yeoneun:target) .mi-pick,
 body:has(#char-papico:target) .mi-pick,
 body:has(#char-happy1:target) .mi-pick,
-body:has(#char-happy2:target) .mi-pick,
-body:has(#banner:target) .mi-pick { background: transparent; }
+body:has(#char-happy2:target) .mi-pick { background: transparent; }
 
 /* 카드 variant (PICK = filled, 그 외 = empty) */
 body:has(#about:target) .card-filled,
 body:has(#list:target) .card-filled,
-body:has(#banner:target) .card-filled,
 body:has(#char-winter:target) .card-filled,
 body:has(#char-hydro:target) .card-filled,
 body:has(#char-eunha:target) .card-filled,
@@ -300,7 +297,6 @@ body:has(#char-happy2:target) .card-filled { opacity: 0; }
 
 body:has(#about:target) .card-empty,
 body:has(#list:target) .card-empty,
-body:has(#banner:target) .card-empty,
 body:has(#char-winter:target) .card-empty,
 body:has(#char-hydro:target) .card-empty,
 body:has(#char-eunha:target) .card-empty,
@@ -333,7 +329,6 @@ body:has(#char-happy2:target) .card-empty { opacity: 1; }
 
 body:has(#about:target) .panel-about,
 body:has(#list:target) .panel-list,
-body:has(#banner:target) .panel-banner,
 body:has(#char-winter:target) .panel-prompt,
 body:has(#char-hydro:target) .panel-prompt,
 body:has(#char-eunha:target) .panel-prompt,
@@ -413,7 +408,6 @@ body:has(#char-happy2:target) .pr-happy2 {
 <span id="pick" class="hash-marker"></span>
 <span id="about" class="hash-marker"></span>
 <span id="list" class="hash-marker"></span>
-<span id="banner" class="hash-marker"></span>
 <span id="char-winter" class="hash-marker"></span>
 <span id="char-hydro" class="hash-marker"></span>
 <span id="char-eunha" class="hash-marker"></span>
@@ -492,7 +486,6 @@ When everything comes crashing down</span>
         <a class="menu-item" href="https://example.com/luvlog-wind">Luvlog.wind</a>
         <a class="menu-item" href="https://example.com/luvlog-savior">Luvlog.savior</a>
         <a class="menu-item" href="https://example.com/luvinfo">Luvinfo.ing...</a>
-        <a class="menu-item mi-banner" href="#banner">Banner</a>
       </div>
     </details>
 
@@ -544,8 +537,6 @@ When everything comes crashing down</span>
         <div class="pr-content pr-happy1"><p>여기에 happy¹ 프롬프트 작성.</p></div>
         <div class="pr-content pr-happy2"><p>여기에 happy² 프롬프트 작성.</p></div>
       </div>
-      <!-- Banner (빈 공간) -->
-      <div class="panel panel-banner"></div>
     </div>
   </div>
 </div>
