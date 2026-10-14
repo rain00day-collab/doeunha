@@ -1,705 +1,1073 @@
 <!doctype html>
-<html lang="ko" data-theme="light">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
 <title>Reserved Sanctuary · Do Eunha × Woo Yeoneun</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ───────── 색 토큰 ───────── */
 :root {
-  --bg: #F5F5F7;
-  --card: #FFFFFF;
+  --bg: #F4F5F7;
+  --grid: rgba(60, 90, 180, 0.06);
   --text: #0A0A0A;
-  --text-2: #86868B;
-  --text-3: #C7C7CC;
-  --border: #E5E5EA;
-  --blue: #0066FF;
-  --blue-pale: #E6EEFF;
-  --sw-track: #C8E0FF;
-  --shadow: 0 4px 20px rgba(0,0,0,0.06);
-  --shadow-lg: 0 20px 50px rgba(0,0,0,0.14);
-  --shadow-float: 0 8px 24px rgba(0,0,0,0.08);
-  --font: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  --font-serif: 'Times New Roman', 'Noto Serif KR', Georgia, serif;
-}
-[data-theme="dark"] {
-  --bg: #0A0A0A;
-  --card: #1C1C1E;
-  --text: #FFFFFF;
-  --text-2: #8E8E93;
-  --text-3: #48484A;
-  --border: #38383A;
-  --blue: #4D9EFF;
-  --blue-pale: rgba(77,158,255,0.14);
-  --sw-track: #1E3A66;
-  --shadow: 0 4px 20px rgba(0,0,0,0.3);
-  --shadow-lg: 0 20px 50px rgba(0,0,0,0.6);
-  --shadow-float: 0 8px 24px rgba(0,0,0,0.4);
+  --text-2: #6E6E74;
+  --text-3: #B5B7BE;
+  --text-mute: #D4D6DD;
+  --blue: #1E3FFF;
+  --blue-soft: #4D6BFF;
+  --blue-pale: #C5D1FF;
+  --blue-dot: #4F9CFF;
+  --card: #FFFFFF;
+  --border: #E5E6EB;
+  --font: 'Pretendard Variable', 'Pretendard', -apple-system, system-ui, sans-serif;
+  --font-sans: 'Inter', 'Pretendard Variable', -apple-system, system-ui, sans-serif;
+  --font-serif: 'Times New Roman', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-hand: 'Caveat', cursive;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { color-scheme: light; }
-html[data-theme="dark"] { color-scheme: dark; }
-body {
-  min-height: 100dvh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  transition: background 0.3s ease, color 0.3s ease;
-}
+html, body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+body { min-height: 100dvh; overflow-x: hidden; }
 body.modal-open { overflow: hidden; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; padding: 0; }
 
-/* ───────── 상단 바 (고정) ───────── */
-.topbar {
-  position: fixed; top: 16px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; align-items: center; gap: 10px;
-  z-index: 20;
-  font-size: 10px; letter-spacing: 0.2em;
-  color: var(--text-2); font-weight: 700;
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  white-space: nowrap;
+/* ──────── Grid background ──────── */
+.grid-bg {
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+  pointer-events: none;
+  z-index: 0;
 }
-html[data-theme="dark"] .topbar { background: rgba(28,28,30,0.65); }
-.topbar .dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-.topbar .sep { color: var(--text-3); }
 
-.theme-btn {
-  position: fixed; top: 16px; right: 16px;
-  width: 38px; height: 38px; border-radius: 50%;
-  background: var(--card); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--text); font-size: 15px;
-  box-shadow: var(--shadow);
-  z-index: 20;
-  transition: transform 0.15s ease;
-}
-.theme-btn:hover { transform: scale(1.08); }
-
-/* ───────── Stage ───────── */
-.stage {
+/* ──────── Canvas ──────── */
+.canvas {
   position: relative;
   width: 100%;
   min-height: 100dvh;
-  padding: clamp(20px, 5vw, 60px);
-  overflow: hidden;
+  padding: 2% 3%;
+  z-index: 1;
 }
 
-/* ───────── Center title ───────── */
-.title {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+/* Faint curves background (top-right, replacing mannequin) */
+.curves-bg {
+  position: absolute;
+  top: 0; right: 0;
+  width: 48%;
+  height: 60%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+}
+.curves-bg svg { width: 100%; height: 100%; }
+.curves-bg path { fill: none; stroke: #C9CDD6; stroke-width: 0.6; }
+
+/* Blue dot indicator (hint for clickable area) */
+.hot-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue-dot);
+  margin-right: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 0 3px rgba(79, 156, 255, 0.15);
+}
+
+/* ──────── 1. Top-left: CALENDAR 스케줄 ──────── */
+.calendar {
+  position: absolute;
+  top: 3%; left: 11%;
+  width: clamp(260px, 24vw, 360px);
+  font-family: var(--font-sans);
+  font-size: clamp(7px, 0.65vw, 9px);
+  line-height: 1.3;
+  color: var(--text);
+}
+.calendar .cal-top { border-top: 1px solid var(--text); padding-top: 4px; display: grid; grid-template-columns: 1fr 2fr 1.4fr; gap: 8px; font-size: 1em; }
+.calendar .cal-top h4 { font-weight: 800; font-size: 1.1em; letter-spacing: 0.02em; }
+.calendar .cal-top .cat { line-height: 1.5; }
+.calendar .cal-top .main { font-weight: 700; }
+.calendar .pub { font-size: 0.85em; margin-top: 2px; grid-column: 3; text-align: right; color: var(--text-2); }
+.calendar .site { font-size: 0.9em; margin-top: 6px; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 3px; font-weight: 600; }
+.calendar .days { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 6px; gap: 4px; border-top: 1px solid var(--text); padding-top: 4px; font-weight: 800; font-size: 1em; }
+.calendar .day h5 { font-size: 1em; }
+.calendar .day h5 small { display: block; font-size: 0.85em; font-weight: 500; }
+.calendar .rows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 4px; }
+.calendar .row { padding: 2px 3px; font-size: 0.95em; line-height: 1.25; border-bottom: 1px solid var(--border); }
+.calendar .row .time { font-weight: 700; font-size: 0.9em; }
+.calendar .row .brand { font-weight: 700; }
+.calendar .row .addr { color: var(--text-2); font-size: 0.9em; }
+.calendar .row.hl { background: #C7D5FF; }
+
+/* CRITIC rotated label */
+.critic {
+  position: absolute;
+  top: 37%; left: 12%;
+  font-family: var(--font-sans);
+}
+.critic .cr-big {
+  font-size: clamp(14px, 1.6vw, 20px);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  transform: rotate(-90deg) translateX(-100%);
+  transform-origin: top left;
+  position: absolute;
+  top: -4px; left: 0;
+}
+.critic .cr-text {
+  margin-left: clamp(22px, 2.4vw, 32px);
+  font-size: clamp(8px, 0.75vw, 10px);
+  line-height: 1.45;
+  color: var(--text);
+}
+.critic .cr-text strong { font-weight: 700; }
+
+/* ──────── 2. Top-center nav: ABOUT / LIST ──────── */
+.top-nav {
+  position: absolute;
+  top: 4.5%; left: 44%;
+  display: flex;
+  gap: clamp(20px, 2.5vw, 36px);
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.3vw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  z-index: 10;
+}
+.top-nav button {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text);
+  font-family: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit;
+  transition: color 0.15s ease;
+}
+.top-nav button:hover { color: var(--blue); }
+
+/* "I would die for you" — repeating staggered */
+.die-stack {
+  position: absolute;
+  top: 8%; right: 24%;
+  font-family: var(--font);
+  font-size: clamp(9px, 0.9vw, 12px);
+  color: var(--text);
+  line-height: 1.1;
+  text-align: left;
+  pointer-events: none;
+}
+.die-stack .d {
+  display: block;
+  letter-spacing: 0.01em;
+}
+.die-stack .d:nth-child(1) { transform: translateX(0); }
+.die-stack .d:nth-child(2) { transform: translateX(10%); }
+.die-stack .d:nth-child(3) { transform: translateX(4%); }
+.die-stack .d:nth-child(4) { transform: translateX(14%); }
+.die-stack .d:nth-child(5) { transform: translateX(8%); }
+.die-stack .d:nth-child(6) { transform: translateX(18%); }
+.die-stack .d:nth-child(7) { transform: translateX(12%); }
+
+/* ──────── 3. Right-top: 3 hanging tags ──────── */
+.tags-wrap {
+  position: absolute;
+  top: 18%; right: 11%;
+  display: flex;
+  gap: clamp(10px, 1.4vw, 18px);
+  align-items: flex-start;
+  z-index: 6;
+}
+.tag {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+  display: block;
+}
+.tag:hover { transform: translateY(2px); }
+.tag::before {
+  content: '';
+  position: absolute;
+  top: -14px; left: 50%;
+  width: 1px; height: 14px;
+  background: var(--text);
+}
+.tag::after {
+  content: '';
+  position: absolute;
+  top: -16px; left: 50%;
+  transform: translateX(-50%);
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text);
+}
+/* Tag 1: Wind Wind Wind (white with blue text + barcode) */
+.tag-wind {
+  width: clamp(60px, 7vw, 88px);
+  padding: 10px 8px 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--text);
+  border-radius: 4px;
   text-align: center;
+  transform: rotate(-4deg);
+}
+.tag-wind .ww {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  color: var(--blue);
+  font-size: clamp(10px, 1vw, 13px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.tag-wind .barcode { margin-top: 8px; display: flex; justify-content: center; gap: 1px; height: 14px; align-items: center; }
+.tag-wind .barcode span { width: 1px; height: 100%; background: #000; display: inline-block; }
+.tag-wind .barcode span.w { width: 2px; }
+.tag-wind .barcode span.ww { width: 3px; }
+
+/* Tag 2: Savior (black tag with blue S logo) */
+.tag-sav {
+  width: clamp(56px, 6.5vw, 82px);
+  padding: 12px 8px 10px;
+  background: #0A0A0A;
+  color: #fff;
+  border-radius: 4px;
+  text-align: center;
+  transform: rotate(5deg);
+  position: relative;
+}
+.tag-sav::before, .tag-sav::after { background: #0A0A0A; }
+.tag-sav .side {
+  position: absolute; top: 50%; left: -22px;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  font-family: var(--font-sans);
+  font-size: 7px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+.tag-sav .logo {
+  width: clamp(26px, 3vw, 36px);
+  height: clamp(26px, 3vw, 36px);
+  margin: 0 auto;
+  background: var(--blue);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(14px, 1.5vw, 18px);
+}
+.tag-sav .name {
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(9px, 0.9vw, 11px);
+  letter-spacing: 0.04em;
+}
+
+/* Tag 3: Heart Boils Over (handwritten) */
+.tag-heart {
+  width: clamp(68px, 7.5vw, 92px);
+  padding: 10px 6px;
+  background: #0A0A0A;
+  color: #fff;
+  border-radius: 4px;
+  text-align: center;
+  transform: rotate(-6deg);
+}
+.tag-heart::before, .tag-heart::after { background: #0A0A0A; }
+.tag-heart .script {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: clamp(14px, 1.6vw, 20px);
+  line-height: 1;
+  color: #CFCAE0;
+  letter-spacing: 0.01em;
+  /* 자리 표시용 — 네가 손글씨 이미지 보내주면 교체 */
+}
+
+.tags-indicator { position: absolute; top: 14%; right: 18%; }
+.tags-indicator .hot-dot { animation: pulse-dot 2.4s ease-in-out infinite; }
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(79, 156, 255, 0.18); }
+  50% { box-shadow: 0 0 0 7px rgba(79, 156, 255, 0.04); }
+}
+
+/* ──────── 4. Center title: do. Reserved Sanctuary + 바늘 ──────── */
+.center-title {
+  position: absolute;
+  top: 44%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: left;
+  z-index: 3;
+  user-select: none;
+}
+.center-title .wrap {
+  position: relative;
+  display: inline-block;
+}
+.center-title .do {
+  position: absolute;
+  top: -2%; left: -14%;
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(54px, 13vw, 130px);
-  line-height: 0.9;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  z-index: 1;
-  pointer-events: none;
-  user-select: none;
+  font-size: clamp(26px, 3vw, 38px);
+  color: var(--text-3);
+  letter-spacing: -0.01em;
 }
-.title .r2 { color: var(--blue); }
-.title .caption {
-  display: block;
-  font-family: var(--font);
-  font-style: normal;
-  font-size: clamp(9px, 1vw, 11px);
-  letter-spacing: 0.3em;
-  color: var(--text-2);
-  margin-top: clamp(14px, 2.2vw, 24px);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-/* ───────── Orbit buttons (공통) ───────── */
-.orbit {
-  position: absolute;
-  border: none;
-  background: var(--card);
-  color: var(--text);
-  cursor: pointer;
-  font-family: inherit;
-  padding: 0;
-  z-index: 5;
-  --rot: 0deg;
-  transform: rotate(var(--rot));
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, background 0.2s ease;
-  box-shadow: var(--shadow-float);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.orbit:hover { transform: rotate(0deg) scale(1.08); box-shadow: var(--shadow-lg); z-index: 10; }
-.orbit:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
-.orbit:active { transform: rotate(0deg) scale(1.03); }
-
-/* 1. Profile — 폴라로이드 느낌 (좌상) */
-.o-profile {
-  top: 14%; left: 10%;
-  --rot: -8deg;
-  width: clamp(104px, 14vw, 150px);
-  height: clamp(130px, 17vw, 180px);
-  border-radius: 10px;
-  padding: 10px 10px 8px;
-  flex-direction: column;
-  gap: 6px;
-  border: 1px solid var(--border);
-  justify-content: flex-start;
-}
-.o-profile .thumbs { display: flex; gap: 4px; margin: 2px auto; }
-.o-profile .thumb { width: clamp(34px, 4.5vw, 42px); height: clamp(34px, 4.5vw, 42px); border-radius: 8px; background: var(--blue-pale); color: var(--blue); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: clamp(14px, 1.8vw, 17px); }
-.o-profile .thumb.b { background: var(--text); color: var(--card); }
-.o-profile .label { font-size: 9px; letter-spacing: 0.2em; color: var(--text-2); font-weight: 700; text-transform: uppercase; margin-top: 6px; }
-.o-profile .name { font-size: clamp(10px, 1.1vw, 12px); font-weight: 700; line-height: 1.3; margin-top: 2px; }
-
-/* 2. Links — 폴더 아이콘 (우상) */
-.o-links {
-  top: 15%; right: 8%;
-  --rot: 7deg;
-  width: clamp(74px, 10vw, 100px);
-  height: clamp(74px, 10vw, 100px);
-  border-radius: 20px;
-  background: var(--blue);
-  color: #fff;
-  flex-direction: column;
-  gap: 4px;
-}
-.o-links svg { width: clamp(26px, 3.5vw, 34px); height: auto; }
-.o-links .label { font-size: clamp(9px, 1vw, 10px); letter-spacing: 0.18em; font-weight: 700; }
-
-/* 3. Daily — 시간 위젯 (좌중) */
-.o-daily {
-  top: 44%; left: 3%;
-  --rot: -5deg;
-  width: clamp(118px, 16vw, 160px);
-  height: clamp(68px, 9vw, 90px);
-  border-radius: 18px;
-  flex-direction: column;
-  gap: 2px;
-  border: 1px solid var(--border);
-}
-.o-daily .label { font-size: 9px; letter-spacing: 0.22em; color: var(--text-2); font-weight: 700; text-transform: uppercase; }
-.o-daily .big-time { font-size: clamp(22px, 3vw, 32px); font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-
-/* 4. Personality — 원형 뱃지 (우중) */
-.o-personality {
-  top: 48%; right: 5%;
-  --rot: 10deg;
-  width: clamp(96px, 13vw, 128px);
-  height: clamp(96px, 13vw, 128px);
-  border-radius: 50%;
-  background: var(--text);
-  color: var(--card);
-  flex-direction: column;
-  gap: 4px;
-}
-.o-personality .emoji { font-size: clamp(20px, 2.6vw, 26px); line-height: 1; }
-.o-personality .label { font-size: clamp(9px, 1vw, 10px); letter-spacing: 0.2em; font-weight: 700; }
-
-/* 5. Playlist — 가로 pill (좌하) */
-.o-playlist {
-  bottom: 18%; left: 12%;
-  --rot: 4deg;
-  width: clamp(140px, 18vw, 200px);
-  height: clamp(54px, 7vw, 72px);
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  justify-content: flex-start;
-  gap: 10px;
-  padding: 0 14px 0 6px;
-}
-.o-playlist .play-circle { width: clamp(38px, 5vw, 50px); height: clamp(38px, 5vw, 50px); border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.o-playlist .play-circle svg { width: clamp(12px, 1.5vw, 15px); height: auto; margin-left: 2px; }
-.o-playlist .song { text-align: left; line-height: 1.2; }
-.o-playlist .song .label { font-size: 9px; color: var(--text-2); letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; }
-.o-playlist .song .title { font-size: clamp(12px, 1.4vw, 14px); font-weight: 700; margin-top: 2px; }
-
-/* 6. Prompt — 각진 스티커 (우하) */
-.o-prompt {
-  bottom: 20%; right: 12%;
-  --rot: -7deg;
-  width: clamp(104px, 13vw, 136px);
-  height: clamp(46px, 6vw, 58px);
-  border-radius: 10px;
-  background: var(--text);
-  color: var(--card);
-  font-size: clamp(11px, 1.2vw, 13px);
+.center-title h1 {
+  font-family: var(--font-sans);
   font-weight: 700;
-  letter-spacing: 0.14em;
-  gap: 7px;
+  font-size: clamp(54px, 7.5vw, 108px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: var(--text);
 }
-.o-prompt svg { width: clamp(12px, 1.3vw, 14px); height: auto; }
-
-/* ───────── 데코 (안 눌림) ───────── */
-.deco {
+.center-title h1 .sanctuary {
+  color: var(--blue);
+  display: block;
+}
+/* 바늘 SVG — Reserved와 Sanctuary 사이를 뚫고 t 뒤에 숨음 */
+.needle-svg {
   position: absolute;
-  font-size: clamp(9px, 1vw, 11px);
-  color: var(--text-2);
-  letter-spacing: 0.25em;
-  font-weight: 600;
-  text-transform: uppercase;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -42%);
+  width: clamp(240px, 36vw, 540px);
+  height: clamp(260px, 40vw, 580px);
   pointer-events: none;
   z-index: 2;
-  white-space: nowrap;
 }
-.deco-top { top: 10%; left: 50%; transform: translateX(-50%); color: var(--text-3); }
-.deco-bot { bottom: 7%; left: 50%; transform: translateX(-50%); color: var(--text-3); }
-.deco-vl { top: 50%; left: 2.5%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; font-size: clamp(9px, 0.9vw, 10px); }
-.deco-vr { top: 50%; right: 2.5%; transform: translateY(-50%) rotate(90deg); transform-origin: center; font-size: clamp(9px, 0.9vw, 10px); }
+.center-title h1 { position: relative; z-index: 3; }
 
-.dot-deco { position: absolute; width: 6px; height: 6px; background: var(--blue); border-radius: 50%; pointer-events: none; z-index: 1; }
-.dot-deco.black { background: var(--text); }
+/* ──────── 5. Left middle: Banner area (Luv3r 자리) ──────── */
+.banner-area {
+  position: absolute;
+  top: 46%; left: 12%;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 6px;
+  z-index: 4;
+}
+.banner-area .b-item {
+  width: clamp(44px, 4.5vw, 60px);
+  height: clamp(44px, 4.5vw, 60px);
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.banner-area .b-item.filled { background: linear-gradient(135deg, #B8C8FF, #7B91E8); color: transparent; }
+.banner-area .b-item.dark { background: #0A0A0A; color: #FFF; }
+.banner-area-indicator { position: absolute; top: 44%; left: 11%; z-index: 5; }
 
-.line-deco { position: absolute; height: 1px; background: var(--border); pointer-events: none; z-index: 1; }
+/* ──────── 6. Center-left scattered: 0, 8, savior circle ──────── */
+.deco-0 { position: absolute; top: 61%; left: 30%; font-family: var(--font-sans); font-size: clamp(14px, 1.4vw, 18px); font-weight: 700; color: var(--text); }
+.deco-8 { position: absolute; top: 63%; left: 38%; font-family: var(--font-sans); font-size: clamp(14px, 1.4vw, 18px); font-weight: 700; color: var(--text); }
+.circle-savior {
+  position: absolute;
+  top: 65%; left: 21%;
+  display: flex; align-items: center; gap: 12px;
+}
+.circle-savior .circ {
+  width: clamp(110px, 12vw, 160px);
+  height: clamp(110px, 12vw, 160px);
+  border: 1px solid var(--text);
+  border-radius: 50%;
+}
+.circle-savior .savior-txt {
+  font-family: var(--font-sans);
+  font-size: clamp(11px, 1.1vw, 14px);
+  color: var(--text);
+}
 
-/* ───────── Modal ───────── */
+/* ──────── 7. Bottom-left: Boutique definition ──────── */
+.boutique {
+  position: absolute;
+  bottom: 7%; left: 11%;
+  max-width: 240px;
+  font-family: var(--font-sans);
+  font-size: clamp(9px, 0.85vw, 11px);
+  line-height: 1.5;
+  color: var(--text);
+}
+.boutique h4 { font-weight: 700; font-size: 1.15em; margin-bottom: 2px; }
+.boutique p { color: var(--text); font-weight: 400; }
+
+/* ──────── 8. Bottom-center: lyrics ──────── */
+.lyrics {
+  position: absolute;
+  bottom: 14%; left: 50%;
+  transform: translateX(-28%);
+  font-family: var(--font-sans);
+  font-size: clamp(10px, 0.95vw, 13px);
+  line-height: 1.5;
+  color: var(--text);
+  text-align: right;
+}
+.lyrics .verse { }
+.lyrics .list { margin-top: 10px; text-align: left; display: inline-block; }
+.lyrics .list .li { padding-left: 18px; text-indent: -18px; }
+
+/* ──────── 9. Bottom-right: Workspace / 12 / pill / prompt ──────── */
+.workspace {
+  position: absolute;
+  bottom: 42%; right: 24%;
+  font-family: var(--font-sans);
+  font-size: clamp(11px, 1.1vw, 14px);
+  color: var(--text);
+}
+.twelve {
+  position: absolute;
+  bottom: 8%; right: 15%;
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 700;
+  color: var(--text);
+}
+.pill-area {
+  position: absolute;
+  bottom: 25%; right: 7%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 6;
+}
+.pill-area .above-dot {
+  position: absolute;
+  top: -14px; left: -10px;
+}
+.pill-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(12px, 1.1vw, 14px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  user-select: none;
+}
+.pill-toggle .opt {
+  position: relative;
+  z-index: 2;
+  padding: 8px 18px;
+  border-radius: 999px;
+  color: var(--text);
+  transition: color 0.3s ease;
+  letter-spacing: 0.02em;
+}
+.pill-toggle .thumb {
+  position: absolute;
+  top: 4px; left: 4px;
+  height: calc(100% - 8px);
+  width: calc(50% - 4px);
+  background: var(--text);
+  border-radius: 999px;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+.pill-toggle.right .thumb { transform: translateX(100%); }
+.pill-toggle .opt.active { color: #fff; }
+.pill-label {
+  font-family: var(--font-sans);
+  font-size: clamp(10px, 0.9vw, 12px);
+  color: var(--text-2);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  margin-top: 2px;
+}
+
+/* ──────── MODAL (사진 2 — Prompt 카드) ──────── */
 .modal {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 24px;
   z-index: 100;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.3s ease;
 }
 .modal.open { display: flex; opacity: 1; }
 .modal-card {
   background: var(--card);
   color: var(--text);
-  border-radius: 28px;
-  padding: 32px 26px 26px;
+  border-radius: 24px;
   width: 100%;
-  max-width: 440px;
-  max-height: 85dvh;
-  overflow-y: auto;
+  max-width: 520px;
+  max-height: 90dvh;
+  overflow: hidden;
   position: relative;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
-  transform: translateY(16px) scale(0.98);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+  transform: translateY(20px) scale(0.98);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; flex-direction: column;
 }
 .modal.open .modal-card { transform: translateY(0) scale(1); }
 .modal-close {
   position: absolute; top: 14px; right: 14px;
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--bg); border: none;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--text); font-size: 18px;
+  background: var(--bg); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; z-index: 2;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .modal-close:hover { background: var(--text); color: var(--card); }
-.modal-label { font-size: 10px; letter-spacing: 0.22em; color: var(--text-2); text-transform: uppercase; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.modal-label::before { content: ''; width: 6px; height: 6px; background: var(--blue); border-radius: 50%; }
-.modal-title { font-size: 26px; letter-spacing: -0.03em; font-weight: 800; margin-bottom: 20px; line-height: 1.1; }
+.modal-body { padding: 48px 32px 24px; overflow-y: auto; flex: 1; }
 
-/* Modal: tabs */
-.tabs { display: flex; background: var(--bg); border-radius: 999px; padding: 4px; gap: 4px; margin-bottom: 20px; }
-.tab { flex: 1; padding: 9px; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-2); border-radius: 999px; cursor: pointer; transition: all 0.2s ease; }
-.tab.active { background: var(--card); color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.char-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(10px, 1.6vw, 20px);
+  padding: 10px 18px;
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: clamp(13px, 1.3vw, 16px);
+  margin: 0 auto 28px;
+  width: fit-content;
+  max-width: 100%;
+}
+.char-tabs .ct {
+  position: relative;
+  padding: 2px 2px;
+  color: var(--text);
+  font-weight: 400;
+  transition: color 0.15s ease;
+}
+.char-tabs .ct.active { font-weight: 700; }
+.char-tabs .ct sup { font-size: 0.6em; font-weight: 400; margin-left: 1px; }
 
-/* Modal: profile char */
-.char { display: flex; flex-direction: column; gap: 16px; }
-.char.hidden { display: none; }
-.char-head { display: flex; align-items: center; gap: 12px; }
-.avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; background: var(--blue-pale); color: var(--blue); border: 2px solid var(--blue-pale); flex-shrink: 0; }
-.avatar.b { background: var(--text); color: var(--card); border-color: var(--text); }
-.char-info h3 { font-size: 20px; letter-spacing: -0.02em; font-weight: 800; }
-.char-info .major { font-size: 12px; color: var(--text-2); margin-top: 2px; }
-.bio { font-size: 14px; line-height: 1.7; color: var(--text); }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--border); background: transparent; font-size: 12px; color: var(--text); font-weight: 500; cursor: pointer; transition: all 0.15s ease; font-family: inherit; }
-.chip:hover { border-color: var(--blue); color: var(--blue); }
-.chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.prompt-block {
+  position: relative;
+  padding: 0 2px;
+}
+.prompt-row {
+  position: relative;
+  margin-bottom: 20px;
+}
+.prompt-row .copy-mini {
+  position: absolute; top: 0; right: 0;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--card);
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.15s ease;
+}
+.prompt-row:hover .copy-mini { opacity: 1; }
+.prompt-row .copy-mini.copied { background: var(--blue); opacity: 1; }
 
-/* Modal: list */
-.list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 16px; }
-.list-row:last-child { border-bottom: none; padding-bottom: 0; }
-.list-row:first-child { padding-top: 0; }
-.list-row .k { font-size: 12.5px; color: var(--text-2); white-space: nowrap; }
-.list-row .v { font-size: 13.5px; font-weight: 600; text-align: right; }
+.prompt-text {
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.3vw, 17px);
+  line-height: 1.65;
+  letter-spacing: -0.005em;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  padding: 10px 14px;
+  border-radius: 10px;
+  outline: none;
+  min-height: 60px;
+  color: var(--text);
+  transition: background 0.2s ease;
+}
+.prompt-text:hover, .prompt-text:focus { background: #F6F7FA; }
+.prompt-text[contenteditable="true"]:focus { background: #EEF1FB; }
+.prompt-text.secondary { color: #9DA0A8; }
 
-/* Modal: switch rows */
-.sw-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); gap: 10px; }
-.sw-row:last-child { border-bottom: none; padding-bottom: 0; }
-.sw-row:first-child { padding-top: 0; }
-.sw-text { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-.sw-time { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.sw-desc { font-size: 12px; color: var(--text-2); line-height: 1.3; }
-.switch { position: relative; width: 50px; height: 30px; background: var(--sw-track); border-radius: 999px; cursor: pointer; border: none; padding: 0; flex-shrink: 0; transition: background 0.2s ease; }
-.switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; background: var(--text); border-radius: 50%; transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-.switch.on::after { transform: translateX(20px); }
-.switch.on { background: var(--blue); }
+.modal-footer {
+  padding: 10px 28px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
+.pr-pt {
+  display: flex; gap: 8px; align-items: flex-start;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 1.4;
+  flex: 1;
+}
+.pr-pt .ab {
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.pr-pt .ab span { display: block; }
+.pr-pt .desc { color: var(--text-2); font-size: 9px; line-height: 1.45; max-width: 240px; }
+.barcode-sm { display: flex; gap: 1px; height: 32px; align-items: center; flex-shrink: 0; }
+.barcode-sm span { width: 1px; height: 100%; background: #000; }
+.barcode-sm span.w { width: 2px; }
+.barcode-sm span.ww { width: 3px; }
 
-/* Modal: prompt */
-.prompt-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
-.copy-btn { background: var(--text); color: var(--card); border: none; padding: 7px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; transition: all 0.15s ease; flex-shrink: 0; }
-.copy-btn:hover { background: var(--blue); }
-.copy-btn.copied { background: var(--blue); }
-.prompt-body { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; line-height: 1.75; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+.home-indicator {
+  width: 70%;
+  max-width: 240px;
+  height: 24px;
+  background: #0A0A0A;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  margin: 0 auto;
+}
 
-/* Modal: links stack */
-.stack { display: flex; flex-direction: column; gap: 10px; }
-.stack-item { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: var(--text); transition: all 0.2s ease; gap: 12px; }
-.stack-item:hover { background: var(--blue-pale); border-color: var(--blue); transform: translateX(4px); }
-.stack-item strong { display: block; font-size: 14px; font-weight: 700; }
-.stack-item span { font-size: 12px; color: var(--text-2); }
-.stack-arrow { background: var(--text); color: var(--card); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.stack-arrow svg { width: 12px; height: 12px; }
-
-/* Toast */
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: var(--card); padding: 11px 20px; border-radius: 999px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 200; }
+/* ──────── Toast ──────── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text); color: var(--card);
+  padding: 11px 20px; border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 13px; font-weight: 600;
+  opacity: 0; transition: all 0.3s ease;
+  pointer-events: none; z-index: 200;
+}
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ───────── 반응형 미세조정 ───────── */
-@media (max-width: 720px) {
-  .deco-vl, .deco-vr { display: none; }
-  .o-profile { top: 12%; left: 6%; }
-  .o-links { top: 12%; right: 6%; }
-  .o-daily { top: 42%; left: 2%; }
-  .o-personality { top: 46%; right: 3%; }
-  .o-playlist { bottom: 18%; left: 8%; }
-  .o-prompt { bottom: 20%; right: 8%; }
+/* ──────── 모바일 반응형 ──────── */
+@media (max-width: 900px) {
+  .calendar { top: 2%; left: 4%; width: 46%; font-size: 8px; }
+  .critic { top: 24%; left: 5%; }
+  .top-nav { top: 2%; right: 4%; left: auto; }
+  .die-stack { top: 7%; right: 5%; }
+  .tags-wrap { top: 32%; right: 6%; gap: 10px; }
+  .tags-indicator { top: 29%; right: 20%; }
+  .center-title { top: 50%; }
+  .banner-area { top: 60%; left: 5%; }
+  .banner-area-indicator { top: 58%; left: 4%; }
+  .deco-0 { top: 71%; left: 42%; }
+  .deco-8 { top: 73%; left: 52%; }
+  .circle-savior { top: 72%; left: 30%; }
+  .circle-savior .circ { width: 80px; height: 80px; }
+  .workspace { bottom: 36%; right: 6%; }
+  .pill-area { bottom: 20%; right: 50%; transform: translateX(50%); }
+  .twelve { bottom: 4%; right: 10%; }
+  .boutique { bottom: 3%; left: 5%; max-width: 180px; }
+  .lyrics { bottom: 10%; left: 50%; transform: translateX(-50%); font-size: 10px; text-align: center; }
+  .curves-bg { width: 70%; height: 40%; }
 }
-@media (max-width: 480px) {
-  .title { font-size: 54px; }
-  .o-profile { top: 11%; left: 5%; width: 92px; height: 118px; }
-  .o-links { top: 12%; right: 5%; width: 68px; height: 68px; }
-  .o-daily { top: 43%; left: 2%; width: 112px; height: 62px; }
-  .o-personality { top: 46%; right: 3%; width: 86px; height: 86px; }
-  .o-playlist { bottom: 15%; left: 8%; width: 136px; height: 52px; }
-  .o-prompt { bottom: 17%; right: 8%; width: 100px; height: 44px; }
-  .deco-top, .deco-bot { font-size: 9px; letter-spacing: 0.18em; }
-}
-@media (max-height: 680px) and (min-width: 721px) {
-  .title { font-size: clamp(44px, 10vw, 90px); }
+@media (max-width: 560px) {
+  .top-nav { font-size: 13px; gap: 14px; }
+  .calendar { font-size: 6.5px; width: 50%; }
+  .die-stack { font-size: 8px; right: 6%; top: 9%; }
+  .tags-wrap { top: 34%; gap: 6px; }
+  .tag { transform: scale(0.85); }
 }
 </style>
 </head>
 <body>
 
-  <header class="topbar">
-    <span class="dot"></span>
-    <span id="now-date">—</span>
-    <span class="sep">·</span>
-    <span id="now-time">—</span>
-  </header>
-  <button class="theme-btn" id="theme-btn" aria-label="테마 전환">◐</button>
+<div class="grid-bg"></div>
 
-  <!-- ─── STAGE ─── -->
-  <main class="stage">
-    <h1 class="title">
-      Reserved<br><span class="r2">Sanctuary</span>
-      <span class="caption">Do Eunha × Woo Yeoneun</span>
-    </h1>
+<div class="canvas">
 
-    <!-- 데코 텍스트 -->
-    <span class="deco deco-top">EUNHA × YEONEUN · OC PAIR ARCHIVE</span>
-    <span class="deco deco-bot">EST. 20XX · SEOUL</span>
-    <span class="deco deco-vl">RESERVED</span>
-    <span class="deco deco-vr">SANCTUARY</span>
+  <!-- 희미한 곡선 (우상단 배경, 마네킹 대체) -->
+  <div class="curves-bg" aria-hidden="true">
+    <svg viewBox="0 0 600 500" preserveAspectRatio="none">
+      <path d="M 100 480 C 140 380, 180 320, 220 240 S 320 100, 420 60"/>
+      <path d="M 140 490 C 180 400, 220 340, 260 250 S 360 110, 460 70"/>
+      <path d="M 60 480 C 100 400, 160 320, 240 220 S 440 80, 560 40"/>
+      <path d="M 200 500 C 240 420, 280 360, 320 280 S 420 150, 520 100"/>
+      <path d="M 380 500 C 400 460, 440 400, 500 340 S 580 200, 600 160"/>
+      <path d="M 20 480 Q 180 300, 320 180 T 580 20"/>
+      <path d="M 50 500 Q 220 320, 360 200 T 600 60"/>
+    </svg>
+  </div>
 
-    <!-- 데코 점 -->
-    <span class="dot-deco" style="top: 30%; left: 42%;"></span>
-    <span class="dot-deco black" style="top: 70%; left: 55%;"></span>
-    <span class="dot-deco" style="top: 25%; left: 60%;"></span>
-    <span class="dot-deco black" style="top: 75%; left: 38%;"></span>
-
-    <!-- ─── 클릭 가능한 orbit 버튼들 ─── -->
-
-    <!-- 1. Profile -->
-    <button class="orbit o-profile" data-modal="profile" aria-label="프로필 열기">
-      <div class="thumbs">
-        <div class="thumb">E</div>
-        <div class="thumb b">Y</div>
+  <!-- ─── 1. 좌상단 CALENDAR 스케줄 ─── -->
+  <div class="calendar" aria-label="Fashion show calendar">
+    <div class="cal-top">
+      <h4>CALENDAR</h4>
+      <div class="main">16/20 JANUARY 2026<br>MEN'S COLLECTION<br>FALL/WINTER 2026/2027</div>
+      <div>
+        <div class="cat">FASHION SHOWS<br>PRESENTATIONS<br>DIGITAL CONTENTS</div>
+        <div class="pub">Final Calendar<br>Published On 10/12/</div>
       </div>
-      <div class="label">PAIR</div>
-      <div class="name">Do Eunha<br>Woo Yeoneun</div>
-    </button>
+    </div>
+    <div class="site">
+      <span>MILANOFASHIONWEEK.CAMERAMODA.IT</span>
+      <span>CAMERAMODA.IT</span>
+    </div>
+    <div class="days">
+      <div class="day"><h5>FRIDAY<small>16 JANUARY 2026</small></h5></div>
+      <div class="day"><h5>SATURDAY<small>17 JANUARY 2026</small></h5></div>
+      <div class="day"><h5>SUNDAY<small>18 JANUARY 2026</small></h5></div>
+    </div>
+    <div class="rows">
+      <!-- Friday -->
+      <div class="row"><span class="time">10:00/15:00</span> <span class="brand">K-WAY **</span><br><span class="addr">Via Dell'Aprica, 12</span></div>
+      <div class="row"><span class="time">10:00/13:00</span> <span class="brand">KITON *</span><br><span class="addr">Via Portaccio, 21</span></div>
+      <div class="row"><span class="time">10:00</span> <span class="brand">SIMON CRACKER **</span><br><span class="addr">Via Bovisasca, 87</span></div>
 
-    <!-- 2. Links -->
-    <button class="orbit o-links" data-modal="links" aria-label="링크 열기">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z"/></svg>
-      <span class="label">LINKS</span>
-    </button>
+      <div class="row"><span class="time">11:00/19:00</span> <span class="brand">MARCELLO PIPITONE - BONOLA **</span><br><span class="addr">Via Bovisasca, 87</span></div>
+      <div class="row"><span class="time">10:00/14:00</span> <span class="brand">LARDINI *</span><br><span class="addr">Via Dell'Annunciata, 23</span></div>
+      <div class="row"><span class="time">10:00/12:00</span> <span class="brand">MOARINO **</span><br><span class="addr">Via Bovisasca, 87</span></div>
 
-    <!-- 3. Daily -->
-    <button class="orbit o-daily" data-modal="daily" aria-label="하루 루틴 열기">
-      <span class="label">DAILY</span>
-      <span class="big-time">6:20</span>
-    </button>
+      <div class="row"><span class="time">11:00/20:00</span> <span class="brand">BIKKEMBERGS *</span><br><span class="addr">Via Stendhal, 36</span></div>
+      <div class="row"><span class="time">10:00/16:00</span> <span class="brand">CHURCH'S *</span><br><span class="addr">Via Vivaio, 7</span></div>
+      <div class="row"><span class="time">10:00/12:00</span> <span class="brand">ELEVENTY **</span><br><span class="addr">Via Visconti Di Modrone, 11</span></div>
 
-    <!-- 4. Personality -->
-    <button class="orbit o-personality" data-modal="personality" aria-label="성향 열기">
-      <span class="emoji">◍</span>
-      <span class="label">PERSONA</span>
-    </button>
+      <div class="row"><span class="time">14:00/20:00</span> <span class="brand">BOGLIOLI *</span><br><span class="addr">Via Plinio, 13</span></div>
+      <div class="row"><span class="time">10:00/16:00</span> <span class="brand">BRIONI *</span><br><span class="addr">Via Monte Di Pieta, 10</span></div>
+      <div class="row"><span class="time">12:00</span> <span class="brand">OASHI *</span><br><span class="addr">Via Tortona, 27</span></div>
 
-    <!-- 5. Playlist -->
-    <button class="orbit o-playlist" data-modal="playlist" aria-label="플레이리스트 열기">
-      <div class="play-circle">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <div class="row"><span class="time">15:00</span> <span class="brand">ZEGNA **</span><br><span class="addr">Location In This Invitation</span></div>
+      <div class="row"><span class="time">10:00/18:00</span> <span class="brand">TEN C *</span><br><span class="addr">Via Uberti, 4</span></div>
+      <div class="row"><span class="time">12:00</span> <span class="brand">VICTOR HART *</span><br><span class="addr">Location Tbc</span></div>
+
+      <div class="row">&nbsp;</div>
+      <div class="row hl"><span class="time">11:00</span> <span class="brand">SETCHU *</span><br><span class="addr">Via Private Pezze, 2</span></div>
+      <div class="row hl"><span class="time">14:00</span> <span class="brand">PRADA **</span><br><span class="addr">Via Goito, 7</span></div>
+
+      <div class="row">&nbsp;</div>
+      <div class="row"><span class="time">11:00/15:00</span> <span class="brand">MARAGNO *</span><br><span class="addr">Via Bovisasca, 87</span></div>
+      <div class="row"><span class="time">14:30/19:30</span> <span class="brand">VIAPIAVE33 **</span><br><span class="addr">Via Lamprese, 14</span></div>
+
+      <div class="row">&nbsp;</div>
+      <div class="row"><span class="time">12:30</span> <span class="brand">DOLCE&amp;GABBANA *</span><br><span class="addr">Viale Piave, 24</span></div>
+      <div class="row"><span class="time">15:00</span> <span class="brand">LATORRE *</span><br><span class="addr">Via Manzoni, 23</span></div>
+
+      <div class="row">&nbsp;</div>
+      <div class="row"><span class="time">13:00/17:00</span> <span class="brand">BALLY *</span><br><span class="addr">Viale Piave, 42</span></div>
+      <div class="row"><span class="time">15:00</span> <span class="brand">SAUL NASH **</span><br><span class="addr">Via Petracarbo, 16</span></div>
+    </div>
+  </div>
+
+  <!-- CRITIC 세로 라벨 -->
+  <div class="critic">
+    <span class="cr-big">CRITIC</span>
+    <div class="cr-text">
+      <strong>fashion design process</strong><br>
+      critic &amp; technical<br>
+      think you know fasion?
+    </div>
+  </div>
+
+  <!-- ─── 2. 상단 네비: ABOUT / LIST ─── -->
+  <nav class="top-nav">
+    <button data-anchor="about" aria-label="ABOUT 열기"><span class="hot-dot"></span>ABOUT</button>
+    <button data-anchor="list" aria-label="LIST 열기"><span class="hot-dot"></span>LIST</button>
+  </nav>
+
+  <!-- I would die for you (반복) -->
+  <div class="die-stack" aria-hidden="true">
+    <span class="d">I would die for you</span>
+    <span class="d">I would die for you</span>
+    <span class="d">I would die for you</span>
+    <span class="d">I would die for you</span>
+    <span class="d">I would die for you</span>
+    <span class="d">I would die for you</span>
+    <span class="d">I would die for you</span>
+  </div>
+
+  <!-- ─── 3. 우상단 3개 태그 (외부 링크) ─── -->
+  <div class="tags-indicator" aria-hidden="true"><span class="hot-dot"></span></div>
+  <div class="tags-wrap">
+    <a class="tag tag-wind" href="#" target="_blank" rel="noopener" data-tag="wind">
+      <div class="ww">Wind<br>Wind<br>Wind</div>
+      <div class="barcode">
+        <span></span><span class="w"></span><span></span><span class="ww"></span><span></span>
+        <span class="w"></span><span></span><span></span><span class="w"></span><span></span>
+        <span class="ww"></span><span></span><span class="w"></span><span></span>
       </div>
-      <div class="song">
-        <div class="label">NOW PLAYING</div>
-        <div class="title">Blue Valentine</div>
-      </div>
+    </a>
+    <a class="tag tag-sav" href="#" target="_blank" rel="noopener" data-tag="savior">
+      <span class="side">Uniform:LUVLOG¹ Resource:LUVLOG² Locator:LUVINFO</span>
+      <div class="logo">S</div>
+      <div class="name">Savior</div>
+    </a>
+    <a class="tag tag-heart" href="#" target="_blank" rel="noopener" data-tag="heart">
+      <div class="script">Heart<br>Boils<br>Over</div>
+    </a>
+  </div>
+
+  <!-- ─── 4. 중앙 타이틀 + 바늘 ─── -->
+  <div class="center-title">
+    <div class="wrap">
+      <span class="do">do.</span>
+
+      <!-- 바늘 + 반짝이 SVG (텍스트 뒤) -->
+      <svg class="needle-svg" viewBox="0 0 400 440" aria-hidden="true">
+        <defs>
+          <!-- 바늘구멍 그라데이션 -->
+          <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1E3FFF" stop-opacity="0"/>
+            <stop offset="40%" stop-color="#1E3FFF" stop-opacity="0.15"/>
+            <stop offset="70%" stop-color="#1E3FFF" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#1E3FFF" stop-opacity="0.95"/>
+          </radialGradient>
+          <!-- 바늘구멍 내부 점 패턴 -->
+          <pattern id="dots" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="0.8" fill="#1E3FFF" opacity="0.75"/>
+          </pattern>
+        </defs>
+
+        <!-- 가로 shine 라인 -->
+        <path d="M 20 220 Q 200 215, 380 220" stroke="#1E3FFF" stroke-width="2" fill="none" opacity="0.85"/>
+        <!-- 대각 shine (살짝) -->
+        <path d="M 80 60 Q 200 220, 320 380" stroke="#1E3FFF" stroke-width="1" fill="none" opacity="0.5"/>
+        <path d="M 320 60 Q 200 220, 80 380" stroke="#1E3FFF" stroke-width="1" fill="none" opacity="0.5"/>
+
+        <!-- 바늘 본체 (세로, 길쭉, 끝이 뾰족) -->
+        <path d="M 198 90 L 202 90 L 206 420 L 194 420 Z" fill="#1E3FFF"/>
+        <!-- 바늘 하단 뾰족한 끝 (여유있게) -->
+        <path d="M 194 420 L 206 420 L 200 436 Z" fill="#1E3FFF"/>
+
+        <!-- 바늘구멍 (eye, 상단 원형 — 그라데이션 + 점) -->
+        <ellipse cx="200" cy="55" rx="38" ry="48" fill="url(#eyeGrad)"/>
+        <ellipse cx="200" cy="55" rx="22" ry="30" fill="url(#dots)" opacity="0.9"/>
+        <ellipse cx="200" cy="55" rx="38" ry="48" fill="none" stroke="#1E3FFF" stroke-width="1.5"/>
+        <!-- 바늘 몸통과 눈 연결 -->
+        <path d="M 198 100 L 202 100 L 200 90 Z" fill="#1E3FFF"/>
+      </svg>
+
+      <h1>
+        Reserved<br>
+        <span class="sanctuary">Sanctuary</span>
+      </h1>
+    </div>
+  </div>
+
+  <!-- ─── 5. 좌중 Banner 영역 (러버미용 placeholder) ─── -->
+  <div class="banner-area-indicator" aria-hidden="true"><span class="hot-dot"></span></div>
+  <div class="banner-area" aria-label="러버미 배너 자리">
+    <div class="b-item">Banner</div>
+    <div class="b-item filled"></div>
+    <div class="b-item filled"></div>
+    <div class="b-item dark">Banner</div>
+  </div>
+
+  <!-- ─── 6. 중앙 스캐터: 0, 8, savior ─── -->
+  <span class="deco-0">0</span>
+  <span class="deco-8">8</span>
+  <div class="circle-savior">
+    <div class="circ"></div>
+    <span class="savior-txt">savior</span>
+  </div>
+
+  <!-- ─── 7. Boutique 정의 ─── -->
+  <div class="boutique">
+    <h4>Boutique</h4>
+    <p>a small retail shop or business<br>that sells fashionable clothes,<br>shoes, jewelry, gifts, or specialized<br>luxury item</p>
+  </div>
+
+  <!-- ─── 8. 가사 ─── -->
+  <div class="lyrics">
+    <div class="verse">
+      I don't wanna go<br>
+      'Til everything comes crashing down<br>
+      You're the one I want<br>
+      When everything comes crashing down
+    </div>
+    <div class="list">
+      <div class="li">a.&nbsp;&nbsp;I know it is way too late (I know it is way too)</div>
+      <div class="li">b.&nbsp;&nbsp;I know it is way too crazy (I know it is way too)</div>
+      <div class="li">c.&nbsp;&nbsp;But if you give me one more chance</div>
+      <div class="li" style="padding-left: 36px; text-indent: 0;">Could you kill me once again, again? (oh-oh-oh)</div>
+    </div>
+  </div>
+
+  <!-- ─── 9. Workspace / 12 / Pill 토글 ─── -->
+  <div class="workspace">Workspace</div>
+  <div class="twelve">12</div>
+
+  <div class="pill-area">
+    <span class="above-dot hot-dot" aria-hidden="true"></span>
+    <button class="pill-toggle" id="pill" aria-label="프롬프트 열기">
+      <span class="opt active">wind</span>
+      <span class="opt">savior</span>
+      <span class="thumb"></span>
     </button>
+    <span class="pill-label">prompt</span>
+  </div>
 
-    <!-- 6. Prompt -->
-    <button class="orbit o-prompt" data-modal="prompt" aria-label="프롬프트 열기">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      PROMPT
-    </button>
+</div><!-- /canvas -->
 
-  </main>
+<!-- ─────────── MODAL (사진 2 — Prompt 카드) ─────────── -->
+<div class="modal" id="modal-prompt" role="dialog" aria-modal="true" aria-label="Prompt 카드">
+  <div class="modal-card">
+    <button class="modal-close" aria-label="닫기">×</button>
 
-  <!-- ─── MODALS ─── -->
-
-  <!-- Profile -->
-  <div class="modal" id="m-profile" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <button class="modal-close" aria-label="닫기">×</button>
-      <div class="modal-label">PROFILE</div>
-      <h2 class="modal-title">Characters</h2>
-      <div class="tabs">
-        <button class="tab active" data-target="char-a">Do Eunha</button>
-        <button class="tab" data-target="char-b">Woo Yeoneun</button>
+    <div class="modal-body">
+      <!-- 캐릭터 탭 -->
+      <div class="char-tabs" id="char-tabs">
+        <button class="ct active" data-char="winter">Winter</button>
+        <button class="ct" data-char="hydro">Hydro</button>
+        <button class="ct" data-char="papico">Papico</button>
+        <button class="ct" data-char="happy1">Happy<sup>1</sup></button>
+        <button class="ct" data-char="happy2">Happy<sup>2</sup></button>
+        <button class="ct" data-char="eunha">Eunha</button>
+        <button class="ct" data-char="yeoneun">Yeoneun</button>
       </div>
-      <div class="char" id="char-a">
-        <div class="char-head">
-          <div class="avatar">E</div>
-          <div class="char-info"><h3>Do Eunha</h3><div class="major">코딩 겜공과 · F · 21</div></div>
+
+      <!-- 프롬프트 2문단 (편집·복사 가능) -->
+      <div class="prompt-block">
+        <div class="prompt-row">
+          <button class="copy-mini" data-copy="p1">Copy</button>
+          <div class="prompt-text" id="p1" contenteditable="true" spellcheck="false">girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, expressionless, flat chest,</div>
         </div>
-        <p class="bio">밤을 지새우며 콘솔 로그를 쫓는 사람. 말보다는 커밋 메세지로 마음을 전하는 편. 자기 코드의 조용한 오류를 더 두려워한다.</p>
-        <div class="chips">
-          <button class="chip active">INFP</button>
-          <button class="chip active">Night Owl</button>
-          <button class="chip">Introverted</button>
-          <button class="chip">Caffeine</button>
-          <button class="chip">Lo-fi</button>
-        </div>
-      </div>
-      <div class="char hidden" id="char-b">
-        <div class="char-head">
-          <div class="avatar b">Y</div>
-          <div class="char-info"><h3>Woo Yeoneun</h3><div class="major">패션디자인과 · M · 22</div></div>
-        </div>
-        <p class="bio">옷자락을 접는 손끝에 자기만의 리듬이 있는 사람. 디테일에 집착하지만 티내지 않는, 조용한 완벽주의자.</p>
-        <div class="chips">
-          <button class="chip active">ENFJ</button>
-          <button class="chip">Perfectionist</button>
-          <button class="chip active">Aesthetic</button>
-          <button class="chip">Vintage</button>
-          <button class="chip">Morning</button>
+        <div class="prompt-row">
+          <button class="copy-mini" data-copy="p2">Copy</button>
+          <div class="prompt-text secondary" id="p2" contenteditable="true" spellcheck="false">1.5::white earmuffs around neck, oversized blue gray blazer::, -1.5::ribbed cuffs, sweatshirt::, serafuku, white shirt, sailor black collar, white stripes, light blue ribbon, striped ribbon, white pleated skirt, 1.5::loose blue gray track pants::, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Personality -->
-  <div class="modal" id="m-personality" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <button class="modal-close" aria-label="닫기">×</button>
-      <div class="modal-label">PERSONALITY</div>
-      <h2 class="modal-title">성향 메모</h2>
-      <div class="list-row"><span class="k">말투</span><span class="v">짧고 담담함</span></div>
-      <div class="list-row"><span class="k">관계</span><span class="v">조용한 공존형</span></div>
-      <div class="list-row"><span class="k">갈등</span><span class="v">회피 → 글로 정리</span></div>
-      <div class="list-row"><span class="k">공통점</span><span class="v">야행성 · 흑백 선호</span></div>
-      <div class="list-row"><span class="k">선 넘는 기준</span><span class="v">서로 다름</span></div>
-      <div class="list-row"><span class="k">반려</span><span class="v">검은 고양이</span></div>
-    </div>
-  </div>
-
-  <!-- Daily -->
-  <div class="modal" id="m-daily" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <button class="modal-close" aria-label="닫기">×</button>
-      <div class="modal-label">DAILY</div>
-      <h2 class="modal-title">하루 루틴</h2>
-      <div class="sw-row">
-        <div class="sw-text"><span class="sw-time">6:20</span><span class="sw-desc">yeoneun<br>wakes</span></div>
-        <button class="switch on" aria-label="toggle"></button>
+    <!-- 아래 꾸밈 (PR/PT + 바코드) -->
+    <div class="modal-footer">
+      <div class="pr-pt">
+        <div class="ab"><span>PR</span><span>PT</span></div>
+        <div class="desc">it's a different class of model. Sharper natural language understanding. Expanded multi-language prompting. Reworked character positioning. Higher image fidelity. This is the most advanced model we've ever shipped.</div>
       </div>
-      <div class="sw-row">
-        <div class="sw-text"><span class="sw-time">6:25</span><span class="sw-desc">coffee<br>brewed</span></div>
-        <button class="switch on" aria-label="toggle"></button>
-      </div>
-      <div class="sw-row">
-        <div class="sw-text"><span class="sw-time">13:40</span><span class="sw-desc">lunch<br>together</span></div>
-        <button class="switch" aria-label="toggle"></button>
-      </div>
-      <div class="sw-row">
-        <div class="sw-text"><span class="sw-time">22:30</span><span class="sw-desc">yeoneun<br>sleeps</span></div>
-        <button class="switch" aria-label="toggle"></button>
-      </div>
-      <div class="sw-row">
-        <div class="sw-text"><span class="sw-time">03:00</span><span class="sw-desc">eunha<br>still coding</span></div>
-        <button class="switch on" aria-label="toggle"></button>
+      <div class="barcode-sm" aria-hidden="true">
+        <span></span><span class="w"></span><span></span><span class="ww"></span><span></span>
+        <span></span><span class="w"></span><span></span><span class="w"></span><span></span>
+        <span class="ww"></span><span></span><span class="w"></span><span></span><span></span>
+        <span></span><span class="ww"></span><span></span><span class="w"></span><span></span>
+        <span class="w"></span><span></span><span></span><span class="w"></span><span></span>
+        <span class="ww"></span><span></span><span class="w"></span><span></span>
       </div>
     </div>
+    <div class="home-indicator" aria-hidden="true"></div>
   </div>
+</div>
 
-  <!-- Playlist -->
-  <div class="modal" id="m-playlist" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <button class="modal-close" aria-label="닫기">×</button>
-      <div class="modal-label">NOW PLAYING</div>
-      <h2 class="modal-title">BGM</h2>
-      <div class="list-row"><span class="k">01</span><span class="v">Blue Valentine</span></div>
-      <div class="list-row"><span class="k">02</span><span class="v">Reserved — Mellow</span></div>
-      <div class="list-row"><span class="k">03</span><span class="v">Night Drive</span></div>
-      <div class="list-row"><span class="k">04</span><span class="v">Rewind, rewind</span></div>
-      <p class="bio" style="margin-top: 18px; color: var(--text-2); font-size: 13px;">두 캐릭터의 분위기를 담은 플레이리스트. 야행성 세션용.</p>
-    </div>
-  </div>
-
-  <!-- Prompt -->
-  <div class="modal" id="m-prompt" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <button class="modal-close" aria-label="닫기">×</button>
-      <div class="modal-label">PROMPT</div>
-      <h2 class="modal-title">생성 프롬프트</h2>
-      <div class="prompt-head">
-        <span style="font-size: 12px; color: var(--text-2);">클릭해서 복사</span>
-        <button class="copy-btn" id="copy-btn">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy
-        </button>
-      </div>
-      <pre class="prompt-body" id="prompt-text">A pair of two college students in Seoul.
-Do Eunha, 21, F, game-development major: long dark hair, oversized hoodie, laptop light on her face.
-Woo Yeoneun, 22, M, fashion-design major: sharp features, monochrome layered outfit, measuring tape around his neck.
-Minimalist aesthetic, muted palette, soft daylight, cinematic composition.</pre>
-    </div>
-  </div>
-
-  <!-- Links -->
-  <div class="modal" id="m-links" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <button class="modal-close" aria-label="닫기">×</button>
-      <div class="modal-label">LINKS</div>
-      <h2 class="modal-title">더 보기</h2>
-      <div class="stack">
-        <a class="stack-item" href="#" onclick="return false;">
-          <div><strong>Portfolio</strong><span>작업물 모음</span></div>
-          <div class="stack-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
-        </a>
-        <a class="stack-item" href="#" onclick="return false;">
-          <div><strong>Moodboard</strong><span>참고 이미지</span></div>
-          <div class="stack-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
-        </a>
-        <a class="stack-item" href="#" onclick="return false;">
-          <div><strong>Instagram</strong><span>@username</span></div>
-          <div class="stack-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
-        </a>
-        <a class="stack-item" href="#" onclick="return false;">
-          <div><strong>Pixiv</strong><span>그림 모음</span></div>
-          <div class="stack-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></div>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast">복사되었습니다</div>
+<div class="toast" id="toast">복사되었습니다</div>
 
 <script>
-// 시계 + 날짜
-function updateClock() {
-  const d = new Date();
-  const h = d.getHours();
-  const m = String(d.getMinutes()).padStart(2, '0');
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  const hh = String(((h + 11) % 12) + 1).padStart(2, '0');
-  document.getElementById('now-time').textContent = `${hh}:${m} ${ampm}`;
-  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  document.getElementById('now-date').textContent = `${months[d.getMonth()]} ${String(d.getDate()).padStart(2,'0')}`;
-}
-updateClock();
-setInterval(updateClock, 30000);
+// ─── 캐릭터별 프롬프트 데이터 (각자 2문단, 네가 수정 가능) ───
+// 지금 Winter에만 내용 넣어두고, 나머지는 비어있음 — 모달에서 직접 쳐서 수정 가능
+const prompts = {
+  winter: {
+    p1: "girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, expressionless, flat chest,",
+    p2: "1.5::white earmuffs around neck, oversized blue gray blazer::, -1.5::ribbed cuffs, sweatshirt::, serafuku, white shirt, sailor black collar, white stripes, light blue ribbon, striped ribbon, white pleated skirt, 1.5::loose blue gray track pants::, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,"
+  },
+  hydro:   { p1: "", p2: "" },
+  papico:  { p1: "", p2: "" },
+  happy1:  { p1: "", p2: "" },
+  happy2:  { p1: "", p2: "" },
+  eunha:   { p1: "", p2: "" },
+  yeoneun: { p1: "", p2: "" },
+};
 
-// 테마 토글
-const themeBtn = document.getElementById('theme-btn');
-try { const s = localStorage.getItem('theme'); if (s) document.documentElement.setAttribute('data-theme', s); } catch(e) {}
-themeBtn.addEventListener('click', () => {
-  const html = document.documentElement;
-  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  try { localStorage.setItem('theme', next); } catch(e) {}
+const p1 = document.getElementById('p1');
+const p2 = document.getElementById('p2');
+let currentChar = 'winter';
+
+// 탭 전환 — 프롬프트만 바뀜
+function switchChar(name) {
+  // 현재 캐릭터 내용 저장
+  prompts[currentChar] = { p1: p1.textContent, p2: p2.textContent };
+  // 새 캐릭터로 전환
+  currentChar = name;
+  p1.textContent = prompts[name].p1 || '';
+  p2.textContent = prompts[name].p2 || '';
+  document.querySelectorAll('#char-tabs .ct').forEach(t => {
+    t.classList.toggle('active', t.dataset.char === name);
+  });
+}
+
+document.querySelectorAll('#char-tabs .ct').forEach(t => {
+  t.addEventListener('click', () => switchChar(t.dataset.char));
 });
 
-// Modal open / close
-document.querySelectorAll('.orbit').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const id = 'm-' + btn.dataset.modal;
-    const modal = document.getElementById(id);
-    if (modal) {
-      modal.classList.add('open');
-      document.body.classList.add('modal-open');
+// ─── 모달 열기/닫기 (pill 토글이 모달 토글) ───
+const modal = document.getElementById('modal-prompt');
+const pill = document.getElementById('pill');
+let modalOpen = false;
+
+function openModal() {
+  modal.classList.add('open');
+  document.body.classList.add('modal-open');
+  modalOpen = true;
+  pill.classList.add('right');
+  pill.querySelectorAll('.opt').forEach((o, i) => o.classList.toggle('active', i === 1));
+}
+function closeModal() {
+  modal.classList.remove('open');
+  document.body.classList.remove('modal-open');
+  modalOpen = false;
+  pill.classList.remove('right');
+  pill.querySelectorAll('.opt').forEach((o, i) => o.classList.toggle('active', i === 0));
+}
+
+pill.addEventListener('click', () => {
+  if (modalOpen) closeModal(); else openModal();
+});
+
+// 모달 밖/닫기 버튼
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+modal.querySelector('.modal-close').addEventListener('click', closeModal);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOpen) closeModal(); });
+
+// ─── pill 스와이프 (좌우 드래그로도 열기/닫기) ───
+let startX = null;
+pill.addEventListener('pointerdown', (e) => { startX = e.clientX; });
+pill.addEventListener('pointerup', (e) => {
+  if (startX === null) return;
+  const dx = e.clientX - startX;
+  if (Math.abs(dx) > 20) {
+    if (dx > 0 && !modalOpen) openModal();
+    else if (dx < 0 && modalOpen) closeModal();
+  }
+  startX = null;
+});
+
+// ─── 상단 ABOUT / LIST (아직 액션 미정 — 토스트만) ───
+document.querySelectorAll('.top-nav button').forEach(b => {
+  b.addEventListener('click', () => {
+    showToast(b.dataset.anchor.toUpperCase() + ' 섹션 (추후 추가)');
+  });
+});
+
+// ─── 복사 버튼 ───
+document.querySelectorAll('.copy-mini').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const target = document.getElementById(btn.dataset.copy);
+    try {
+      await navigator.clipboard.writeText(target.textContent);
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      showToast('복사되었습니다');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
+    } catch(err) {
+      showToast('복사 실패');
     }
   });
 });
-document.querySelectorAll('.modal').forEach(modal => {
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal); });
-  const closeBtn = modal.querySelector('.modal-close');
-  if (closeBtn) closeBtn.addEventListener('click', () => closeModal(modal));
-});
-function closeModal(modal) {
-  modal.classList.remove('open');
-  if (!document.querySelector('.modal.open')) document.body.classList.remove('modal-open');
-}
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') document.querySelectorAll('.modal.open').forEach(closeModal);
-});
 
-// chip 토글
-document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => c.classList.toggle('active')));
-
-// 스위치 토글
-document.querySelectorAll('.switch').forEach(s => s.addEventListener('click', () => s.classList.toggle('on')));
-
-// 캐릭터 탭
-document.querySelectorAll('.tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    document.querySelectorAll('.char').forEach(c => c.classList.add('hidden'));
-    document.getElementById(t.dataset.target).classList.remove('hidden');
-  });
-});
-
-// 복사 버튼
-const copyBtn = document.getElementById('copy-btn');
-const copyIconDefault = copyBtn.innerHTML;
-copyBtn.addEventListener('click', async (e) => {
-  e.stopPropagation();
-  try {
-    await navigator.clipboard.writeText(document.getElementById('prompt-text').textContent);
-    copyBtn.classList.add('copied');
-    copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied';
-    showToast();
-    setTimeout(() => { copyBtn.classList.remove('copied'); copyBtn.innerHTML = copyIconDefault; }, 1800);
-  } catch(err) { showToast('복사 실패'); }
-});
-
+// ─── Toast ───
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg || '복사되었습니다';
