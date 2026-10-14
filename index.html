@@ -132,7 +132,7 @@ a { color: inherit; text-decoration: none; }
 .corner-btn:hover { transform: scale(1.06); }
 .corner-btn:active { transform: scale(0.92); }
 /* 하트 채워짐 */
-#heart-on:checked ~ .page .corner-btn.left svg { fill: var(--accent); }
+body:has(#heart-on:checked) .corner-btn.left svg { fill: var(--accent); }
 
 /* ─── Modal ─── */
 .modal {
@@ -146,7 +146,7 @@ a { color: inherit; text-decoration: none; }
   visibility: hidden;
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
 }
-#modal-open:checked ~ .page .modal { opacity: 1; visibility: visible; }
+body:has(#modal-open:checked) .modal { opacity: 1; visibility: visible; }
 
 .modal-wrap {
   position: relative;
@@ -158,7 +158,7 @@ a { color: inherit; text-decoration: none; }
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
   transform-origin: center 55%;
 }
-#modal-open:checked ~ .page .modal-wrap { transform: scale(1) translateY(0); opacity: 1; }
+body:has(#modal-open:checked) .modal-wrap { transform: scale(1) translateY(0); opacity: 1; }
 
 .modal-img {
   width: 100%; height: auto; display: block;
@@ -168,16 +168,16 @@ a { color: inherit; text-decoration: none; }
 .card-empty { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
 
 /* 메뉴 선택에 따라 filled/empty 토글 */
-#sel-pick:checked ~ .page .card-empty { opacity: 0; }
-#sel-pick:checked ~ .page .card-filled { opacity: 1; }
-#sel-about:checked ~ .page .card-empty,
-#sel-list:checked ~ .page .card-empty,
-#sel-prompt:checked ~ .page .card-empty,
-#sel-banner:checked ~ .page .card-empty { opacity: 1; }
-#sel-about:checked ~ .page .card-filled,
-#sel-list:checked ~ .page .card-filled,
-#sel-prompt:checked ~ .page .card-filled,
-#sel-banner:checked ~ .page .card-filled { opacity: 0; }
+body:has(#sel-pick:checked) .card-empty { opacity: 0; }
+body:has(#sel-pick:checked) .card-filled { opacity: 1; }
+body:has(#sel-about:checked) .card-empty,
+body:has(#sel-list:checked) .card-empty,
+body:has(#sel-prompt:checked) .card-empty,
+body:has(#sel-banner:checked) .card-empty { opacity: 1; }
+body:has(#sel-about:checked) .card-filled,
+body:has(#sel-list:checked) .card-filled,
+body:has(#sel-prompt:checked) .card-filled,
+body:has(#sel-banner:checked) .card-filled { opacity: 0; }
 
 /* 투명 클릭 영역 */
 .hit-btn {
@@ -206,7 +206,7 @@ a { color: inherit; text-decoration: none; }
   opacity: 0;
   transition: opacity 0.18s ease;
 }
-#star-on:checked ~ .page .star-overlay { opacity: 1; }
+body:has(#star-on:checked) .star-overlay { opacity: 1; }
 .star-overlay img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 /* 메뉴 패널 */
@@ -226,7 +226,7 @@ a { color: inherit; text-decoration: none; }
   transition: opacity 0.22s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.22s;
   z-index: 15;
 }
-#menu-open:checked ~ .page .menu-panel {
+body:has(#menu-open:checked) .menu-panel {
   opacity: 1; visibility: visible;
   transform: translateY(0) scale(1);
 }
@@ -275,10 +275,10 @@ a { color: inherit; text-decoration: none; }
 }
 .panel p { margin: 0 0 8px 0; }
 .panel p:last-child { margin-bottom: 0; }
-#sel-about:checked ~ .page .panel-about,
-#sel-list:checked ~ .page .panel-list,
-#sel-prompt:checked ~ .page .panel-prompt,
-#sel-banner:checked ~ .page .panel-banner {
+body:has(#sel-about:checked) .panel-about,
+body:has(#sel-list:checked) .panel-list,
+body:has(#sel-prompt:checked) .panel-prompt,
+body:has(#sel-banner:checked) .panel-banner {
   display: block;
   animation: content-in 0.3s ease-out;
 }
@@ -316,7 +316,7 @@ a { color: inherit; text-decoration: none; }
 #char-winter:checked  ~ .page .co-winter,
 #char-hydro:checked   ~ .page .co-hydro,
 #char-eunha:checked   ~ .page .co-eunha,
-#char-yeoneun:checked ~ .page .co-yeoneun,
+body:has(#char-yeoneun:checked) .co-yeoneun,
 #char-papico:checked  ~ .page .co-papico,
 #char-happy1:checked  ~ .page .co-happy1,
 #char-happy2:checked  ~ .page .co-happy2 { font-weight: 700; }
@@ -324,7 +324,7 @@ a { color: inherit; text-decoration: none; }
 #char-winter:checked  ~ .page .pr-winter,
 #char-hydro:checked   ~ .page .pr-hydro,
 #char-eunha:checked   ~ .page .pr-eunha,
-#char-yeoneun:checked ~ .page .pr-yeoneun,
+body:has(#char-yeoneun:checked) .pr-yeoneun,
 #char-papico:checked  ~ .page .pr-papico,
 #char-happy1:checked  ~ .page .pr-happy1,
 #char-happy2:checked  ~ .page .pr-happy2 {
