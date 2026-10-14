@@ -137,6 +137,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   position: relative;
   width: 100%;
   max-width: clamp(320px, 38vw, 540px);
+  aspect-ratio: 1 / 1;    /* 확대축소 시 overlay 어긋남 방지 */
   transform: scale(0.86) translateY(16px);
   opacity: 0;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
@@ -525,36 +526,45 @@ btnStar.addEventListener('click', (e) => {
   starOverlay.classList.toggle('on');
 });
 
-// ─── 상단 글자 자동 전환 (fade) ───
-// 수정하려면 아래 배열에 문자열 추가/변경
-const topLeftTexts = [
-  '<sup>1</sup>Boutique',
-  '<sup>2</sup>Critic',
-  '<sup>3</sup>DIE 4 YOU'
-];
-const topCenterTexts = [
-  `fashion design process
+// ─── 상단 글자 자동 전환 (좌상단 + 중앙상단 세트로 함께 바뀜) ───
+// 수정하려면 아래 배열에 세트 추가/변경
+const topSets = [
+  {
+    left: '<sup>1</sup>Boutique',
+    center: `a small retail shop or business
+that sells fashionable clothes,
+shoes, jewelry, gifts, or specialized
+luxury item`
+  },
+  {
+    left: '<sup>2</sup>Critic',
+    center: `fashion design process
 critic & technical
 think you know fasion?
-workspace`,
-  `I don't wanna go
+workspace`
+  },
+  {
+    left: '<sup>3</sup>DIE 4 YOU',
+    center: `I don't wanna go
 'Til everything comes crashing down
 You're the one I want
 When everything comes crashing down`
+  }
 ];
-function rotateText(el, arr, interval) {
-  let i = 0;
-  setInterval(() => {
-    el.classList.add('fading');
-    setTimeout(() => {
-      i = (i + 1) % arr.length;
-      el.innerHTML = arr[i];
-      el.classList.remove('fading');
-    }, 400);
-  }, interval);
-}
-rotateText(document.getElementById('top-left'), topLeftTexts, 4000);
-rotateText(document.getElementById('top-center'), topCenterTexts, 4000);
+const tlEl = document.getElementById('top-left');
+const tcEl = document.getElementById('top-center');
+let topIdx = 0;
+setInterval(() => {
+  tlEl.classList.add('fading');
+  tcEl.classList.add('fading');
+  setTimeout(() => {
+    topIdx = (topIdx + 1) % topSets.length;
+    tlEl.innerHTML = topSets[topIdx].left;
+    tcEl.textContent = topSets[topIdx].center;
+    tlEl.classList.remove('fading');
+    tcEl.classList.remove('fading');
+  }, 400);
+}, 4000);
 
 // 공유 버튼 — 기능 추후
 </script>
