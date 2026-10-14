@@ -592,81 +592,73 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </svg>
   </div>
 
-  <!-- ============ 중앙 바늘 + 실 + savior 원 (하나의 연결 곡선) ============ -->
+  <!-- ============ 중앙 바늘 + 반짝이 + 실 ============ -->
   <div class="composition" aria-hidden="true">
-    <svg viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox="0 0 1400 820" preserveAspectRatio="xMidYMid meet">
       <defs>
-        <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#1E3FFF" stop-opacity="0"/>
-          <stop offset="55%" stop-color="#1E3FFF" stop-opacity="0.1"/>
-          <stop offset="85%" stop-color="#1E3FFF" stop-opacity="0.45"/>
-          <stop offset="100%" stop-color="#1E3FFF" stop-opacity="0.9"/>
-        </radialGradient>
-        <pattern id="needleDots" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="0.75" fill="#1E3FFF" opacity="0.55"/>
+        <!-- 바늘 내부: 연파랑 배경 + 짙은파랑 점 (흰색 아님) -->
+        <pattern id="dotFill" patternUnits="userSpaceOnUse" width="5" height="5">
+          <rect width="5" height="5" fill="#D7DEFF"/>
+          <circle cx="2.5" cy="2.5" r="1" fill="#1E3FFF" opacity="0.7"/>
         </pattern>
       </defs>
 
-      <!-- ===== 실 (continuous black curve) ===== -->
-      <!-- 1) 왼쪽 끝에서 바늘 눈까지 가로로 길게 -->
-      <!-- 2) 바늘 눈 통과 -->
-      <!-- 3) 아래로 큰 아크 그리며 오른쪽으로 -->
-      <!-- 4) 다시 왼쪽으로 돌아와 savior 원 형성 -->
-      <!-- 5) 오른쪽으로 가늘게 빠져나감 -->
+      <!-- ====== 실 (black, 매끄러운 곡선) ====== -->
+      <!-- 좌측 → 바늘 눈 앞까지 가로 -->
+      <path d="M -40 90 L 850 90"
+            stroke="#141414" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <!-- 바늘 눈 통과 후 오른쪽 아래로 크게 아크 -->
       <path d="
-        M 0 180
-        C 200 175, 500 180, 850 185
-        Q 870 188, 884 198
-        M 894 220
-        C 1100 320, 1300 480, 1240 680
-        C 1180 880, 820 920, 580 850
-        C 400 800, 300 740, 320 680
-        C 340 620, 440 610, 480 670
-        C 510 720, 420 760, 380 740
-        C 430 760, 900 850, 1350 820
-      " stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+        M 895 105
+        C 1070 200, 1230 340, 1270 490
+        C 1310 650, 1200 760, 1020 780
+        C 820 800, 580 780, 475 720
+      " stroke="#141414" stroke-width="2.2" fill="none" stroke-linecap="round"/>
 
-      <!-- 작은 savior 원 (실의 loop) -->
-      <ellipse cx="400" cy="700" rx="85" ry="75"
-               fill="none" stroke="#111" stroke-width="2"
-               transform="rotate(-10 400 700)"/>
+      <!-- savior 원 (실 루프의 작은 원) -->
+      <ellipse cx="420" cy="720" rx="90" ry="76"
+               fill="none" stroke="#141414" stroke-width="2.2"
+               transform="rotate(-8 420 720)"/>
 
-      <!-- ===== 4-point 반짝이 (horizontal + vertical, 하늘거리는 blue 곡선) ===== -->
-      <!-- 가로 shine (중앙 가늘고 끝으로 갈수록 가늘어짐) -->
-      <path d="M 400 480
-               Q 650 470, 880 480
-               Q 650 490, 400 480 Z"
-            fill="#1E3FFF" opacity="0.9"/>
-      <path d="M 870 480
-               Q 1100 475, 1280 480
-               Q 1100 485, 870 480 Z"
-            fill="#1E3FFF" opacity="0.85"/>
-      <!-- 세로 shine (바늘 아래쪽 연장선 느낌) -->
-      <path d="M 880 300
-               Q 889 390, 884 480
-               Q 879 390, 880 300 Z"
-            fill="#1E3FFF" opacity="0.75"/>
-      <path d="M 884 480
-               Q 889 580, 884 680
-               Q 879 580, 884 480 Z"
-            fill="#1E3FFF" opacity="0.7"/>
+      <!-- savior 원에서 오른쪽으로 빠져나오는 꼬리 -->
+      <path d="M 505 760 C 650 790, 1050 800, 1400 730"
+            stroke="#141414" stroke-width="2.2" fill="none" stroke-linecap="round"/>
 
-      <!-- ===== 바늘 (tilted blue oval with dots) ===== -->
-      <g transform="translate(880 290) rotate(8)">
-        <!-- 바늘 몸통 (상단 둥글고 아래 뾰족) -->
+      <!-- ====== 반짝이 가로 arm (lens) — 바늘과 교차 ====== -->
+      <path d="
+        M 470 440
+        Q 870 400, 1270 440
+        Q 870 480, 470 440 Z
+      " fill="url(#dotFill)" stroke="#1E3FFF" stroke-width="1.6"/>
+
+      <!-- ====== 바늘 (반짝이 세로 arm = 바늘) ====== -->
+      <g transform="translate(880 440) rotate(6)">
+        <!-- 바늘 윗부분 (반짝이 교차점 위로, 눈 포함) -->
         <path d="
-          M 0 -210
-          Q 24 -200, 24 -180
-          L 10 220
-          Q 0 240, -10 220
-          L -24 -180
-          Q -24 -200, 0 -210 Z
-        " fill="url(#needleDots)" stroke="#1E3FFF" stroke-width="2.2" stroke-linejoin="round"/>
-        <!-- 뾰족한 끝 (아래 연장) -->
-        <path d="M -10 220 L 10 220 L 0 275 Z" fill="#1E3FFF"/>
-        <!-- 바늘구멍 (eye) — 작은 oval hole -->
-        <ellipse cx="0" cy="-180" rx="7" ry="12" fill="#F2F3F6" stroke="#1E3FFF" stroke-width="1.5"/>
+          M -14 0
+          L -15 -330
+          Q -15 -346, 0 -352
+          Q 15 -346, 15 -330
+          L 14 0 Z
+        " fill="url(#dotFill)" stroke="#1E3FFF" stroke-width="1.8" stroke-linejoin="round"/>
+        <!-- 바늘 아래 (반짝이 교차점 아래, 뾰족한 끝으로 수렴) -->
+        <path d="
+          M -14 0
+          L -8 160
+          L 0 180
+          L 8 160
+          L 14 0 Z
+        " fill="url(#dotFill)" stroke="#1E3FFF" stroke-width="1.8" stroke-linejoin="round"/>
+        <!-- 바늘 끝 뾰족 (아래 연장) -->
+        <path d="M -2 180 L 2 180 L 0 240 Z" fill="#1E3FFF"/>
+        <!-- 바늘구멍 (실이 통과하는 작은 홀) -->
+        <ellipse cx="0" cy="-335" rx="5" ry="9"
+                 fill="#F2F3F6" stroke="#1E3FFF" stroke-width="1.3"/>
       </g>
+
+      <!-- 바늘 아래 희미한 파란 연장선 -->
+      <path d="M 905 680 L 940 810"
+            stroke="#1E3FFF" stroke-width="1.2" opacity="0.35" fill="none"/>
     </svg>
   </div>
 
