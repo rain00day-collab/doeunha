@@ -64,6 +64,12 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   50.01%, 100% { opacity: 0; }
 }
 
+/* 상단 글자 전환 fade */
+.top-left, .top-center {
+  transition: opacity 0.4s ease;
+}
+.top-left.fading, .top-center.fading { opacity: 0; }
+
 /* ─── 중앙 Savior 아이콘 (살짝 더 크게) ─── */
 .savior-icon {
   position: absolute;
@@ -160,11 +166,11 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .hit-square { top: 15.7%; left: 62.65%; width: 4%; height: 3.4%; }
 .hit-star  { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; background: transparent !important; }
 
-/* 별 PNG overlay — 더 작게 */
+/* 별 PNG overlay — 미세 축소 & 왼쪽으로 */
 .star-overlay {
   position: absolute;
-  top: 16.3%; left: 67.85%;
-  width: 2.5%; height: 2.2%;
+  top: 16.4%; left: 67.5%;
+  width: 2.2%; height: 2%;
   pointer-events: none;
   z-index: 3;
   opacity: 0;
@@ -306,9 +312,9 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 </head>
 <body>
 
-<div class="top-left"><sup>1</sup>Boutique</div>
+<div class="top-left" id="top-left"><sup>1</sup>Boutique</div>
 
-<div class="top-center">a small retail shop or business
+<div class="top-center" id="top-center">a small retail shop or business
 that sells fashionable clothes,
 shoes, jewelry, gifts, or specialized
 luxury item</div>
@@ -518,6 +524,37 @@ btnStar.addEventListener('click', (e) => {
   e.stopPropagation();
   starOverlay.classList.toggle('on');
 });
+
+// ─── 상단 글자 자동 전환 (fade) ───
+// 수정하려면 아래 배열에 문자열 추가/변경
+const topLeftTexts = [
+  '<sup>1</sup>Boutique',
+  '<sup>2</sup>Critic',
+  '<sup>3</sup>DIE 4 YOU'
+];
+const topCenterTexts = [
+  `fashion design process
+critic & technical
+think you know fasion?
+workspace`,
+  `I don't wanna go
+'Til everything comes crashing down
+You're the one I want
+When everything comes crashing down`
+];
+function rotateText(el, arr, interval) {
+  let i = 0;
+  setInterval(() => {
+    el.classList.add('fading');
+    setTimeout(() => {
+      i = (i + 1) % arr.length;
+      el.innerHTML = arr[i];
+      el.classList.remove('fading');
+    }, 400);
+  }, interval);
+}
+rotateText(document.getElementById('top-left'), topLeftTexts, 4000);
+rotateText(document.getElementById('top-center'), topCenterTexts, 4000);
 
 // 공유 버튼 — 기능 추후
 </script>
