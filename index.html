@@ -135,9 +135,24 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 }
 .hit-btn:hover { background: rgba(0,0,0,0.06); }
 .hit-btn:active { background: rgba(0,0,0,0.12); }
-/* 아이콘 호버 영역 (전·현 중간값) */
+/* 아이콘 호버 영역 */
 .hit-minus { top: 15.7%; left: 58.65%; width: 4%; height: 3.4%; }
 .hit-square { top: 15.7%; left: 62.65%; width: 4%; height: 3.4%; }
+.hit-star  { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; }
+
+/* 별 채워지는 오버레이 (클릭 시 검정으로 채움) */
+.star-overlay {
+  position: absolute;
+  top: 14.3%; left: 65.5%;
+  width: 7%; height: 5.7%;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: scale(0.9);
+}
+.star-overlay.on { opacity: 1; transform: scale(1); }
+.star-overlay svg { width: 100%; height: 100%; display: block; fill: #0A0A0A; }
 
 /* ─── 메뉴 패널 (가로 ↑, 세로/글자 ↓, 둥글기 더 작게) ─── */
 .menu-panel {
@@ -200,8 +215,8 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .panel {
   display: none;
   padding: 0;
-  font-size: clamp(7px, 0.75vw, 9.5px);
-  line-height: 1.45;
+  font-size: clamp(6.5px, 0.55vw, 8px);
+  line-height: 1.5;
   color: #0a0a0a;
   letter-spacing: -0.005em;
   word-break: keep-all;
@@ -224,7 +239,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 }
 .panel-prompt .char-opt {
   font-family: inherit;
-  font-size: clamp(7px, 0.75vw, 9.5px);
+  font-size: clamp(6.5px, 0.55vw, 8px);
   color: #0a0a0a;
   font-weight: 400;
   cursor: pointer;
@@ -240,17 +255,19 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .pr-content.active { display: block; }
 .pr-content p { margin: 0 0 8px 0; }
 
-/* 모바일 */
+/* 모바일: Savior 아이콘·모달 전체 약간씩 더 크게 (호버/메뉴는 % 기반이라 유지) */
 @media (max-width: 600px) {
   .top-left, .top-center, .top-right { font-size: 9px; }
-  .savior-icon img { width: 46px; }
-  .corner-btn svg { width: 20px; }
+  .savior-icon img { width: 62px; }
+  .corner-btn svg { width: 22px; }
   .top-center { max-width: 60%; }
-  .modal-wrap { max-width: 86%; }
+  .modal-wrap { max-width: 94%; }
 }
 @media (max-width: 420px) {
   .top-left, .top-center, .top-right { font-size: 8px; }
+  .savior-icon img { width: 58px; }
   .top-center { max-width: 54%; }
+  .modal-wrap { max-width: 96%; }
 }
 </style>
 </head>
@@ -290,6 +307,12 @@ luxury item</div>
     <img class="modal-img" id="img-card" alt="Boutique">
     <button class="hit-btn hit-minus" id="btn-minus" aria-label="닫기"></button>
     <button class="hit-btn hit-square" id="btn-square" aria-label="메뉴"></button>
+    <button class="hit-btn hit-star" id="btn-star" aria-label="즐겨찾기"></button>
+    <div class="star-overlay" id="star-overlay" aria-hidden="true">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+      </svg>
+    </div>
 
     <!-- ─── 카드 중앙 #f2f2f2 content (About / List / Prompt / Banner) ─── -->
     <div class="card-content" id="card-content">
@@ -454,6 +477,14 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal
 
 const heartBtn = document.getElementById('heart-btn');
 heartBtn.addEventListener('click', () => heartBtn.classList.toggle('on'));
+
+// 별 토글 (채워지는 모션만, 기능 없음)
+const btnStar = document.getElementById('btn-star');
+const starOverlay = document.getElementById('star-overlay');
+btnStar.addEventListener('click', (e) => {
+  e.stopPropagation();
+  starOverlay.classList.toggle('on');
+});
 
 // 공유 버튼 — 기능 추후
 </script>
