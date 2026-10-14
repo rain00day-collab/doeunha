@@ -110,7 +110,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .modal-wrap {
   position: relative;
   width: 100%;
-  max-width: clamp(260px, 32vw, 440px);
+  max-width: clamp(320px, 38vw, 540px);
   transform: scale(0.86) translateY(16px);
   opacity: 0;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
@@ -204,8 +204,8 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 /* ─── 카드 중앙 #f2f2f2 영역 content ─── */
 .card-content {
   position: absolute;
-  /* 카드 안쪽 content 영역 (이미지30 기준) */
-  top: 24%; left: 32%; right: 32%; bottom: 28%;
+  /* 가로세로 여백 넉넉하게 중앙으로 */
+  top: 27%; left: 36%; right: 36%; bottom: 31%;
   z-index: 5;
   overflow-y: auto;
   overflow-x: hidden;
@@ -248,26 +248,26 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   padding: 0;
   letter-spacing: -0.005em;
 }
-.panel-prompt .char-opt:hover { color: var(--accent); }
+.panel-prompt .char-opt:hover { color: #3a9af3; }
 .panel-prompt .char-opt.active { font-weight: 700; }
 .panel-prompt .char-opt sup { font-size: 0.65em; margin-left: 1px; vertical-align: super; }
 .pr-content { display: none; }
 .pr-content.active { display: block; }
 .pr-content p { margin: 0 0 8px 0; }
 
-/* 모바일: Savior 아이콘·모달 전체 약간씩 더 크게 (호버/메뉴는 % 기반이라 유지) */
+/* 모바일: 모달 더 크게 */
 @media (max-width: 600px) {
   .top-left, .top-center, .top-right { font-size: 9px; }
-  .savior-icon img { width: 62px; }
+  .savior-icon img { width: 68px; }
   .corner-btn svg { width: 22px; }
   .top-center { max-width: 60%; }
-  .modal-wrap { max-width: 94%; }
+  .modal-wrap { max-width: 96%; }
 }
 @media (max-width: 420px) {
   .top-left, .top-center, .top-right { font-size: 8px; }
-  .savior-icon img { width: 58px; }
+  .savior-icon img { width: 62px; }
   .top-center { max-width: 54%; }
-  .modal-wrap { max-width: 96%; }
+  .modal-wrap { max-width: 98%; }
 }
 </style>
 </head>
