@@ -228,8 +228,11 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .menu-item.active { background: #D8E0F2; }
 .menu-item:hover:not(.active) { background: #F3F4F7; }
 
-/* 카드 교체: img src 변경 */
+/* 카드 교체: filled / empty 두 이미지 겹침 */
 .modal-img { transition: opacity 0.2s ease; }
+.card-empty { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.card-empty.show { opacity: 1; }
+.card-filled.hide { opacity: 0; }
 
 /* ─── 카드 중앙 #f2f2f2 영역 content ─── */
 .card-content {
@@ -323,7 +326,7 @@ luxury item</div>
 <div class="top-right">Reserved.Sanctuary.com</div>
 
 <div class="savior-icon" id="savior-icon" role="button" tabindex="0" aria-label="Boutique 열기">
-  <img id="img-savior" alt="Savior">
+  <img id="img-savior" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/savior-icon.png" alt="Savior">
 </div>
 
 <button class="corner-btn left" id="heart-btn" aria-label="좋아요">
@@ -344,12 +347,13 @@ luxury item</div>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true">
   <div class="modal-wrap">
-    <img class="modal-img" id="img-card" alt="Boutique">
+    <img class="modal-img card-filled" id="img-card-filled" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/boutique-card.png" alt="Boutique">
+    <img class="modal-img card-empty" id="img-card-empty" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/card-empty.png" alt="Card empty">
     <button class="hit-btn hit-minus" id="btn-minus" aria-label="닫기"></button>
     <button class="hit-btn hit-square" id="btn-square" aria-label="메뉴"></button>
     <button class="hit-btn hit-star" id="btn-star" aria-label="즐겨찾기"></button>
     <div class="star-overlay" id="star-overlay" aria-hidden="true">
-      <img id="img-star" alt="">
+      <img id="img-star" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/star-filled.png" alt="Star">
     </div>
 
     <!-- ─── 카드 중앙 #f2f2f2 content (About / List / Prompt / Banner) ─── -->
@@ -434,12 +438,7 @@ luxury item</div>
 </div>
 
 <script>
-const IMG_STAR = 'https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/star-filled.png';
-document.getElementById('img-star').src = IMG_STAR;
-const IMG_SAVIOR = 'https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/savior-icon.png';
-const IMG_CARD = 'https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/boutique-card.png';
-document.getElementById('img-savior').src = IMG_SAVIOR;
-document.getElementById('img-card').src = IMG_CARD;
+/* 이미지 src 는 HTML <img> 안에 직접 들어있음 (러버미가 인식하도록) */
 
 const savior = document.getElementById('savior-icon');
 const modal = document.getElementById('modal');
@@ -448,8 +447,8 @@ const btnSquare = document.getElementById('btn-square');
 
 const menuPanel = document.getElementById('menu-panel');
 const menuItems = document.querySelectorAll('.menu-item');
-const imgCard = document.getElementById('img-card');
-const IMG_CARD_EMPTY = 'https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/card-empty.png';
+const imgCardFilled = document.getElementById('img-card-filled');
+const imgCardEmpty = document.getElementById('img-card-empty');
 
 function openModal() { modal.classList.add('open'); document.body.classList.add('modal-open'); }
 function closeModal() {
@@ -476,7 +475,13 @@ const panels = document.querySelectorAll('.panel');
 function selectItem(name) {
   menuItems.forEach(x => x.classList.toggle('active', x.dataset.item === name));
   // 카드 이미지: Designer's PICK = 자켓, 나머지 = 빈 카드
-  imgCard.src = (name === 'pick') ? IMG_CARD : IMG_CARD_EMPTY;
+  if (name === 'pick') {
+    imgCardFilled.classList.remove('hide');
+    imgCardEmpty.classList.remove('show');
+  } else {
+    imgCardFilled.classList.add('hide');
+    imgCardEmpty.classList.add('show');
+  }
   // 패널 표시: pick/luvlog은 비움, 그 외는 해당 패널
   panels.forEach(p => p.classList.toggle('active', p.dataset.panel === name));
 }
