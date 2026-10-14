@@ -169,9 +169,14 @@ details.heart[open] summary.corner-btn svg { fill: var(--accent); }
 .modal-img {
   width: 100%; height: auto; display: block;
   filter: drop-shadow(0 20px 50px rgba(0,0,0,0.12));
-  transition: opacity 0.2s ease;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .card-empty { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+/* PICK (card-filled 보일 때)에서도 content-in 비슷하게 */
+body:not(:has(:target)) .card-filled,
+body:has(#pick:target) .card-filled {
+  animation: content-in 0.35s ease-out;
+}
 
 /* 해시 중 하나라도 target 이면 모달 열림 */
 body:has(:target) .modal {
