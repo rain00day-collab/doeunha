@@ -22,11 +22,26 @@ html, body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
+html { scroll-behavior: auto; }
 body { min-height: 100dvh; position: relative; overflow-x: hidden; }
 a { color: inherit; text-decoration: none; }
 
-/* 숨겨진 체크박스/라디오 (상태 저장용) */
-.toggle { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
+/* details 네이티브 마커 숨김 */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details > summary::-webkit-details-marker { display: none; }
+details > summary::marker { content: ''; }
+
+/* 해시 marker (스크롤 안 가게 상단에 absolute) */
+.hash-marker {
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
 /* ─── 상단 ─── */
 .top-left {
@@ -67,16 +82,12 @@ a { color: inherit; text-decoration: none; }
   0%, 50% { opacity: 1; }
   50.01%, 100% { opacity: 0; }
 }
-
-/* 상단 글자 세트 회전 — 각 span 겹쳐서 opacity 순환 */
 .top-left span, .top-center span {
   position: absolute; inset: 0;
   opacity: 0;
   animation: rot12 12s infinite;
 }
-.top-center span {
-  white-space: pre-line;
-}
+.top-center span { white-space: pre-line; }
 .top-left span:nth-child(1), .top-center span:nth-child(1) { animation-delay: 0s; }
 .top-left span:nth-child(2), .top-center span:nth-child(2) { animation-delay: 4s; }
 .top-left span:nth-child(3), .top-center span:nth-child(3) { animation-delay: 8s; }
@@ -88,7 +99,7 @@ a { color: inherit; text-decoration: none; }
   100%   { opacity: 0; }
 }
 
-/* ─── 중앙 Savior 아이콘 ─── */
+/* ─── Savior 아이콘 ─── */
 .savior-icon {
   position: absolute;
   top: 50%; left: 50%;
@@ -104,14 +115,13 @@ a { color: inherit; text-decoration: none; }
   display: block;
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.08));
   animation: savior-float 3.6s ease-in-out infinite;
-  transform-origin: center;
 }
 @keyframes savior-float {
   0%, 100% { transform: translateY(-2px) rotate(-1deg); }
   50%      { transform: translateY(2px)  rotate(1deg); }
 }
 
-/* ─── 하단 아이콘 (하트/공유, label 로 체크박스 토글) ─── */
+/* ─── 하단 하트/공유 ─── */
 .corner-btn {
   position: absolute;
   bottom: 4%;
@@ -131,8 +141,8 @@ a { color: inherit; text-decoration: none; }
 }
 .corner-btn:hover { transform: scale(1.06); }
 .corner-btn:active { transform: scale(0.92); }
-/* 하트 채워짐 */
-body:has(#heart-on:checked) .corner-btn.left svg { fill: var(--accent); }
+/* 하트: details.open 상태로 fill */
+details.heart[open] summary.corner-btn svg { fill: var(--accent); }
 
 /* ─── Modal ─── */
 .modal {
@@ -146,8 +156,6 @@ body:has(#heart-on:checked) .corner-btn.left svg { fill: var(--accent); }
   visibility: hidden;
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
 }
-body:has(#modal-open:checked) .modal { opacity: 1; visibility: visible; }
-
 .modal-wrap {
   position: relative;
   width: 100%;
@@ -158,8 +166,6 @@ body:has(#modal-open:checked) .modal { opacity: 1; visibility: visible; }
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
   transform-origin: center 55%;
 }
-body:has(#modal-open:checked) .modal-wrap { transform: scale(1) translateY(0); opacity: 1; }
-
 .modal-img {
   width: 100%; height: auto; display: block;
   filter: drop-shadow(0 20px 50px rgba(0,0,0,0.12));
@@ -167,17 +173,13 @@ body:has(#modal-open:checked) .modal-wrap { transform: scale(1) translateY(0); o
 }
 .card-empty { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
 
-/* 메뉴 선택에 따라 filled/empty 토글 */
-body:has(#sel-pick:checked) .card-empty { opacity: 0; }
-body:has(#sel-pick:checked) .card-filled { opacity: 1; }
-body:has(#sel-about:checked) .card-empty,
-body:has(#sel-list:checked) .card-empty,
-body:has(#sel-prompt:checked) .card-empty,
-body:has(#sel-banner:checked) .card-empty { opacity: 1; }
-body:has(#sel-about:checked) .card-filled,
-body:has(#sel-list:checked) .card-filled,
-body:has(#sel-prompt:checked) .card-filled,
-body:has(#sel-banner:checked) .card-filled { opacity: 0; }
+/* 해시 중 하나라도 target 이면 모달 열림 */
+body:has(:target) .modal {
+  opacity: 1; visibility: visible;
+}
+body:has(:target) .modal-wrap {
+  transform: scale(1) translateY(0); opacity: 1;
+}
 
 /* 투명 클릭 영역 */
 .hit-btn {
@@ -194,9 +196,14 @@ body:has(#sel-banner:checked) .card-filled { opacity: 0; }
 .hit-btn:active { background: rgba(0,0,0,0.12); }
 .hit-minus { top: 15.7%; left: 58.65%; width: 4%; height: 3.4%; }
 .hit-square { top: 15.7%; left: 62.65%; width: 4%; height: 3.4%; }
-.hit-star { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; background: transparent !important; }
+.hit-star-wrap { position: absolute; top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; }
+.hit-star-wrap summary {
+  width: 100%; height: 100%;
+  background: transparent;
+  border-radius: 6px;
+}
 
-/* 별 PNG overlay */
+/* 별 overlay */
 .star-overlay {
   position: absolute;
   top: 16.3%; left: 67.35%;
@@ -206,29 +213,34 @@ body:has(#sel-banner:checked) .card-filled { opacity: 0; }
   opacity: 0;
   transition: opacity 0.18s ease;
 }
-body:has(#star-on:checked) .star-overlay { opacity: 1; }
+.modal-wrap:has(details.star[open]) .star-overlay { opacity: 1; }
 .star-overlay img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* 메뉴 패널 */
+/* ─── 메뉴 패널 (details.open 상태) ─── */
+.menu-dropdown {
+  position: absolute;
+  top: 15.7%; left: 62.65%;
+  width: 4%; height: 3.4%;
+  z-index: 20;
+}
+.menu-dropdown summary {
+  display: block;
+  width: 100%; height: 100%;
+  background: transparent;
+  border-radius: 6px;
+}
+.menu-dropdown summary:hover { background: rgba(0,0,0,0.06); }
 .menu-panel {
   position: absolute;
-  top: 22.5%;
-  left: 68%;
+  top: 100%; left: 100%;
   width: clamp(95px, 11.5vw, 125px);
   background: #FFFFFF;
   border-radius: 1.5px;
   padding: 5px 0 18px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.05);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-4px) scale(0.98);
-  transform-origin: top left;
-  transition: opacity 0.22s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.22s;
+  margin-top: 10px;
+  margin-left: -10px;
   z-index: 15;
-}
-body:has(#menu-open:checked) .menu-panel {
-  opacity: 1; visibility: visible;
-  transform: translateY(0) scale(1);
 }
 .menu-item {
   display: block;
@@ -247,14 +259,57 @@ body:has(#menu-open:checked) .menu-panel {
   line-height: 1.4;
 }
 .menu-item:hover { background: #F3F4F7; }
-/* 각 메뉴 선택 하이라이트 */
-#sel-pick:checked    ~ .page .menu-panel .mi-pick,
-#sel-about:checked   ~ .page .menu-panel .mi-about,
-#sel-list:checked    ~ .page .menu-panel .mi-list,
-#sel-prompt:checked  ~ .page .menu-panel .mi-prompt,
-#sel-banner:checked  ~ .page .menu-panel .mi-banner { background: #D8E0F2; }
 
-/* ─── 카드 중앙 content ─── */
+/* 메뉴 하이라이트 (현재 :target 에 따라) */
+body:has(#pick:target) .mi-pick,
+body:has(#about:target) .mi-about,
+body:has(#list:target) .mi-list,
+body:has(#char-winter:target) .mi-prompt,
+body:has(#char-hydro:target) .mi-prompt,
+body:has(#char-eunha:target) .mi-prompt,
+body:has(#char-yeoneun:target) .mi-prompt,
+body:has(#char-papico:target) .mi-prompt,
+body:has(#char-happy1:target) .mi-prompt,
+body:has(#char-happy2:target) .mi-prompt,
+body:has(#banner:target) .mi-banner { background: #D8E0F2; }
+
+/* 아무것도 안 선택되면 PICK 디폴트 */
+.mi-pick { background: #D8E0F2; }
+body:has(#about:target) .mi-pick,
+body:has(#list:target) .mi-pick,
+body:has(#char-winter:target) .mi-pick,
+body:has(#char-hydro:target) .mi-pick,
+body:has(#char-eunha:target) .mi-pick,
+body:has(#char-yeoneun:target) .mi-pick,
+body:has(#char-papico:target) .mi-pick,
+body:has(#char-happy1:target) .mi-pick,
+body:has(#char-happy2:target) .mi-pick,
+body:has(#banner:target) .mi-pick { background: transparent; }
+
+/* 카드 variant (PICK = filled, 그 외 = empty) */
+body:has(#about:target) .card-filled,
+body:has(#list:target) .card-filled,
+body:has(#banner:target) .card-filled,
+body:has(#char-winter:target) .card-filled,
+body:has(#char-hydro:target) .card-filled,
+body:has(#char-eunha:target) .card-filled,
+body:has(#char-yeoneun:target) .card-filled,
+body:has(#char-papico:target) .card-filled,
+body:has(#char-happy1:target) .card-filled,
+body:has(#char-happy2:target) .card-filled { opacity: 0; }
+
+body:has(#about:target) .card-empty,
+body:has(#list:target) .card-empty,
+body:has(#banner:target) .card-empty,
+body:has(#char-winter:target) .card-empty,
+body:has(#char-hydro:target) .card-empty,
+body:has(#char-eunha:target) .card-empty,
+body:has(#char-yeoneun:target) .card-empty,
+body:has(#char-papico:target) .card-empty,
+body:has(#char-happy1:target) .card-empty,
+body:has(#char-happy2:target) .card-empty { opacity: 1; }
+
+/* ─── Content 패널 ─── */
 .card-content {
   position: absolute;
   top: 26%; left: 36%; right: 36%; bottom: 32%;
@@ -275,10 +330,17 @@ body:has(#menu-open:checked) .menu-panel {
 }
 .panel p { margin: 0 0 8px 0; }
 .panel p:last-child { margin-bottom: 0; }
-body:has(#sel-about:checked) .panel-about,
-body:has(#sel-list:checked) .panel-list,
-body:has(#sel-prompt:checked) .panel-prompt,
-body:has(#sel-banner:checked) .panel-banner {
+
+body:has(#about:target) .panel-about,
+body:has(#list:target) .panel-list,
+body:has(#banner:target) .panel-banner,
+body:has(#char-winter:target) .panel-prompt,
+body:has(#char-hydro:target) .panel-prompt,
+body:has(#char-eunha:target) .panel-prompt,
+body:has(#char-yeoneun:target) .panel-prompt,
+body:has(#char-papico:target) .panel-prompt,
+body:has(#char-happy1:target) .panel-prompt,
+body:has(#char-happy2:target) .panel-prompt {
   display: block;
   animation: content-in 0.3s ease-out;
 }
@@ -301,9 +363,6 @@ body:has(#sel-banner:checked) .panel-banner {
   color: #0a0a0a;
   font-weight: 400;
   cursor: pointer;
-  background: transparent;
-  border: none;
-  padding: 0;
   letter-spacing: -0.005em;
   display: inline-block;
 }
@@ -312,22 +371,22 @@ body:has(#sel-banner:checked) .panel-banner {
 .pr-content { display: none; }
 .pr-content p { margin: 0 0 8px 0; }
 
-/* 캐릭터 라디오 → 글자 볼드 + 프롬프트 content 보임 */
-#char-winter:checked  ~ .page .co-winter,
-#char-hydro:checked   ~ .page .co-hydro,
-#char-eunha:checked   ~ .page .co-eunha,
-body:has(#char-yeoneun:checked) .co-yeoneun,
-#char-papico:checked  ~ .page .co-papico,
-#char-happy1:checked  ~ .page .co-happy1,
-#char-happy2:checked  ~ .page .co-happy2 { font-weight: 700; }
+/* 캐릭터 선택 → 볼드 + 해당 content 표시 */
+body:has(#char-winter:target) .co-winter,
+body:has(#char-hydro:target) .co-hydro,
+body:has(#char-eunha:target) .co-eunha,
+body:has(#char-yeoneun:target) .co-yeoneun,
+body:has(#char-papico:target) .co-papico,
+body:has(#char-happy1:target) .co-happy1,
+body:has(#char-happy2:target) .co-happy2 { font-weight: 700; }
 
-#char-winter:checked  ~ .page .pr-winter,
-#char-hydro:checked   ~ .page .pr-hydro,
-#char-eunha:checked   ~ .page .pr-eunha,
-body:has(#char-yeoneun:checked) .pr-yeoneun,
-#char-papico:checked  ~ .page .pr-papico,
-#char-happy1:checked  ~ .page .pr-happy1,
-#char-happy2:checked  ~ .page .pr-happy2 {
+body:has(#char-winter:target) .pr-winter,
+body:has(#char-hydro:target) .pr-hydro,
+body:has(#char-eunha:target) .pr-eunha,
+body:has(#char-yeoneun:target) .pr-yeoneun,
+body:has(#char-papico:target) .pr-papico,
+body:has(#char-happy1:target) .pr-happy1,
+body:has(#char-happy2:target) .pr-happy2 {
   display: block;
   animation: content-in 0.28s ease-out;
 }
@@ -350,36 +409,27 @@ body:has(#char-yeoneun:checked) .pr-yeoneun,
 </head>
 <body>
 
-<!-- ─── 숨겨진 상태 저장 input (CSS 토글용) ─── -->
-<input type="checkbox" id="heart-on" class="toggle">
-<input type="checkbox" id="star-on" class="toggle">
-<input type="checkbox" id="modal-open" class="toggle">
-<input type="checkbox" id="menu-open" class="toggle">
-<!-- 메뉴 선택 라디오 (기본: PICK) -->
-<input type="radio" name="menu-sel" id="sel-pick" class="toggle" checked>
-<input type="radio" name="menu-sel" id="sel-about" class="toggle">
-<input type="radio" name="menu-sel" id="sel-list" class="toggle">
-<input type="radio" name="menu-sel" id="sel-prompt" class="toggle">
-<input type="radio" name="menu-sel" id="sel-banner" class="toggle">
-<!-- 캐릭터 선택 라디오 (기본: winter) -->
-<input type="radio" name="char-sel" id="char-winter" class="toggle" checked>
-<input type="radio" name="char-sel" id="char-hydro" class="toggle">
-<input type="radio" name="char-sel" id="char-eunha" class="toggle">
-<input type="radio" name="char-sel" id="char-yeoneun" class="toggle">
-<input type="radio" name="char-sel" id="char-papico" class="toggle">
-<input type="radio" name="char-sel" id="char-happy1" class="toggle">
-<input type="radio" name="char-sel" id="char-happy2" class="toggle">
+<!-- 해시 marker (상단 absolute, 스크롤 안 함) -->
+<span id="pick" class="hash-marker"></span>
+<span id="about" class="hash-marker"></span>
+<span id="list" class="hash-marker"></span>
+<span id="banner" class="hash-marker"></span>
+<span id="char-winter" class="hash-marker"></span>
+<span id="char-hydro" class="hash-marker"></span>
+<span id="char-eunha" class="hash-marker"></span>
+<span id="char-yeoneun" class="hash-marker"></span>
+<span id="char-papico" class="hash-marker"></span>
+<span id="char-happy1" class="hash-marker"></span>
+<span id="char-happy2" class="hash-marker"></span>
 
-<div class="page">
-
-<!-- 좌상단 (3 세트 회전) -->
+<!-- 좌상단 -->
 <div class="top-left">
   <span><sup>1</sup>Boutique</span>
   <span><sup>2</sup>Critic</span>
   <span><sup>3</sup>DIE 4 YOU</span>
 </div>
 
-<!-- 중앙상단 (3 세트 회전) -->
+<!-- 중앙 상단 -->
 <div class="top-center">
   <span>a small retail shop or business
 that sells fashionable clothes,
@@ -397,19 +447,21 @@ When everything comes crashing down</span>
 
 <div class="top-right">Reserved.Sanctuary.com</div>
 
-<!-- 중앙 Savior 아이콘 → modal-open 토글 -->
-<label class="savior-icon" for="modal-open" aria-label="Boutique 열기">
-  <img id="img-savior" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/savior-icon.png" alt="Savior">
-</label>
+<!-- Savior 아이콘 → #pick 로 이동 (모달 open) -->
+<a href="#pick" class="savior-icon" aria-label="Boutique 열기">
+  <img src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/savior-icon.png" alt="Savior">
+</a>
 
-<!-- 좌하단 하트 -->
-<label class="corner-btn left" for="heart-on" aria-label="좋아요">
-  <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-  </svg>
-</label>
+<!-- 좌하단 하트 (details 로 토글) -->
+<details class="heart">
+  <summary class="corner-btn left" aria-label="좋아요">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+  </summary>
+</details>
 
-<!-- 우하단 공유 (기능 없음, 모양만) -->
+<!-- 우하단 공유 (장식만, 토글 없음) -->
 <div class="corner-btn right" aria-label="공유">
   <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="18" cy="5" r="3"/>
@@ -421,23 +473,38 @@ When everything comes crashing down</span>
 </div>
 
 <!-- Modal -->
-<div class="modal" role="dialog" aria-modal="true">
+<div class="modal">
   <div class="modal-wrap">
-    <img class="modal-img card-filled" id="img-card-filled" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/boutique-card.png" alt="Boutique">
-    <img class="modal-img card-empty" id="img-card-empty" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/card-empty.png" alt="Card empty">
+    <img class="modal-img card-filled" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/boutique-card.png" alt="Boutique">
+    <img class="modal-img card-empty" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/card-empty.png" alt="Card empty">
 
-    <!-- - 버튼: modal-open 체크박스 off -->
-    <label class="hit-btn hit-minus" for="modal-open" aria-label="닫기"></label>
-    <!-- □ 버튼: menu-open 체크박스 토글 -->
-    <label class="hit-btn hit-square" for="menu-open" aria-label="메뉴"></label>
-    <!-- ★ 버튼: star-on 체크박스 토글 -->
-    <label class="hit-btn hit-star" for="star-on" aria-label="즐겨찾기"></label>
+    <!-- - 버튼 → 해시 clear -->
+    <a class="hit-btn hit-minus" href="#" aria-label="닫기"></a>
 
+    <!-- 메뉴 토글 (details) — □ 버튼 -->
+    <details class="menu-dropdown">
+      <summary aria-label="메뉴"></summary>
+      <div class="menu-panel">
+        <a class="menu-item mi-pick"   href="#pick">[Designer's PICK]</a>
+        <a class="menu-item mi-about"  href="#about">About</a>
+        <a class="menu-item mi-list"   href="#list">List</a>
+        <a class="menu-item mi-prompt" href="#char-winter">Prompt</a>
+        <a class="menu-item" href="https://example.com/luvlog-wind">Luvlog.wind</a>
+        <a class="menu-item" href="https://example.com/luvlog-savior">Luvlog.savior</a>
+        <a class="menu-item" href="https://example.com/luvinfo">Luvinfo.ing...</a>
+        <a class="menu-item mi-banner" href="#banner">Banner</a>
+      </div>
+    </details>
+
+    <!-- 별 (details 로 토글) -->
+    <details class="star hit-star-wrap">
+      <summary aria-label="즐겨찾기"></summary>
+    </details>
     <div class="star-overlay" aria-hidden="true">
-      <img id="img-star" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/star-filled.png" alt="Star">
+      <img src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/star-filled.png" alt="Star">
     </div>
 
-    <!-- 중앙 content (About / List / Prompt / Banner) -->
+    <!-- 중앙 content -->
     <div class="card-content">
       <!-- About -->
       <div class="panel panel-about">
@@ -453,17 +520,17 @@ When everything comes crashing down</span>
       <div class="panel panel-prompt">
         <div class="char-select">
           <div class="char-row">
-            <label class="char-opt co-winter" for="char-winter">winter</label>
-            <label class="char-opt co-hydro" for="char-hydro">hydro</label>
+            <a class="char-opt co-winter" href="#char-winter">winter</a>
+            <a class="char-opt co-hydro"  href="#char-hydro">hydro</a>
           </div>
           <div class="char-row">
-            <label class="char-opt co-eunha" for="char-eunha">eunha</label>
-            <label class="char-opt co-yeoneun" for="char-yeoneun">yeoneun</label>
+            <a class="char-opt co-eunha"   href="#char-eunha">eunha</a>
+            <a class="char-opt co-yeoneun" href="#char-yeoneun">yeoneun</a>
           </div>
           <div class="char-row">
-            <label class="char-opt co-papico" for="char-papico">papico</label>
-            <label class="char-opt co-happy1" for="char-happy1">happy<sup>1</sup></label>
-            <label class="char-opt co-happy2" for="char-happy2">happy<sup>2</sup></label>
+            <a class="char-opt co-papico" href="#char-papico">papico</a>
+            <a class="char-opt co-happy1" href="#char-happy1">happy<sup>1</sup></a>
+            <a class="char-opt co-happy2" href="#char-happy2">happy<sup>2</sup></a>
           </div>
         </div>
         <div class="pr-content pr-winter">
@@ -480,22 +547,8 @@ When everything comes crashing down</span>
       <!-- Banner (빈 공간) -->
       <div class="panel panel-banner"></div>
     </div>
-
-    <!-- 메뉴 패널 -->
-    <div class="menu-panel" role="menu">
-      <label class="menu-item mi-pick"   for="sel-pick"  role="menuitem">[Designer's PICK]</label>
-      <label class="menu-item mi-about"  for="sel-about" role="menuitem">About</label>
-      <label class="menu-item mi-list"   for="sel-list"  role="menuitem">List</label>
-      <label class="menu-item mi-prompt" for="sel-prompt" role="menuitem">Prompt</label>
-      <a class="menu-item" href="https://example.com/luvlog-wind" role="menuitem">Luvlog.wind</a>
-      <a class="menu-item" href="https://example.com/luvlog-savior" role="menuitem">Luvlog.savior</a>
-      <a class="menu-item" href="https://example.com/luvinfo" role="menuitem">Luvinfo.ing...</a>
-      <label class="menu-item mi-banner" for="sel-banner" role="menuitem">Banner</label>
-    </div>
   </div>
 </div>
-
-</div><!-- /page -->
 
 </body>
 </html>
