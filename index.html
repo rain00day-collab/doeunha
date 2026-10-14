@@ -23,15 +23,18 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 body { min-height: 100dvh; position: relative; overflow-x: hidden; }
-body.modal-open { overflow: hidden; }
-button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; padding: 0; }
+a { color: inherit; text-decoration: none; }
 
-/* ─── 상단 (큰 화면에서도 작게 유지) ─── */
+/* 숨겨진 체크박스/라디오 (상태 저장용) */
+.toggle { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
+
+/* ─── 상단 ─── */
 .top-left {
   position: absolute;
   top: 2.6%; left: 3.5%;
   font-size: clamp(8px, 0.55vw, 9px);
   line-height: 1.3; z-index: 2;
+  min-height: 1.2em; min-width: 50px;
 }
 .top-left sup {
   font-size: 0.82em;
@@ -47,6 +50,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   text-align: left;
   white-space: pre-line;
   z-index: 2;
+  min-height: 5em; min-width: 180px;
 }
 .top-right {
   position: absolute;
@@ -64,13 +68,27 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   50.01%, 100% { opacity: 0; }
 }
 
-/* 상단 글자 전환 fade */
-.top-left, .top-center {
-  transition: opacity 0.4s ease;
+/* 상단 글자 세트 회전 — 각 span 겹쳐서 opacity 순환 */
+.top-left span, .top-center span {
+  position: absolute; inset: 0;
+  opacity: 0;
+  animation: rot12 12s infinite;
 }
-.top-left.fading, .top-center.fading { opacity: 0; }
+.top-center span {
+  white-space: pre-line;
+}
+.top-left span:nth-child(1), .top-center span:nth-child(1) { animation-delay: 0s; }
+.top-left span:nth-child(2), .top-center span:nth-child(2) { animation-delay: 4s; }
+.top-left span:nth-child(3), .top-center span:nth-child(3) { animation-delay: 8s; }
+@keyframes rot12 {
+  0%     { opacity: 0; }
+  3%     { opacity: 1; }
+  30%    { opacity: 1; }
+  33.33% { opacity: 0; }
+  100%   { opacity: 0; }
+}
 
-/* ─── 중앙 Savior 아이콘 (살짝 더 크게) ─── */
+/* ─── 중앙 Savior 아이콘 ─── */
 .savior-icon {
   position: absolute;
   top: 50%; left: 50%;
@@ -78,36 +96,31 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   user-select: none;
   cursor: pointer;
   z-index: 3;
-  transition: transform 0.15s ease;
+  display: block;
 }
-.savior-icon:hover { transform: translate(-50%, -50%) scale(1.04); }
-.savior-icon:active { transform: translate(-50%, -50%) scale(0.97); }
 .savior-icon img {
   width: clamp(56px, 5.2vw, 70px);
   height: auto;
   display: block;
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.08));
-  animation: savior-float 3.6s ease-in-out infinite,
-             savior-wiggle 4.2s ease-in-out infinite;
+  animation: savior-float 3.6s ease-in-out infinite;
   transform-origin: center;
 }
 @keyframes savior-float {
   0%, 100% { transform: translateY(-2px) rotate(-1deg); }
   50%      { transform: translateY(2px)  rotate(1deg); }
 }
-@keyframes savior-wiggle {
-  /* dummy — 통합 */
-  0%, 100% { }
-}
 
-/* ─── 하단 아이콘 (큰 화면에서도 작게 유지) ─── */
+/* ─── 하단 아이콘 (하트/공유, label 로 체크박스 토글) ─── */
 .corner-btn {
   position: absolute;
   bottom: 4%;
   color: var(--accent);
-  z-index: 150;   /* 모달 위에서도 눌리게 */
+  z-index: 150;
   padding: 6px;
   transition: transform 0.15s ease;
+  cursor: pointer;
+  display: block;
 }
 .corner-btn.left { left: 3.5%; }
 .corner-btn.right { right: 3.5%; }
@@ -118,9 +131,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 }
 .corner-btn:hover { transform: scale(1.06); }
 .corner-btn:active { transform: scale(0.92); }
-#heart-btn.on svg { fill: var(--accent); }
+/* 하트 채워짐 */
+#heart-on:checked ~ .page .corner-btn.left svg { fill: var(--accent); }
 
-/* ─── Modal (Boutique 카드) ─── */
+/* ─── Modal ─── */
 .modal {
   position: fixed; inset: 0;
   background: rgba(0, 0, 0, 0);
@@ -132,25 +146,40 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   visibility: hidden;
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
 }
-.modal.open { opacity: 1; visibility: visible; }
+#modal-open:checked ~ .page .modal { opacity: 1; visibility: visible; }
+
 .modal-wrap {
   position: relative;
   width: 100%;
   max-width: clamp(320px, 38vw, 540px);
-  aspect-ratio: 1 / 1;    /* 확대축소 시 overlay 어긋남 방지 */
+  aspect-ratio: 1 / 1;
   transform: scale(0.86) translateY(16px);
   opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
   transform-origin: center 55%;
 }
-.modal.open .modal-wrap { transform: scale(1) translateY(0); opacity: 1; }
+#modal-open:checked ~ .page .modal-wrap { transform: scale(1) translateY(0); opacity: 1; }
+
 .modal-img {
   width: 100%; height: auto; display: block;
   filter: drop-shadow(0 20px 50px rgba(0,0,0,0.12));
+  transition: opacity 0.2s ease;
 }
+.card-empty { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
 
-/* 투명 클릭 영역 — 실측치 반영 */
+/* 메뉴 선택에 따라 filled/empty 토글 */
+#sel-pick:checked ~ .page .card-empty { opacity: 0; }
+#sel-pick:checked ~ .page .card-filled { opacity: 1; }
+#sel-about:checked ~ .page .card-empty,
+#sel-list:checked ~ .page .card-empty,
+#sel-prompt:checked ~ .page .card-empty,
+#sel-banner:checked ~ .page .card-empty { opacity: 1; }
+#sel-about:checked ~ .page .card-filled,
+#sel-list:checked ~ .page .card-filled,
+#sel-prompt:checked ~ .page .card-filled,
+#sel-banner:checked ~ .page .card-filled { opacity: 0; }
+
+/* 투명 클릭 영역 */
 .hit-btn {
   position: absolute;
   background: transparent;
@@ -159,15 +188,15 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   padding: 0;
   border-radius: 6px;
   transition: background 0.15s ease;
+  display: block;
 }
 .hit-btn:hover { background: rgba(0,0,0,0.06); }
 .hit-btn:active { background: rgba(0,0,0,0.12); }
-/* 아이콘 호버 영역 */
 .hit-minus { top: 15.7%; left: 58.65%; width: 4%; height: 3.4%; }
 .hit-square { top: 15.7%; left: 62.65%; width: 4%; height: 3.4%; }
-.hit-star  { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; background: transparent !important; }
+.hit-star { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; background: transparent !important; }
 
-/* 별 PNG overlay — 미세 축소 & 왼쪽으로 */
+/* 별 PNG overlay */
 .star-overlay {
   position: absolute;
   top: 16.3%; left: 67.35%;
@@ -177,14 +206,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   opacity: 0;
   transition: opacity 0.18s ease;
 }
-.star-overlay.on { opacity: 1; }
-.star-overlay img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  display: block;
-}
+#star-on:checked ~ .page .star-overlay { opacity: 1; }
+.star-overlay img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* ─── 메뉴 패널 (가로 ↑, 세로/글자 ↓, 둥글기 더 작게) ─── */
+/* 메뉴 패널 */
 .menu-panel {
   position: absolute;
   top: 22.5%;
@@ -193,20 +218,16 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   background: #FFFFFF;
   border-radius: 1.5px;
   padding: 5px 0 18px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.1),
-              0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.05);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px) scale(0.98);
   transform-origin: top left;
-  transition: opacity 0.22s ease,
-              transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-              visibility 0.22s;
+  transition: opacity 0.22s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.22s;
   z-index: 15;
 }
-.menu-panel.open {
-  opacity: 1;
-  visibility: visible;
+#menu-open:checked ~ .page .menu-panel {
+  opacity: 1; visibility: visible;
   transform: translateY(0) scale(1);
 }
 .menu-item {
@@ -225,19 +246,17 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   transition: background 0.15s ease;
   line-height: 1.4;
 }
-.menu-item.active { background: #D8E0F2; }
-.menu-item:hover:not(.active) { background: #F3F4F7; }
+.menu-item:hover { background: #F3F4F7; }
+/* 각 메뉴 선택 하이라이트 */
+#sel-pick:checked    ~ .page .menu-panel .mi-pick,
+#sel-about:checked   ~ .page .menu-panel .mi-about,
+#sel-list:checked    ~ .page .menu-panel .mi-list,
+#sel-prompt:checked  ~ .page .menu-panel .mi-prompt,
+#sel-banner:checked  ~ .page .menu-panel .mi-banner { background: #D8E0F2; }
 
-/* 카드 교체: filled / empty 두 이미지 겹침 */
-.modal-img { transition: opacity 0.2s ease; }
-.card-empty { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-.card-empty.show { opacity: 1; }
-.card-filled.hide { opacity: 0; }
-
-/* ─── 카드 중앙 #f2f2f2 영역 content ─── */
+/* ─── 카드 중앙 content ─── */
 .card-content {
   position: absolute;
-  /* 상하 여백 동일 (gray 영역 22-72% 기준으로 상·하 4%씩) */
   top: 26%; left: 36%; right: 36%; bottom: 32%;
   z-index: 5;
   overflow-y: auto;
@@ -254,7 +273,12 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   letter-spacing: -0.005em;
   word-break: keep-all;
 }
-.panel.active {
+.panel p { margin: 0 0 8px 0; }
+.panel p:last-child { margin-bottom: 0; }
+#sel-about:checked ~ .page .panel-about,
+#sel-list:checked ~ .page .panel-list,
+#sel-prompt:checked ~ .page .panel-prompt,
+#sel-banner:checked ~ .page .panel-banner {
   display: block;
   animation: content-in 0.3s ease-out;
 }
@@ -262,8 +286,6 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   from { opacity: 0; transform: translateY(2px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.panel p { margin: 0 0 8px 0; }
-.panel p:last-child { margin-bottom: 0; }
 
 /* Prompt 전용 */
 .panel-prompt .char-select {
@@ -272,11 +294,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   gap: 6px;
   margin-bottom: 14px;
 }
-.panel-prompt .char-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.panel-prompt .char-row { display: flex; gap: 10px; flex-wrap: wrap; }
 .panel-prompt .char-opt {
   font-family: inherit;
   font-size: clamp(6.5px, 0.55vw, 8px);
@@ -287,18 +305,34 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   border: none;
   padding: 0;
   letter-spacing: -0.005em;
+  display: inline-block;
 }
 .panel-prompt .char-opt:hover { color: #3a9af3; }
-.panel-prompt .char-opt.active { font-weight: 700; }
 .panel-prompt .char-opt sup { font-size: 0.65em; margin-left: 1px; vertical-align: super; }
 .pr-content { display: none; }
-.pr-content.active {
+.pr-content p { margin: 0 0 8px 0; }
+
+/* 캐릭터 라디오 → 글자 볼드 + 프롬프트 content 보임 */
+#char-winter:checked  ~ .page .co-winter,
+#char-hydro:checked   ~ .page .co-hydro,
+#char-eunha:checked   ~ .page .co-eunha,
+#char-yeoneun:checked ~ .page .co-yeoneun,
+#char-papico:checked  ~ .page .co-papico,
+#char-happy1:checked  ~ .page .co-happy1,
+#char-happy2:checked  ~ .page .co-happy2 { font-weight: 700; }
+
+#char-winter:checked  ~ .page .pr-winter,
+#char-hydro:checked   ~ .page .pr-hydro,
+#char-eunha:checked   ~ .page .pr-eunha,
+#char-yeoneun:checked ~ .page .pr-yeoneun,
+#char-papico:checked  ~ .page .pr-papico,
+#char-happy1:checked  ~ .page .pr-happy1,
+#char-happy2:checked  ~ .page .pr-happy2 {
   display: block;
   animation: content-in 0.28s ease-out;
 }
-.pr-content p { margin: 0 0 8px 0; }
 
-/* 모바일: 모달 더 크게 */
+/* 모바일 */
 @media (max-width: 600px) {
   .top-left, .top-center, .top-right { font-size: 9px; }
   .savior-icon img { width: 68px; }
@@ -316,26 +350,67 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 </head>
 <body>
 
-<div class="top-left" id="top-left"><sup>1</sup>Boutique</div>
+<!-- ─── 숨겨진 상태 저장 input (CSS 토글용) ─── -->
+<input type="checkbox" id="heart-on" class="toggle">
+<input type="checkbox" id="star-on" class="toggle">
+<input type="checkbox" id="modal-open" class="toggle">
+<input type="checkbox" id="menu-open" class="toggle">
+<!-- 메뉴 선택 라디오 (기본: PICK) -->
+<input type="radio" name="menu-sel" id="sel-pick" class="toggle" checked>
+<input type="radio" name="menu-sel" id="sel-about" class="toggle">
+<input type="radio" name="menu-sel" id="sel-list" class="toggle">
+<input type="radio" name="menu-sel" id="sel-prompt" class="toggle">
+<input type="radio" name="menu-sel" id="sel-banner" class="toggle">
+<!-- 캐릭터 선택 라디오 (기본: winter) -->
+<input type="radio" name="char-sel" id="char-winter" class="toggle" checked>
+<input type="radio" name="char-sel" id="char-hydro" class="toggle">
+<input type="radio" name="char-sel" id="char-eunha" class="toggle">
+<input type="radio" name="char-sel" id="char-yeoneun" class="toggle">
+<input type="radio" name="char-sel" id="char-papico" class="toggle">
+<input type="radio" name="char-sel" id="char-happy1" class="toggle">
+<input type="radio" name="char-sel" id="char-happy2" class="toggle">
 
-<div class="top-center" id="top-center">a small retail shop or business
+<div class="page">
+
+<!-- 좌상단 (3 세트 회전) -->
+<div class="top-left">
+  <span><sup>1</sup>Boutique</span>
+  <span><sup>2</sup>Critic</span>
+  <span><sup>3</sup>DIE 4 YOU</span>
+</div>
+
+<!-- 중앙상단 (3 세트 회전) -->
+<div class="top-center">
+  <span>a small retail shop or business
 that sells fashionable clothes,
 shoes, jewelry, gifts, or specialized
-luxury item</div>
+luxury item</span>
+  <span>fashion design process
+critic &amp; technical
+think you know fasion?
+workspace</span>
+  <span>I don't wanna go
+'Til everything comes crashing down
+You're the one I want
+When everything comes crashing down</span>
+</div>
 
 <div class="top-right">Reserved.Sanctuary.com</div>
 
-<div class="savior-icon" id="savior-icon" role="button" tabindex="0" aria-label="Boutique 열기">
+<!-- 중앙 Savior 아이콘 → modal-open 토글 -->
+<label class="savior-icon" for="modal-open" aria-label="Boutique 열기">
   <img id="img-savior" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/savior-icon.png" alt="Savior">
-</div>
+</label>
 
-<button class="corner-btn left" id="heart-btn" aria-label="좋아요">
+<!-- 좌하단 하트 -->
+<label class="corner-btn left" for="heart-on" aria-label="좋아요">
   <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
   </svg>
-</button>
+</label>
 
-<button class="corner-btn right" id="share-btn" aria-label="공유">
+<!-- 우하단 공유 (기능 없음, 모양만) -->
+<div class="corner-btn right" aria-label="공유">
   <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="18" cy="5" r="3"/>
     <circle cx="6" cy="12" r="3"/>
@@ -343,235 +418,84 @@ luxury item</div>
     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
   </svg>
-</button>
+</div>
 
-<div class="modal" id="modal" role="dialog" aria-modal="true">
+<!-- Modal -->
+<div class="modal" role="dialog" aria-modal="true">
   <div class="modal-wrap">
     <img class="modal-img card-filled" id="img-card-filled" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/boutique-card.png" alt="Boutique">
     <img class="modal-img card-empty" id="img-card-empty" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/card-empty.png" alt="Card empty">
-    <button class="hit-btn hit-minus" id="btn-minus" aria-label="닫기"></button>
-    <button class="hit-btn hit-square" id="btn-square" aria-label="메뉴"></button>
-    <button class="hit-btn hit-star" id="btn-star" aria-label="즐겨찾기"></button>
-    <div class="star-overlay" id="star-overlay" aria-hidden="true">
+
+    <!-- - 버튼: modal-open 체크박스 off -->
+    <label class="hit-btn hit-minus" for="modal-open" aria-label="닫기"></label>
+    <!-- □ 버튼: menu-open 체크박스 토글 -->
+    <label class="hit-btn hit-square" for="menu-open" aria-label="메뉴"></label>
+    <!-- ★ 버튼: star-on 체크박스 토글 -->
+    <label class="hit-btn hit-star" for="star-on" aria-label="즐겨찾기"></label>
+
+    <div class="star-overlay" aria-hidden="true">
       <img id="img-star" src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/star-filled.png" alt="Star">
     </div>
 
-    <!-- ─── 카드 중앙 #f2f2f2 content (About / List / Prompt / Banner) ─── -->
-    <div class="card-content" id="card-content">
-
-      <!-- ============ About (자유 작성) ============ -->
-      <!--
-        여기 안에 자유롭게 글을 적으세요.
-        - 굵게:        <b>글자</b>
-        - 글자 크기:    <span style="font-size:14px">글자</span>
-        - 글자 색:     <span style="color:#1E3FFF">글자</span>
-        - 줄바꿈:      <br>
-        - 새 문단:     <p>...</p>  (한 문단씩 묶어 쓰면 사이 간격 생김)
-      -->
-      <div class="panel panel-about" data-panel="about">
+    <!-- 중앙 content (About / List / Prompt / Banner) -->
+    <div class="card-content">
+      <!-- About -->
+      <div class="panel panel-about">
         <p>여기에 <b>About</b> 글을 적으세요.</p>
         <p>원하는 만큼 문단을 추가할 수 있어요.</p>
       </div>
-
-      <!-- ============ List (자유 작성) ============ -->
-      <div class="panel panel-list" data-panel="list">
+      <!-- List -->
+      <div class="panel panel-list">
         <p>여기에 <b>List</b> 를 적으세요.</p>
         <p>· 항목 1<br>· 항목 2<br>· 항목 3</p>
       </div>
-
-      <!-- ============ Prompt (캐릭터 선택 + 프롬프트) ============ -->
-      <div class="panel panel-prompt" data-panel="prompt">
-        <!-- 7개 캐릭터 선택 (고정, 수정 X) -->
+      <!-- Prompt -->
+      <div class="panel panel-prompt">
         <div class="char-select">
           <div class="char-row">
-            <button class="char-opt active" data-char="winter">winter</button>
-            <button class="char-opt" data-char="hydro">hydro</button>
+            <label class="char-opt co-winter" for="char-winter">winter</label>
+            <label class="char-opt co-hydro" for="char-hydro">hydro</label>
           </div>
           <div class="char-row">
-            <button class="char-opt" data-char="eunha">eunha</button>
-            <button class="char-opt" data-char="yeoneun">yeoneun</button>
+            <label class="char-opt co-eunha" for="char-eunha">eunha</label>
+            <label class="char-opt co-yeoneun" for="char-yeoneun">yeoneun</label>
           </div>
           <div class="char-row">
-            <button class="char-opt" data-char="papico">papico</button>
-            <button class="char-opt" data-char="happy1">happy<sup>1</sup></button>
-            <button class="char-opt" data-char="happy2">happy<sup>2</sup></button>
+            <label class="char-opt co-papico" for="char-papico">papico</label>
+            <label class="char-opt co-happy1" for="char-happy1">happy<sup>1</sup></label>
+            <label class="char-opt co-happy2" for="char-happy2">happy<sup>2</sup></label>
           </div>
         </div>
-
-        <!--
-          각 캐릭터별 프롬프트. <div class="pr-content" data-char="xxx"> 안에
-          두 문단 (또는 원하는 만큼) 넣으면 됨.
-          방문자는 문단을 드래그해서 복사할 수 있어요.
-        -->
-        <div class="pr-content active" data-char="winter">
+        <div class="pr-content pr-winter">
           <p>girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, expressionless, flat chest,</p>
           <p>1.5::white earmuffs around neck, oversized blue gray blazer::, -1.5::ribbed cuffs, sweatshirt::, serafuku, white shirt, sailor black collar, white stripes, light blue ribbon, striped ribbon, white pleated skirt, 1.5::loose blue gray track pants::, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</p>
         </div>
-        <div class="pr-content" data-char="hydro"><p>여기에 hydro 프롬프트 작성.</p></div>
-        <div class="pr-content" data-char="eunha"><p>여기에 eunha 프롬프트 작성.</p></div>
-        <div class="pr-content" data-char="yeoneun"><p>여기에 yeoneun 프롬프트 작성.</p></div>
-        <div class="pr-content" data-char="papico"><p>여기에 papico 프롬프트 작성.</p></div>
-        <div class="pr-content" data-char="happy1"><p>여기에 happy¹ 프롬프트 작성.</p></div>
-        <div class="pr-content" data-char="happy2"><p>여기에 happy² 프롬프트 작성.</p></div>
+        <div class="pr-content pr-hydro"><p>여기에 hydro 프롬프트 작성.</p></div>
+        <div class="pr-content pr-eunha"><p>여기에 eunha 프롬프트 작성.</p></div>
+        <div class="pr-content pr-yeoneun"><p>여기에 yeoneun 프롬프트 작성.</p></div>
+        <div class="pr-content pr-papico"><p>여기에 papico 프롬프트 작성.</p></div>
+        <div class="pr-content pr-happy1"><p>여기에 happy¹ 프롬프트 작성.</p></div>
+        <div class="pr-content pr-happy2"><p>여기에 happy² 프롬프트 작성.</p></div>
       </div>
-
-      <!-- ============ Banner (러버미 영역, 빈 공간) ============ -->
-      <div class="panel panel-banner" data-panel="banner"></div>
-
+      <!-- Banner (빈 공간) -->
+      <div class="panel panel-banner"></div>
     </div>
 
-    <div class="menu-panel" id="menu-panel" role="menu">
-      <button class="menu-item active" data-item="pick" role="menuitem">[Designer's PICK]</button>
-      <button class="menu-item" data-item="about" role="menuitem">About</button>
-      <button class="menu-item" data-item="list" role="menuitem">List</button>
-      <button class="menu-item" data-item="prompt" role="menuitem">Prompt</button>
-      <!--
-        아래 3개는 외부 링크. href에 URL 넣으세요.
-        누르면 새 탭이 아니라 이 탭에서 이동함.
-      -->
-      <a class="menu-item" data-item="luvlog-wind" data-link href="https://example.com/luvlog-wind" role="menuitem">Luvlog.wind</a>
-      <a class="menu-item" data-item="luvlog-savior" data-link href="https://example.com/luvlog-savior" role="menuitem">Luvlog.savior</a>
-      <a class="menu-item" data-item="luvinfo" data-link href="https://example.com/luvinfo" role="menuitem">Luvinfo.ing...</a>
-      <button class="menu-item" data-item="banner" role="menuitem">Banner</button>
+    <!-- 메뉴 패널 -->
+    <div class="menu-panel" role="menu">
+      <label class="menu-item mi-pick"   for="sel-pick"  role="menuitem">[Designer's PICK]</label>
+      <label class="menu-item mi-about"  for="sel-about" role="menuitem">About</label>
+      <label class="menu-item mi-list"   for="sel-list"  role="menuitem">List</label>
+      <label class="menu-item mi-prompt" for="sel-prompt" role="menuitem">Prompt</label>
+      <a class="menu-item" href="https://example.com/luvlog-wind" role="menuitem">Luvlog.wind</a>
+      <a class="menu-item" href="https://example.com/luvlog-savior" role="menuitem">Luvlog.savior</a>
+      <a class="menu-item" href="https://example.com/luvinfo" role="menuitem">Luvinfo.ing...</a>
+      <label class="menu-item mi-banner" for="sel-banner" role="menuitem">Banner</label>
     </div>
   </div>
 </div>
 
-<script>
-/* 이미지 src 는 HTML <img> 안에 직접 들어있음 (러버미가 인식하도록) */
+</div><!-- /page -->
 
-const savior = document.getElementById('savior-icon');
-const modal = document.getElementById('modal');
-const btnMinus = document.getElementById('btn-minus');
-const btnSquare = document.getElementById('btn-square');
-
-const menuPanel = document.getElementById('menu-panel');
-const menuItems = document.querySelectorAll('.menu-item');
-const imgCardFilled = document.getElementById('img-card-filled');
-const imgCardEmpty = document.getElementById('img-card-empty');
-
-function openModal() { modal.classList.add('open'); document.body.classList.add('modal-open'); }
-function closeModal() {
-  modal.classList.remove('open');
-  document.body.classList.remove('modal-open');
-  menuPanel.classList.remove('open');
-}
-
-savior.addEventListener('click', openModal);
-savior.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
-});
-
-btnMinus.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
-
-// □ 버튼: 메뉴 토글
-btnSquare.addEventListener('click', (e) => {
-  e.stopPropagation();
-  menuPanel.classList.toggle('open');
-});
-
-// 메뉴 항목 클릭 → 하이라이트 + 카드 content 교체
-const panels = document.querySelectorAll('.panel');
-function selectItem(name) {
-  menuItems.forEach(x => x.classList.toggle('active', x.dataset.item === name));
-  // 카드 이미지: Designer's PICK = 자켓, 나머지 = 빈 카드
-  if (name === 'pick') {
-    imgCardFilled.classList.remove('hide');
-    imgCardEmpty.classList.remove('show');
-  } else {
-    imgCardFilled.classList.add('hide');
-    imgCardEmpty.classList.add('show');
-  }
-  // 패널 표시: pick/luvlog은 비움, 그 외는 해당 패널
-  panels.forEach(p => p.classList.toggle('active', p.dataset.panel === name));
-}
-menuItems.forEach(item => {
-  item.addEventListener('click', (e) => {
-    // 외부 링크 항목 → 자연스럽게 이동 (preventDefault 안 함)
-    if (item.hasAttribute('data-link')) {
-      // 하이라이트는 바꾸지 않음 — 돌아오면 이전 상태 유지
-      return;
-    }
-    e.preventDefault();
-    e.stopPropagation();
-    selectItem(item.dataset.item);
-  });
-});
-
-// Prompt 패널 내부 캐릭터 선택
-const charOpts = document.querySelectorAll('.char-opt');
-const prContents = document.querySelectorAll('.pr-content');
-charOpts.forEach(opt => {
-  opt.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const c = opt.dataset.char;
-    charOpts.forEach(x => x.classList.toggle('active', x.dataset.char === c));
-    prContents.forEach(x => x.classList.toggle('active', x.dataset.char === c));
-  });
-});
-
-// 메뉴 외부 클릭시 메뉴만 접기 (모달은 유지)
-document.addEventListener('click', (e) => {
-  if (!menuPanel.contains(e.target) && e.target !== btnSquare) {
-    menuPanel.classList.remove('open');
-  }
-});
-
-modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
-const heartBtn = document.getElementById('heart-btn');
-heartBtn.addEventListener('click', () => heartBtn.classList.toggle('on'));
-
-// 별 토글 (채워지는 모션만, 기능 없음)
-const btnStar = document.getElementById('btn-star');
-const starOverlay = document.getElementById('star-overlay');
-btnStar.addEventListener('click', (e) => {
-  e.stopPropagation();
-  starOverlay.classList.toggle('on');
-});
-
-// ─── 상단 글자 자동 전환 (좌상단 + 중앙상단 세트로 함께 바뀜) ───
-// 수정하려면 아래 배열에 세트 추가/변경
-const topSets = [
-  {
-    left: '<sup>1</sup>Boutique',
-    center: `a small retail shop or business
-that sells fashionable clothes,
-shoes, jewelry, gifts, or specialized
-luxury item`
-  },
-  {
-    left: '<sup>2</sup>Critic',
-    center: `fashion design process
-critic & technical
-think you know fasion?
-workspace`
-  },
-  {
-    left: '<sup>3</sup>DIE 4 YOU',
-    center: `I don't wanna go
-'Til everything comes crashing down
-You're the one I want
-When everything comes crashing down`
-  }
-];
-const tlEl = document.getElementById('top-left');
-const tcEl = document.getElementById('top-center');
-let topIdx = 0;
-setInterval(() => {
-  tlEl.classList.add('fading');
-  tcEl.classList.add('fading');
-  setTimeout(() => {
-    topIdx = (topIdx + 1) % topSets.length;
-    tlEl.innerHTML = topSets[topIdx].left;
-    tcEl.textContent = topSets[topIdx].center;
-    tlEl.classList.remove('fading');
-    tcEl.classList.remove('fading');
-  }, 400);
-}, 4000);
-
-// 공유 버튼 — 기능 추후
-</script>
 </body>
 </html>
