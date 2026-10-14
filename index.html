@@ -105,7 +105,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   position: absolute;
   bottom: 4%;
   color: var(--accent);
-  z-index: 4;
+  z-index: 150;   /* 모달 위에서도 눌리게 */
   padding: 6px;
   transition: transform 0.15s ease;
 }
@@ -170,7 +170,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 /* 별 PNG overlay — 미세 축소 & 왼쪽으로 */
 .star-overlay {
   position: absolute;
-  top: 16.4%; left: 67.35%;
+  top: 16.25%; left: 67.35%;
   width: 2.2%; height: 2%;
   pointer-events: none;
   z-index: 3;
