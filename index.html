@@ -138,21 +138,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 /* 아이콘 호버 영역 */
 .hit-minus { top: 15.7%; left: 58.65%; width: 4%; height: 3.4%; }
 .hit-square { top: 15.7%; left: 62.65%; width: 4%; height: 3.4%; }
-.hit-star  { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; }
+.hit-star  { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; background: transparent !important; }
 
-/* 별 채워지는 오버레이 (클릭 시 검정으로 채움) */
-.star-overlay {
-  position: absolute;
-  top: 14.3%; left: 65.5%;
-  width: 7%; height: 5.7%;
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  transform: scale(0.9);
-}
-.star-overlay.on { opacity: 1; transform: scale(1); }
-.star-overlay svg { width: 100%; height: 100%; display: block; fill: #0A0A0A; }
+/* 별 overlay 임시 비활성화 — PNG 받으면 교체 */
+.star-overlay { display: none; }
 
 /* ─── 메뉴 패널 (가로 ↑, 세로/글자 ↓, 둥글기 더 작게) ─── */
 .menu-panel {
@@ -204,8 +193,8 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 /* ─── 카드 중앙 #f2f2f2 영역 content ─── */
 .card-content {
   position: absolute;
-  /* 가로세로 여백 넉넉하게 중앙으로 */
-  top: 27%; left: 36%; right: 36%; bottom: 31%;
+  /* 상하 여백 동일 (gray 영역 22-72% 기준으로 상·하 4%씩) */
+  top: 26%; left: 36%; right: 36%; bottom: 32%;
   z-index: 5;
   overflow-y: auto;
   overflow-x: hidden;
