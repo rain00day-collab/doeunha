@@ -1,0 +1,991 @@
+<style>
+.oc-wrap-outer {
+  position: relative;
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+.oc-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+  aspect-ratio: 3 / 4;
+  max-height: calc(100vh - 40px);
+  background: #efeff0;
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  color: #000;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.oc-wrap *, .oc-wrap *::before, .oc-wrap *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 상단 텍스트 */
+.oc-top-left, .oc-top-center, .oc-top-right {
+  position: absolute;
+  top: 2.6%;
+  font-size: clamp(8px, 0.55vw, 9px);
+  line-height: 1.3;
+  z-index: 2;
+}
+.oc-top-left { left: 3.5%; min-height: 1.2em; }
+.oc-top-left sup { font-size: 0.82em; margin-right: 8px; vertical-align: top; }
+.oc-top-center {
+  left: 50%;
+  line-height: 1.4;
+  text-align: left;
+  white-space: pre-line;
+  min-height: 5em;
+}
+.oc-top-right { right: 3.5%; }
+.oc-top-right .oc-caret {
+  display: inline-block;
+  margin-left: 1px;
+  transition: opacity 0.1s;
+}
+.oc-top-right .oc-caret.is-off { opacity: 0; }
+
+.oc-top-left span, .oc-top-center span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: 50vw;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.oc-top-center span { transform: translateX(-50%); }
+.oc-top-left span.is-visible, .oc-top-center span.is-visible { opacity: 1; }
+
+/* Savior */
+.oc-savior {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  user-select: none;
+}
+.oc-savior img {
+  width: clamp(56px, 6.5vw, 88px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.08));
+  will-change: transform;
+}
+.oc-wrap.is-modal-open .oc-savior { display: none; }
+
+/* 하단 코너 버튼 */
+.oc-corner {
+  position: absolute;
+  bottom: 4%;
+  background: transparent;
+  border: none;
+  color: #3a9af3;
+  z-index: 150;
+  padding: 6px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.oc-heart { left: 3.5%; }
+.oc-share { right: 3.5%; }
+.oc-corner svg {
+  width: clamp(18px, 1.4vw, 22px);
+  height: auto;
+  display: block;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+}
+.oc-corner:hover { transform: scale(1.06); }
+.oc-corner:active { transform: scale(0.92); }
+.oc-heart.is-on svg { fill: #3a9af3; }
+
+/* Modal */
+.oc-modal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
+}
+.oc-wrap.is-modal-open .oc-modal { opacity: 1; visibility: visible; }
+
+.oc-modal-wrap {
+  position: relative;
+  width: 100%;
+  max-width: clamp(380px, 45vw, 640px);
+  aspect-ratio: 1 / 1;
+  transform: scale(0.86) translateY(16px);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  transform-origin: center 55%;
+}
+/* aspect-ratio fallback (예전 브라우저) */
+@supports not (aspect-ratio: 1 / 1) {
+  .oc-modal-wrap::before { content: ''; display: block; padding-top: 100%; }
+}
+.oc-wrap.is-modal-open .oc-modal-wrap {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+.oc-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  filter: drop-shadow(0 20px 50px rgba(0,0,0,0.12));
+}
+/* 상품 레이어 (옷 / 글씨 분리) */
+.oc-product-graphic-layer, .oc-product-text-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+/* 옷 레이어만 About/List/Prompt에서 숨김 (글씨는 유지) */
+.oc-wrap:not([data-page="pick"]) .oc-product-graphic-layer { opacity: 0; }
+.oc-product-graphic, .oc-product-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.oc-product-graphic.is-on, .oc-product-text.is-on { opacity: 1; }
+
+/* 페이지 탭 (ㅡㅡ 2개) */
+.oc-pick-tabs {
+  position: absolute;
+  top: 68.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0;
+  z-index: 15;
+}
+.oc-wrap:not([data-page="pick"]) .oc-pick-tabs { display: none; }
+.oc-pick-tab {
+  width: 14px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+}
+.oc-pick-tab::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 1px;
+  background: #B0B0B5;
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+.oc-pick-tab.is-on::after {
+  width: 12px;
+  height: 1.5px;
+  background: #0A0A0A;
+}
+
+
+/* 투명 버튼 (원래 위치 복구) */
+.oc-hit {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0;
+  transition: background 0.15s ease;
+  z-index: 20;
+}
+.oc-hit:hover { background: rgba(0,0,0,0.06); }
+.oc-hit:active { background: rgba(0,0,0,0.12); }
+.oc-star, .oc-star:hover, .oc-star:active { background: transparent !important; }
+.oc-close { top: 15.7%; left: 58.65%; width: 4%; height: 3.4%; }
+.oc-menu-btn { top: 15.7%; left: 62.65%; width: 4%; height: 3.4%; }
+.oc-star { top: 15.7%; left: 66.65%; width: 5%; height: 3.4%; }
+
+.oc-star-overlay {
+  position: absolute;
+  top: 16.3%; left: 67.35%;
+  width: 2.2%; height: 2%;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.oc-star-overlay.is-on { opacity: 1; }
+.oc-star-overlay img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+/* 메뉴 패널 (원래 위치 복구) */
+.oc-menu-panel {
+  position: absolute;
+  top: calc(15.7% + 3.4%);
+  left: 62.65%;
+  width: clamp(110px, 13.5vw, 148px);
+  background: #FFFFFF;
+  border-radius: 1.5px;
+  padding: 5px 0 18px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.05);
+  margin-top: 10px;
+  margin-left: -10px;
+  z-index: 25;
+  opacity: 0;
+  transform: scale(0.98) translateY(-4px);
+  transform-origin: top left;
+  transition: opacity 0.22s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.oc-wrap.is-menu-open .oc-menu-panel {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+.oc-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 3px 13px;
+  font-family: inherit;
+  font-size: clamp(7.5px, 0.65vw, 9.5px);
+  font-weight: 400;
+  color: #0A0A0A;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  letter-spacing: -0.005em;
+  transition: background 0.15s ease;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.oc-menu-item:hover { background: #F3F4F7; }
+.oc-menu-item.is-active { background: #D8E0F2; }
+
+/* About/List/Prompt 패널 (원래 위치, 회색 안에서 스크롤, 양방향 페이드) */
+.oc-content {
+  position: absolute;
+  top: 26%; left: 36%; right: 36%; bottom: 32%;
+  z-index: 5;
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.oc-content::-webkit-scrollbar { width: 0; }
+.oc-wrap:not([data-page="pick"]) .oc-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.oc-panel {
+  display: none;
+  font-size: clamp(6.5px, 0.55vw, 8px);
+  line-height: 1.5;
+  color: #0a0a0a;
+  letter-spacing: -0.005em;
+  word-break: keep-all;
+}
+.oc-panel.is-shown {
+  display: block;
+  animation: oc-fade-in 0.3s ease-out;
+}
+@keyframes oc-fade-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.oc-panel p { margin: 0 0 8px 0; }
+.oc-panel p:last-child { margin-bottom: 0; }
+
+/* Prompt */
+.oc-char-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.oc-char-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.oc-char {
+  font-family: inherit;
+  font-size: clamp(6.5px, 0.55vw, 8px);
+  color: #0a0a0a;
+  font-weight: 400;
+  cursor: pointer;
+  letter-spacing: -0.005em;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.oc-char:hover { color: #3a9af3; }
+.oc-char.is-selected { font-weight: 700; }
+.oc-char sup { font-size: 0.65em; margin-left: 1px; vertical-align: super; }
+.oc-pr { display: none; }
+.oc-pr.is-shown {
+  display: block;
+  animation: oc-fade-in 0.28s ease-out;
+}
+.oc-pr p { margin: 0 0 8px 0; }
+
+/* 배너 오버레이 — 배너 보이던 버전과 같은 자리(.oc-wrap 밖, .oc-wrap-outer 안).
+   하트/공유 아래정렬은 JS(placeSheet)가 계산해서 맞춤 */
+.oc-banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+.oc-wrap.is-banner-open ~ .oc-banner-overlay {
+  pointer-events: auto;
+}
+/* 시트: 모달과 같은 팝 모션(살짝 작게 → 원래 크기). 다 뜨면 transform: none (자리 조상에 transform 안 남게).
+   표시는 JS가 is-shown / is-visible로 제어. 닫힐 때만 0.12초 잡았다가 모션 → 배너 블록이 카드보다 먼저 빠지게.
+   left/bottom/width는 JS가 덮어씀 (아래 값은 JS 실패 시 대비용) */
+.oc-banner-sheet {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  bottom: 120px;
+  width: min(300px, calc(100% - 120px));
+  aspect-ratio: 1 / 1;
+  flex-direction: column;
+  transform: scale(0.86) translateY(16px);
+  transform-origin: center 55%;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.12s, opacity 0.3s ease 0.12s;
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+.oc-banner-sheet.is-shown { display: flex; }
+.oc-banner-sheet.is-visible {
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+/* 상단 카드 (Banner 라벨 + 슬롯 + 디바이더 + 아바타 + 디바이더 + 앱 아이콘) */
+.oc-banner-card {
+  flex: 1;
+  background: #f8f8f8;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.oc-banner-title {
+  text-align: center;
+  color: #8b8b8b;
+  font-size: 10.5px;
+  letter-spacing: 0;
+  padding: 7px 0 10px;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+/* 배너 칸 틀 — 카드 안 남는 세로공간 차지 (레이아웃 고정용, 스크롤 없음) */
+.oc-banner-frame {
+  flex: 1 1 0;
+  min-height: 0;
+  margin: 0 14px 10px;
+}
+/* 스크롤 상자 — 가이드 예시 그대로: 자리가 바로 아래 자식, 상자에 max-height + overflow-y:auto.
+   max-height 픽셀값은 열 때 JS가 틀 높이로 넣음. 자리(data-li-slot)엔 높이 안 줌 */
+.oc-banner-scroll {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.oc-banner-scroll::-webkit-scrollbar { display: none; }
+/* 자리 숨김 = 상자째 display:none (틀이 크기를 잡고 있어서 카드는 안 흔들림) */
+.oc-banner-frame.is-off .oc-banner-scroll { display: none; }
+/* 자리: 높이 0이면 러브인포가 못 알아보는 걸로 보여서 최소 높이 = 배너 칸 높이.
+   (최소값이라 배너가 더 길면 러브인포가 늘리는 건 그대로 됨) */
+.oc-banner-slot { min-height: 100%; }
+.oc-banner-divider {
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 0;
+  flex-shrink: 0;
+}
+/* 사용자 아바타 (회색 그라데이션 동그라미) — 앱 아이콘과 동일 크기 */
+.oc-banner-user {
+  padding: 10px 14px;
+  flex-shrink: 0;
+}
+.oc-banner-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(to top, #9f9f9f, #c0c0c0);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14);
+}
+/* iOS 연락처 사람 아이콘 (머리 + 어깨) */
+.oc-banner-avatar::before {
+  content: '';
+  position: absolute;
+  top: 11px; left: 50%;
+  transform: translateX(-50%);
+  width: 17px; height: 17px;
+  background: #f8f8f8;
+  border-radius: 50%;
+}
+.oc-banner-avatar::after {
+  content: '';
+  position: absolute;
+  top: 30px; left: 50%;
+  transform: translateX(-50%);
+  width: 32px; height: 22px;
+  background: #f8f8f8;
+  border-radius: 50% 50% 0 0 / 85% 85% 0 0;
+}
+/* 앱 아이콘 4개 */
+.oc-banner-apps {
+  display: flex;
+  gap: 10px;
+  padding: 10px 14px 14px;
+  flex-shrink: 0;
+}
+.oc-app {
+  width: 50px;
+  height: 50px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.oc-app-msg, .oc-app-mail, .oc-app-kakao {
+  background: linear-gradient(to top, #5db4f6, #448dec);
+}
+.oc-app-more {
+  background: #ffffff;
+}
+.oc-app svg { display: block; width: 42px; height: 42px; }
+/* Cancel 버튼 */
+.oc-banner-cancel {
+  display: block;
+  width: 100%;
+  background: #f8f8f8;
+  border: none;
+  border-radius: 14px;
+  padding: 13px;
+  color: #3a9af3;
+  font-weight: 400;
+  font-size: 16px;
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  margin-top: 8px;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.oc-banner-cancel:active { background: #ececec; }
+/* 시트 크기에 비례해서 안쪽 전부 같이 축소. --u = 시트너비/300 (JS placeSheet가 넣음).
+   300px 시트 = 위 px 값과 동일 */
+.oc-banner-card { border-radius: calc(14px * var(--u, 1)); }
+.oc-banner-title { font-size: calc(10.5px * var(--u, 1)); padding: calc(7px * var(--u, 1)) 0 calc(10px * var(--u, 1)); }
+.oc-banner-frame { margin: 0 calc(14px * var(--u, 1)) calc(10px * var(--u, 1)); }
+.oc-banner-user { padding: calc(10px * var(--u, 1)) calc(14px * var(--u, 1)); }
+.oc-banner-avatar, .oc-app { width: calc(50px * var(--u, 1)); height: calc(50px * var(--u, 1)); }
+.oc-banner-avatar::before { top: calc(11px * var(--u, 1)); width: calc(17px * var(--u, 1)); height: calc(17px * var(--u, 1)); }
+.oc-banner-avatar::after { top: calc(30px * var(--u, 1)); width: calc(32px * var(--u, 1)); height: calc(22px * var(--u, 1)); }
+.oc-banner-apps { gap: calc(10px * var(--u, 1)); padding: calc(10px * var(--u, 1)) calc(14px * var(--u, 1)) calc(14px * var(--u, 1)); }
+.oc-app { border-radius: calc(11px * var(--u, 1)); }
+.oc-app svg { width: calc(42px * var(--u, 1)); height: calc(42px * var(--u, 1)); }
+.oc-banner-cancel { padding: calc(13px * var(--u, 1)); font-size: calc(16px * var(--u, 1)); margin-top: calc(8px * var(--u, 1)); border-radius: calc(14px * var(--u, 1)); }
+/* 하트/공유: 배너 열려있을 때도 눌리게 z-index 끌어올림 */
+.oc-wrap.is-banner-open .oc-share,
+.oc-wrap.is-banner-open .oc-heart { z-index: 350; }
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .oc-top-left, .oc-top-center, .oc-top-right { font-size: 9px; }
+  .oc-savior img { width: 68px; }
+  .oc-corner svg { width: 22px; }
+  .oc-top-center { max-width: 60%; }
+  .oc-modal { padding: 16px; }
+  .oc-modal-wrap { max-width: 100%; }
+}
+@media (max-width: 420px) {
+  .oc-top-left, .oc-top-center, .oc-top-right { font-size: 8px; }
+  .oc-savior img { width: 62px; }
+  .oc-top-center { max-width: 54%; }
+}
+</style>
+
+<div class="oc-wrap-outer"><div class="oc-wrap" data-page="pick" data-prod="0">
+
+  <div class="oc-top-left">
+    <span class="is-visible"><sup>1</sup>Boutique</span>
+    <span><sup>2</sup>Critic</span>
+    <span><sup>3</sup>DIE 4 YOU</span>
+  </div>
+
+  <div class="oc-top-center">
+    <span class="is-visible">a small retail shop or business
+that sells fashionable clothes,
+shoes, jewelry, gifts, or specialized
+luxury item</span>
+    <span>fashion design process
+critic &amp; technical
+think you know fasion?
+workspace</span>
+    <span>I don't wanna go
+'Til everything comes crashing down
+You're the one I want
+When everything comes crashing down</span>
+  </div>
+
+  <div class="oc-top-right">Reserved.Sanctuary.com</div>
+
+  <button class="oc-savior" type="button" aria-label="Boutique 열기">
+    <img src="https://i.imgur.com/hWrdoUV.png" alt="Savior">
+  </button>
+
+  <button class="oc-corner oc-heart" type="button" aria-label="좋아요">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+  </button>
+
+  <button class="oc-corner oc-share" type="button" aria-label="배너 열기">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+  </button>
+
+  <div class="oc-modal">
+    <div class="oc-modal-wrap">
+      <!-- 빈 카드 프레임 (항상 깔림) -->
+      <img class="oc-card" src="https://i.imgur.com/lb6UyMI.png" alt="">
+
+      <!-- 상품 옷 레이어 (About에서 숨김) -->
+      <div class="oc-product-graphic-layer">
+        <img class="oc-product-graphic is-on" data-prod="0" src="https://i.imgur.com/Uf7hWRx.png" alt="재킷">
+        <img class="oc-product-graphic" data-prod="1" src="https://i.imgur.com/aLUzWwX.png" alt="머플러">
+      </div>
+
+      <!-- 상품 글씨 레이어 (항상 보임) -->
+      <div class="oc-product-text-layer">
+        <img class="oc-product-text is-on" data-prod="0" src="https://i.imgur.com/kkzB4Pu.png" alt="재킷 글씨">
+        <img class="oc-product-text" data-prod="1" src="https://i.imgur.com/wyzk6ni.png" alt="머플러 글씨">
+      </div>
+
+      <button class="oc-hit oc-close" type="button" aria-label="닫기"></button>
+      <button class="oc-hit oc-menu-btn" type="button" aria-label="메뉴"></button>
+      <button class="oc-hit oc-star" type="button" aria-label="즐겨찾기"></button>
+
+      <div class="oc-star-overlay" aria-hidden="true">
+        <img src="https://i.imgur.com/LhtYehf.png" alt="">
+      </div>
+
+      <!-- 페이지 탭 (ㅡㅡ 2개) -->
+      <div class="oc-pick-tabs">
+        <button class="oc-pick-tab is-on" type="button" data-tab="0" aria-label="재킷"></button>
+        <button class="oc-pick-tab" type="button" data-tab="1" aria-label="머플러"></button>
+      </div>
+
+      <!-- About/List/Prompt 텍스트 (원래 위치) -->
+      <div class="oc-content">
+        <div class="oc-panel" data-panel="about">
+          <p><b>잇</b> <span style="color:#727272">로그 Ai이미지 재연결ok</span></p>
+          <p>계정 정말 편히 씁니다. 트청 자주 해요.<br><b>ONLY</b>, 1t1d 가능하신 분만 연결해 주세요. n페어 배려합니다.</p>
+          <p>arch - 윈터<br>bluefairy - 빠삐코<br><span style="color:#727272">둘 다 서브도 수용 어렵습니다. 제 쪽을 정리해 주세요.</span></p>
+        </div>
+        <div class="oc-panel" data-panel="list">
+          <p>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>dear my - 하인츠<br>kokori - 서이현<br>@ - 우재경, 류이든<br>meon_meo - 에단<br>fearless - 메이트, 지젤<br>メン地下 - シノノメ ユウ<br>Love_S2 - 레나토, 세트<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>bluefairy - 직살, 냐냐냥, 건닉<br>ashpole - 헬렐, 베스퍼, 에사오<br>ohnyu - 서유준, 고유빈, 차재현<br>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 마르카, 카니발, 어비스</p>
+        </div>
+        <div class="oc-panel" data-panel="prompt">
+          <div class="oc-char-select">
+            <div class="oc-char-row">
+              <button class="oc-char is-selected" type="button" data-char="winter">winter</button>
+              <button class="oc-char" type="button" data-char="hydro">hydro</button>
+            </div>
+            <div class="oc-char-row">
+              <button class="oc-char" type="button" data-char="eunha">eunha</button>
+              <button class="oc-char" type="button" data-char="yeoneun">yeoneun</button>
+            </div>
+            <div class="oc-char-row">
+              <button class="oc-char" type="button" data-char="papico">papico</button>
+              <button class="oc-char" type="button" data-char="happy1">happy<sup>1</sup></button>
+              <button class="oc-char" type="button" data-char="happy2">happy<sup>2</sup></button>
+            </div>
+          </div>
+          <div class="oc-pr is-shown" data-pr="winter">
+            <p>boy, slender, pale skin, teens, short white hair, long bangs covering the space between eyes, hair vents, delicate strands, half-closed blue eyes, droopy eyes, sleepy gaze,</p>
+            <p><span style="color:#727272">plain flat fabric light grey scarf, 0.4::mouth slightly peeking over the scarf::, white military uniform, silver trim, white trousers tucked into black combat boots, -1.1::short sleeves, gloves::,</span></p>
+          </div>
+          <div class="oc-pr" data-pr="hydro">
+            <p>girl, slender, pale skin, teens, cute, 1.6::light blue hair::, straight medium hair, see-through bangs, long bangs covering the space between eyes, hair vents, white eyes, 1.3::tareme::, droopy eyes, smile, flat chest, -2::hairpin::,</p>
+            <p><span style="color:#727272">oversized black military uniform, ::short sleeves::, silver trim, 1.5::black cape, short cape::, black short gloves, black shorts, white socks, 1.5::white sneakers::, -1::headwear::,</span></p>
+          </div>
+          <div class="oc-pr" data-pr="eunha">
+            <p>boy, young man, pale skin, light yellow eyes, 0.4::tsurime::, 0.8::jitome::, sharp eyes, short hair, 0.4::hair over eyes::, deep blue hair, -1::long hair::, 0.5::voluminous hair, layered hair::, 0.4::cowlick, spiky straight hair::, -0.5::mullet, forehead::, hair vents, lip piercing, expressionless,</p>
+            <p><span style="color:#727272">oversized blue and white racing jacket, 1.3::zipped up::, wide black pants,</span></p>
+          </div>
+          <div class="oc-pr" data-pr="yeoneun">
+            <p>girl, slender, pale skin, teens, cute, dark grey hair, see-through bangs, 0.6::bob hair, mullet::, -0.5::hime cut, blunt bangs::, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, blue eyes, 1.3::tareme::, flat chest, expressionless,</p>
+            <p><span style="color:#727272">1.5::black short sleeved hoodie::, open hoodie, hood up, 0.9::hood pulled over head::, white t-shirt, blue graphic, wide leg denim pants hiding shoes, black converse shoes, -2::hairpin, cat ears::, -0.5::sleeveless::,</span></p>
+          </div>
+          <div class="oc-pr" data-pr="papico">
+            <p>boy, tall, pale skin, black eyes, 1.2::tsurime::, big eyes, short hair, cowlick, 0.5::messy hair::, long bangs, black hair, hair vents, delicate strands, expressionless,</p>
+            <p><span style="color:#727272">black techwear windbreaker jacket with multiple hanging straps and buckles, high collar, zipped up, tactical harness layered over the jacket, baggy puddled black tactical cargo pants with multiple pockets and straps, sleek black cyberpunk mask covering lower face, -1::revolver::,</span></p>
+            <p><span style="color:#727272">shield, white kiteshield, holy knight,</span></p>
+          </div>
+          <div class="oc-pr" data-pr="happy1">
+            <p>girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, expressionless, -1.1::braid, tied hair, twintails::, -1.6::long hair::, 1.2::white eyes::, blue pupils, 1.3::tareme::, flat chest,</p>
+            <p><span style="color:#727272">white earmuffs, white goggles around neck, 2::oversized track jacket::, color block jacket, white and light blue jacket, white leg warmers, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</span></p>
+          </div>
+          <div class="oc-pr" data-pr="happy2">
+            <p>girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, expressionless, flat chest,</p>
+            <p><span style="color:#727272">1.5::white earmuffs around neck, oversized blue gray blazer::, -1.5::ribbed cuffs, sweatshirt::, serafuku, white shirt, sailor black collar, white stripes, light blue ribbon, striped ribbon, white pleated skirt, 1.5::loose blue gray track pants::, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="oc-menu-panel">
+        <button class="oc-menu-item is-active" type="button" data-page="pick">[Designer's PICK]</button>
+        <button class="oc-menu-item" type="button" data-page="about">About</button>
+        <button class="oc-menu-item" type="button" data-page="list">List</button>
+        <button class="oc-menu-item" type="button" data-page="prompt">Prompt</button>
+        <a class="oc-menu-item" href="https://luvlog.me/hangyeoul" target="_blank" rel="noopener">Luvlog.wind</a>
+        <a class="oc-menu-item" href="https://luvlog.me/pico" target="_blank" rel="noopener">Luvlog.savior</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BGM: 하트 토글로 재생/정지, 반복, 적당한 음량 -->
+  <audio class="oc-bgm" loop preload="auto"
+    src="https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/oc-pair-intro-page-me3cjz/assets/bgm.mp3"></audio>
+
+</div>
+
+<!-- 배너 패널 (CSS로 재현, .oc-wrap 밖) -->
+<div class="oc-banner-overlay">
+  <div class="oc-banner-sheet">
+    <div class="oc-banner-card">
+      <div class="oc-banner-title">Banner</div>
+      <div class="oc-banner-frame is-off">
+        <div class="oc-banner-scroll">
+          <div class="oc-banner-slot" data-li-slot="bn"></div>
+        </div>
+      </div>
+      <div class="oc-banner-divider"></div>
+      <div class="oc-banner-user">
+        <div class="oc-banner-avatar"></div>
+      </div>
+      <div class="oc-banner-divider"></div>
+      <div class="oc-banner-apps">
+        <div class="oc-app oc-app-msg" aria-label="메시지">
+          <svg viewBox="0 0 42 42" fill="none"><path d="M21 8C13.3 8 7 13 7 19.3c0 3.4 1.9 6.4 4.9 8.4-.3 1-1.2 3-1.4 3.7-.2.8.3.8.6.6.3-.2 3.6-2.3 5-3.2 1.5.3 3 .5 4.6.5 7.7 0 14-5 14-11.3S28.7 8 21 8z" fill="#ffffff"/></svg>
+        </div>
+        <div class="oc-app oc-app-mail" aria-label="메일">
+          <svg viewBox="0 0 42 42" fill="none"><rect x="8" y="12" width="26" height="18" rx="2.4" fill="#ffffff"/><path d="M8.6 14 L21 23 L33.4 14" stroke="#448dec" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </div>
+        <div class="oc-app oc-app-kakao" aria-label="카카오톡">
+          <svg viewBox="0 0 42 42" fill="none"><path d="M21 8C13.3 8 7 13 7 19.3c0 3.4 1.9 6.4 4.9 8.4-.3 1-1.2 3-1.4 3.7-.2.8.3.8.6.6.3-.2 3.6-2.3 5-3.2 1.5.3 3 .5 4.6.5 7.7 0 14-5 14-11.3S28.7 8 21 8z" fill="#ffffff"/><text x="21" y="21.8" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.5" font-weight="800" fill="#448dec" letter-spacing="-0.3">TALK</text></svg>
+        </div>
+        <div class="oc-app oc-app-more" aria-label="더보기">
+          <svg viewBox="0 0 42 42" fill="#acacac"><circle cx="12" cy="21" r="2.3"/><circle cx="21" cy="21" r="2.3"/><circle cx="30" cy="21" r="2.3"/></svg>
+        </div>
+      </div>
+    </div>
+    <button class="oc-banner-cancel" type="button">Cancel</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+(function() {
+  var wrap = document.querySelector('.oc-wrap');
+  var wrapOuter = document.querySelector('.oc-wrap-outer');
+  if (!wrap) return;
+
+  var modal = wrap.querySelector('.oc-modal');
+  var modalWrap = wrap.querySelector('.oc-modal-wrap');
+  var savior = wrap.querySelector('.oc-savior');
+  var closeBtn = wrap.querySelector('.oc-close');
+  var menuBtn = wrap.querySelector('.oc-menu-btn');
+  var starBtn = wrap.querySelector('.oc-star');
+  var starOverlay = wrap.querySelector('.oc-star-overlay');
+  var heartBtn = wrap.querySelector('.oc-heart');
+  var shareBtn = wrap.querySelector('.oc-share');
+  var bannerOverlay = wrapOuter.querySelector('.oc-banner-overlay');
+  var bannerClose = wrapOuter.querySelector('.oc-banner-cancel');
+
+  var modalOpen = false;
+  var bannerOpen = false;
+  var historyStack = 0;
+
+  function openModal() {
+    if (modalOpen) return;
+    wrap.classList.add('is-modal-open');
+    modalOpen = true;
+    try { history.pushState({oc: 'modal'}, ''); historyStack++; } catch(e) {}
+  }
+  function closeModalDirect() {
+    if (bannerOpen) closeBannerDirect();
+    wrap.classList.remove('is-modal-open', 'is-menu-open');
+    modalOpen = false;
+  }
+  function closeModal() {
+    if (historyStack > 0) history.back();
+    else closeModalDirect();
+  }
+  savior.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+
+  // 배너 이미지는 프레임 밖 홈 본체가 그림.
+  // 열기: 배너 보이던 버전과 같은 조건 — 공유 누르는 순간 자리 공개 (타이머로 나중에 공개하면 안 그려짐)
+  // 닫기: 배너 자리 먼저 숨김, 카드는 0.12초 잡았다가 모션
+  var bannerSheet = bannerOverlay.querySelector('.oc-banner-sheet');
+  var bannerFrame = bannerOverlay.querySelector('.oc-banner-frame');
+  var bannerScroll = bannerOverlay.querySelector('.oc-banner-scroll');
+  var sheetTimer = null;
+  // 시트를 .oc-wrap 기준으로 배치: 가로 가운데, 아래 끝 = 하트/공유 아이콘 아래 끝 (CSS .oc-corner: bottom 4% + padding 6px)
+  function placeSheet() {
+    var o = wrapOuter.getBoundingClientRect();
+    var w = wrap.getBoundingClientRect();
+    var size = Math.min(300, w.width * 0.93 - 84);
+    bannerSheet.style.margin = '0';
+    bannerSheet.style.right = 'auto';
+    bannerSheet.style.width = size + 'px';
+    bannerSheet.style.left = (w.left - o.left + (w.width - size) / 2) + 'px';
+    bannerSheet.style.bottom = (o.bottom - w.bottom + w.height * 0.04 + 6) + 'px';
+    bannerSheet.style.setProperty('--u', size / 300);
+  }
+  function showSheet() {
+    clearTimeout(sheetTimer);
+    placeSheet();
+    bannerFrame.classList.remove('is-off');
+    bannerSheet.classList.add('is-shown');
+    void bannerSheet.offsetWidth;
+    bannerScroll.style.maxHeight = bannerFrame.clientHeight + 'px';
+    bannerSheet.classList.add('is-visible');
+  }
+  function hideSheet() {
+    clearTimeout(sheetTimer);
+    bannerFrame.classList.add('is-off');
+    bannerSheet.classList.remove('is-visible');
+    sheetTimer = setTimeout(function() { bannerSheet.classList.remove('is-shown'); }, 520);
+  }
+  window.addEventListener('resize', function() {
+    if (!bannerOpen) return;
+    placeSheet();
+    bannerScroll.style.maxHeight = bannerFrame.clientHeight + 'px';
+  });
+  function openBanner() {
+    if (bannerOpen) return;
+    wrap.classList.add('is-banner-open');
+    bannerOpen = true;
+    showSheet();
+    try { history.pushState({oc: 'banner'}, ''); historyStack++; } catch(e) {}
+  }
+  var bannerClosing = false;
+  function closeBannerDirect() {
+    wrap.classList.remove('is-banner-open');
+    bannerOpen = false;
+    bannerClosing = false;
+    hideSheet();
+  }
+  // 닫기 요청: 배너 자리는 클릭 순간 바로 숨기고, 나머지는 뒤로가기 기록 처리(popstate)로.
+  // 연타해도 뒤로가기 두 번 안 되게 막음
+  function requestCloseBanner() {
+    if (bannerClosing) return;
+    bannerClosing = true;
+    hideSheet();
+    if (historyStack > 0) history.back();
+    else closeBannerDirect();
+  }
+  shareBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    // 공유 버튼 토글: 배너 열려있으면 닫기, 닫혀있으면 열기
+    if (bannerOpen) requestCloseBanner();
+    else openBanner();
+  });
+  bannerClose.addEventListener('click', function() {
+    requestCloseBanner();
+  });
+  bannerOverlay.addEventListener('click', function(e) {
+    // 배너 오버레이 어디든 클릭 → 배너만 닫기 (버블링 막아서 handleOutsideClick 중복 방지)
+    if (e.target === bannerOverlay) {
+      e.stopPropagation();
+      requestCloseBanner();
+    }
+  });
+
+  window.addEventListener('popstate', function() {
+    if (bannerOpen) { closeBannerDirect(); historyStack = Math.max(0, historyStack - 1); return; }
+    if (modalOpen) { closeModalDirect(); historyStack = Math.max(0, historyStack - 1); return; }
+  });
+
+  // 메뉴 토글
+  menuBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    wrap.classList.toggle('is-menu-open');
+  });
+
+  // 바깥 클릭 처리 (한 번만 바인딩, 배너→모달 순서로 체크)
+  function handleOutsideClick(e) {
+    // 배너가 열려있으면 배너 먼저 처리
+    if (bannerOpen) {
+      // 배너 시트 안 클릭 → 무시 (닫기 버튼은 자체 핸들러)
+      if (e.target.closest('.oc-banner-sheet')) return;
+      // 배너 밖 (사이트 공백 포함) → 배너만 닫기
+      e.stopPropagation();
+      requestCloseBanner();
+      return;
+    }
+    // 모달 열림
+    if (modalOpen) {
+      // 모달 안 요소 클릭 → 메뉴만 닫기
+      if (e.target.closest('.oc-modal-wrap')) {
+        if (!e.target.closest('.oc-menu-panel') && !e.target.closest('.oc-menu-btn')) {
+          wrap.classList.remove('is-menu-open');
+        }
+        return;
+      }
+      // Savior/하트/공유 클릭은 자체 핸들러
+      if (e.target.closest('.oc-savior') || e.target.closest('.oc-corner')) return;
+      // 그 외 바깥 (사이트 공백 포함) → 모달 닫기
+      e.stopPropagation();
+      closeModal();
+    }
+  }
+  // 하나만 바인딩 (양쪽 다 하면 중복 발화)
+  wrapOuter.addEventListener('click', handleOutsideClick);
+
+  wrap.querySelectorAll('.oc-menu-item[data-page]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      selectPage(btn.dataset.page);
+    });
+  });
+  function selectPage(page) {
+    wrap.setAttribute('data-page', page);
+    wrap.querySelectorAll('.oc-menu-item').forEach(function(mi) {
+      mi.classList.toggle('is-active', mi.dataset.page === page);
+    });
+    wrap.querySelectorAll('.oc-panel').forEach(function(p) {
+      p.classList.toggle('is-shown', p.dataset.panel === page);
+    });
+  }
+
+  wrap.querySelectorAll('.oc-char').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var char = btn.dataset.char;
+      wrap.querySelectorAll('.oc-char').forEach(function(c) {
+        c.classList.toggle('is-selected', c.dataset.char === char);
+      });
+      wrap.querySelectorAll('.oc-pr').forEach(function(p) {
+        p.classList.toggle('is-shown', p.dataset.pr === char);
+      });
+    });
+  });
+
+  // 하트 토글 + BGM 재생/정지
+  var bgm = wrap.querySelector('.oc-bgm');
+  if (bgm) bgm.volume = 0.35;
+  heartBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    heartBtn.classList.toggle('is-on');
+    if (!bgm) return;
+    if (heartBtn.classList.contains('is-on')) {
+      var p = bgm.play();
+      if (p && p.catch) p.catch(function() {}); // autoplay 차단 조용히 무시
+    } else {
+      bgm.pause();
+    }
+  });
+  starBtn.addEventListener('click', function() { starOverlay.classList.toggle('is-on'); });
+
+  // 상품 페이지 전환 (옷+글씨 둘 다 페이드 스왑, 크롬은 유지)
+  var pickTabs = wrap.querySelectorAll('.oc-pick-tab');
+  var productGraphics = wrap.querySelectorAll('.oc-product-graphic');
+  var productTexts = wrap.querySelectorAll('.oc-product-text');
+  var curProd = '0';
+  function switchProduct(idx) {
+    var s = String(idx);
+    if (s === curProd) return;
+    curProd = s;
+    wrap.setAttribute('data-prod', s);
+    pickTabs.forEach(function(t) { t.classList.toggle('is-on', t.dataset.tab === s); });
+    productGraphics.forEach(function(p) { p.classList.toggle('is-on', p.dataset.prod === s); });
+    productTexts.forEach(function(p) { p.classList.toggle('is-on', p.dataset.prod === s); });
+  }
+  pickTabs.forEach(function(tab) {
+    tab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      switchProduct(tab.dataset.tab);
+    });
+  });
+
+  var topLeft = wrap.querySelectorAll('.oc-top-left span');
+  var topCenter = wrap.querySelectorAll('.oc-top-center span');
+  var topIndex = 0;
+  setInterval(function() {
+    topIndex = (topIndex + 1) % 3;
+    topLeft.forEach(function(s, i) { s.classList.toggle('is-visible', i === topIndex); });
+    topCenter.forEach(function(s, i) { s.classList.toggle('is-visible', i === topIndex); });
+  }, 4000);
+
+  var saviorImg = savior.querySelector('img');
+  var startTime = performance.now();
+  function floatTick(now) {
+    var t = (now - startTime) / 1000;
+    var y = Math.sin(t * 1.75) * 4;
+    var r = Math.sin(t * 1.75) * 2;
+    saviorImg.style.transform = 'translateY(' + y + 'px) rotate(' + r + 'deg)';
+    requestAnimationFrame(floatTick);
+  }
+  requestAnimationFrame(floatTick);
+
+  var topRight = wrap.querySelector('.oc-top-right');
+  if (topRight) {
+    var caret = document.createElement('span');
+    caret.className = 'oc-caret';
+    caret.textContent = '|';
+    topRight.appendChild(caret);
+    setInterval(function() { caret.classList.toggle('is-off'); }, 500);
+  }
+})();
+</script>
