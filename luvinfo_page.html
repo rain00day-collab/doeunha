@@ -246,18 +246,17 @@
 .oc-star-overlay.is-on { opacity: 1; }
 .oc-star-overlay img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* 메뉴 패널 (원래 위치 복구) */
+/* 메뉴 패널 — 왼쪽 끝 = □ 아이콘 왼쪽 끝(카드 이미지 기준 63.84%). 회색 칸 글(오른쪽 끝 64%)을 안 덮음 */
 .oc-menu-panel {
   position: absolute;
   top: calc(15.7% + 3.4%);
-  left: 62.65%;
+  left: 63.84%;
   width: clamp(110px, 13.5vw, 148px);
   background: #FFFFFF;
   border-radius: 1.5px;
   padding: 5px 0 18px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.05);
   margin-top: 10px;
-  margin-left: -10px;
   z-index: 25;
   opacity: 0;
   transform: scale(0.98) translateY(-4px);
@@ -895,8 +894,11 @@ When everything comes crashing down</span>
       selectPage(btn.dataset.page);
     });
   });
+  var contentBox = wrap.querySelector('.oc-content');
   function selectPage(page) {
     wrap.setAttribute('data-page', page);
+    // 항목 바꾸면 글은 항상 맨 위 첫 줄부터
+    if (contentBox) contentBox.scrollTop = 0;
     wrap.querySelectorAll('.oc-menu-item').forEach(function(mi) {
       mi.classList.toggle('is-active', mi.dataset.page === page);
     });
@@ -944,6 +946,8 @@ When everything comes crashing down</span>
     if (s === curProd) return;
     curProd = s;
     wrap.setAttribute('data-prod', s);
+    // 페이지 바꾸면 별은 빈 별로 (새 페이지에서 다시 누를 수 있게)
+    starOverlay.classList.remove('is-on');
     pickTabs.forEach(function(t) { t.classList.toggle('is-on', t.dataset.tab === s); });
     productGraphics.forEach(function(p) { p.classList.toggle('is-on', p.dataset.prod === s); });
     productTexts.forEach(function(p) { p.classList.toggle('is-on', p.dataset.prod === s); });
