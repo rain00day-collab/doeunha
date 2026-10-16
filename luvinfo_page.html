@@ -366,8 +366,8 @@
 .oc-wrap.is-banner-open ~ .oc-banner-overlay {
   pointer-events: auto;
 }
-/* 시트: 모달과 같은 팝 모션(살짝 작게 → 원래 크기). 다 뜨면 transform: none (자리 조상에 transform 안 남게).
-   표시는 JS가 is-shown / is-visible로 제어. 닫힐 때만 0.12초 잡았다가 모션 → 배너 블록이 카드보다 먼저 빠지게.
+/* 시트: 제자리 페이드만 (움직임 없음 → 러브인포 배너가 움직이는 자리를 쫓아갈 일 없음).
+   표시는 JS가 is-shown / is-visible로 제어. 닫힐 때만 0.12초 잡았다가 페이드 → 배너 블록이 카드보다 먼저 빠지게.
    left/bottom/width는 JS가 덮어씀 (아래 값은 JS 실패 시 대비용) */
 .oc-banner-sheet {
   display: none;
@@ -379,16 +379,13 @@
   width: min(300px, calc(100% - 120px));
   aspect-ratio: 1 / 1;
   flex-direction: column;
-  transform: scale(0.86) translateY(16px);
-  transform-origin: center 55%;
   opacity: 0;
   pointer-events: none;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.12s, opacity 0.3s ease 0.12s;
+  transition: opacity 0.3s ease 0.12s;
   font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 .oc-banner-sheet.is-shown { display: flex; }
 .oc-banner-sheet.is-visible {
-  transform: none;
   opacity: 1;
   pointer-events: auto;
   transition-delay: 0s;
@@ -805,7 +802,7 @@ When everything comes crashing down</span>
     clearTimeout(sheetTimer);
     bannerFrame.classList.add('is-off');
     bannerSheet.classList.remove('is-visible');
-    sheetTimer = setTimeout(function() { bannerSheet.classList.remove('is-shown'); }, 520);
+    sheetTimer = setTimeout(function() { bannerSheet.classList.remove('is-shown'); }, 450);
   }
   window.addEventListener('resize', function() {
     if (!bannerOpen) return;
