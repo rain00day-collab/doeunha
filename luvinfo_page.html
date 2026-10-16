@@ -807,6 +807,101 @@ When everything comes crashing down</span>
     placeSheet();
     bannerScroll.style.maxHeight = bannerFrame.clientHeight + 'px';
   });
+
+  // 배너 칸 부드러운 스크롤 + 관성.
+  // 배너 위에서 휠을 굴리거나 손가락으로 밀면 러브인포가 칸을 그만큼만 즉시 스크롤시켜서 뚝뚝 끊김 →
+  // 러브인포의 스크롤 명령(scrollTop / scrollBy / scrollTo)을 받아서 목표 위치만 바꾸고,
+  // 실제 위치는 매 프레임 목표를 부드럽게 따라가게 함. 폰은 손 뗀 뒤 그 속도로 살짝 더 미끄러짐.
+  // 러브인포가 다른 방식으로 스크롤시키면(가로채기 실패) 폰은 스크롤 속도를 재서 관성만 이어줌
+  (function() {
+    var box = bannerScroll;
+    var desc = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTop');
+    if (!desc || !desc.get || !desc.set) return;
+    var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    var TAU = coarse ? 45 : 90;    // 목표를 따라가는 부드러움 (ms, 클수록 더 미끄러짐)
+    var FRICTION = 0.992;          // 폰 관성 감속 (ms당, 작을수록 빨리 멈춤)
+    var shown = null, target = 0, vel = 0, raf = null, prev = 0, lastSelf = null;
+    var samples = [], idleTimer = null;
+    function getTop() { return desc.get.call(box); }
+    function setTop(v) { desc.set.call(box, v); lastSelf = getTop(); }
+    function maxTop() { return Math.max(0, box.scrollHeight - box.clientHeight); }
+    function clamp(v) { return Math.max(0, Math.min(maxTop(), v)); }
+    function stopAll() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = null; shown = null; vel = 0; samples = []; clearTimeout(idleTimer);
+    }
+    function loop(now) {
+      if (box.offsetParent === null) { stopAll(); return; }   // 배너 닫힘
+      var dt = Math.min(50, now - prev); prev = now;
+      if (vel) {                                              // 관성: 목표를 계속 밀어줌
+        vel *= Math.pow(FRICTION, dt);
+        var t = clamp(target + vel * dt);
+        if (Math.abs(vel) < 0.02 || t === target) vel = 0;
+        target = t;
+      }
+      shown += (target - shown) * (1 - Math.exp(-dt / TAU));
+      if (!vel && Math.abs(target - shown) < 0.5) shown = target;
+      setTop(shown);
+      if (!vel && shown === target) { raf = null; shown = null; return; }
+      raf = requestAnimationFrame(loop);
+    }
+    function kick() {
+      if (!raf) { prev = performance.now(); raf = requestAnimationFrame(loop); }
+    }
+    function record(t) {
+      var now = performance.now();
+      samples.push([now, t]);
+      while (samples.length && now - samples[0][0] > 100) samples.shift();
+      if (coarse) { clearTimeout(idleTimer); idleTimer = setTimeout(fling, 45); }
+    }
+    function fling() {
+      var s = samples; samples = [];
+      if (s.length < 2) return;
+      var dt = s[s.length - 1][0] - s[0][0];
+      if (dt <= 0) return;
+      var v = (s[s.length - 1][1] - s[0][1]) / dt;   // px/ms
+      if (Math.abs(v) < 0.15) return;
+      vel = Math.max(-3, Math.min(3, v));
+      if (shown === null) { shown = getTop(); target = shown; }
+      kick();
+    }
+    function moveTo(v) {
+      if (shown === null) { shown = getTop(); target = shown; }
+      vel = 0;
+      target = clamp(v);
+      record(target);
+      kick();
+    }
+    // 러브인포가 부르는 스크롤 명령 가로채기
+    Object.defineProperty(box, 'scrollTop', {
+      configurable: true,
+      get: function() { return shown === null ? getTop() : target; },
+      set: function(v) { moveTo(Number(v)); }
+    });
+    ['scrollBy', 'scrollTo', 'scroll'].forEach(function(name) {
+      var orig = box[name];
+      box[name] = function(a, b) {
+        var o = (a && typeof a === 'object') ? a : { left: a, top: b };
+        if (o.top === undefined || o.top === null || isNaN(Number(o.top))) return orig.apply(box, arguments);
+        var base = name === 'scrollBy' ? (shown === null ? getTop() : target) : 0;
+        moveTo(base + Number(o.top));
+      };
+    });
+    // 칸을 직접 터치하면 브라우저 기본 스크롤에 맡김
+    var nativeTouch = false;
+    box.addEventListener('touchstart', function() { nativeTouch = true; stopAll(); }, { passive: true });
+    box.addEventListener('touchend', function() { setTimeout(function() { nativeTouch = false; }, 600); }, { passive: true });
+    // 가로채기 밖에서 생긴 스크롤 (예비): 폰이면 속도를 재서 관성만 이어줌
+    box.addEventListener('scroll', function() {
+      var top = getTop();
+      if (lastSelf !== null && Math.abs(top - lastSelf) < 1.5) return;   // 내가 만든 스크롤
+      if (nativeTouch) return;
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+      shown = null; vel = 0;
+      record(top);
+    }, { passive: true });
+  })();
+
   function openBanner() {
     if (bannerOpen) return;
     wrap.classList.add('is-banner-open');
