@@ -1,0 +1,17 @@
+/* ======================================================
+   UPGRADE / luvlinks custom CSS
+   01 PROFILE — image design only (name/handle/icon hidden)
+   Safe escape: add ?nocss=1 to your URL if needed.
+   ====================================================== */
+html,body{background:#efeff0!important}
+body{background-image:none!important}
+#glow,#bgimg{display:none!important}
+
+/* 01 PROFILE */
+#profile{all:unset!important;display:block!important;position:relative!important;width:min(843px,calc(100vw - 32px))!important;margin:0 0 24px 50%!important;transform:translateX(-50%)!important}
+#profile::before,#profile::after,#profile>:not(.pcard),#profile .pcard>*,#profile .pcard::before{display:none!important}
+#profile .pcard{all:unset!important;display:block!important;position:relative!important;width:100%!important;aspect-ratio:843/450!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile.png") 0 0/100% 100% no-repeat!important}
+/* butterfly — same spot as the design, blinking */
+#profile .pcard::after{content:""!important;display:block!important;position:absolute!important;left:94.187%!important;top:8.222%!important;width:4.508%!important;aspect-ratio:38/51!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-butterfly.png") 0 0/100% 100% no-repeat!important;pointer-events:none!important;animation:upFly 1.6s ease-in-out infinite!important}
+@keyframes upFly{0%,100%{opacity:1}50%{opacity:.15}}
+@media(prefers-reduced-motion:reduce){#profile .pcard::after{animation:none!important}}
