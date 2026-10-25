@@ -11,13 +11,12 @@ body{background-image:none!important}
 #profile{all:unset!important;display:block!important;position:relative!important;width:100%!important;margin:0!important}
 #profile>:not(.pcard),#profile .pcard>*,#profile .pcard::before{display:none!important}
 #profile .pcard{all:unset!important;display:block!important;position:relative!important;width:100%!important;aspect-ratio:843/450!important}
-/* profile image follows the link page (1–5), quick soft fade on change */
-#profile::before{content:""!important;display:block!important;position:absolute!important;inset:0!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile1.png") 0 0/100% 100% no-repeat!important;animation:up1 .45s ease-out!important}
-#page:has(#stage .card:nth-child(2).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile2.png")!important;animation-name:up2!important}
-#page:has(#stage .card:nth-child(3).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile3.png")!important;animation-name:up3!important}
-#page:has(#stage .card:nth-child(4).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile4.png")!important;animation-name:up4!important}
-#page:has(#stage .card:nth-child(5).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile5.png")!important;animation-name:up5!important}
-@keyframes up1{from{opacity:.3}}@keyframes up2{from{opacity:.3}}@keyframes up3{from{opacity:.3}}@keyframes up4{from{opacity:.3}}@keyframes up5{from{opacity:.3}}
+/* profile image follows the link page (1–5), only the changed numbers/bar cross-fade (no dimming) */
+#profile::before{content:""!important;display:block!important;position:absolute!important;inset:0!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile1.png") 0 0/100% 100% no-repeat!important;transition:background-image .35s ease!important}
+#page:has(#stage .card:nth-child(2).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile2.png")!important}
+#page:has(#stage .card:nth-child(3).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile3.png")!important}
+#page:has(#stage .card:nth-child(4).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile4.png")!important}
+#page:has(#stage .card:nth-child(5).is-active) #profile::before{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile5.png")!important}
 /* preload the other four so the swap never shows a blank */
 #profile::after{content:""!important;position:absolute!important;left:0!important;top:0!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile2.png"),url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile3.png"),url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile4.png"),url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-profile5.png")!important}
 /* butterfly — same spot as the design, wing flap along its tilted body line (21deg) */
@@ -44,4 +43,4 @@ body{background-image:none!important}
 #dots .dot{all:unset!important;display:block!important;width:4px!important;height:4px!important;border-radius:50%!important;background:#c3c8ce!important;font-size:0!important;cursor:pointer!important;transition:width .3s,height .3s,background .3s!important}
 #dots .dot.is-active{width:7px!important;height:7px!important;background:#3a9af3!important}
 @media(max-width:640px){#profile{width:85%!important;margin:0 auto!important}#stage{aspect-ratio:100/54!important}#dots{gap:6px!important;height:5px!important;min-height:5px!important}#controls{height:5px!important}#dots .dot{width:3px!important;height:3px!important}#dots .dot.is-active{width:5px!important;height:5px!important}#stage .card{left:25%!important;width:50%!important}}
-@media(prefers-reduced-motion:reduce){#profile .pcard::after,#profile::before{animation:none!important}}
+@media(prefers-reduced-motion:reduce){#profile .pcard::after{animation:none!important}#profile::before{transition:none!important}}
