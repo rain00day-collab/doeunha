@@ -1027,7 +1027,12 @@ When everything comes crashing down</span>
       bgm.pause();
     }
   });
-  starBtn.addEventListener('click', function() { starOverlay.classList.toggle('is-on'); });
+  // 별: 페이지(재킷/머플러)마다 따로 기억. 새로고침 전까지 유지
+  var starred = {};
+  starBtn.addEventListener('click', function() {
+    starred[curProd] = !starred[curProd];
+    starOverlay.classList.toggle('is-on', starred[curProd]);
+  });
 
   // 상품 페이지 전환 (옷+글씨 둘 다 페이드 스왑, 크롬은 유지)
   var pickTabs = wrap.querySelectorAll('.oc-pick-tab');
@@ -1039,8 +1044,8 @@ When everything comes crashing down</span>
     if (s === curProd) return;
     curProd = s;
     wrap.setAttribute('data-prod', s);
-    // 페이지 바꾸면 별은 빈 별로 (새 페이지에서 다시 누를 수 있게)
-    starOverlay.classList.remove('is-on');
+    // 페이지 바꾸면 그 페이지에 기억된 별 상태로
+    starOverlay.classList.toggle('is-on', !!starred[s]);
     pickTabs.forEach(function(t) { t.classList.toggle('is-on', t.dataset.tab === s); });
     productGraphics.forEach(function(p) { p.classList.toggle('is-on', p.dataset.prod === s); });
     productTexts.forEach(function(p) { p.classList.toggle('is-on', p.dataset.prod === s); });
