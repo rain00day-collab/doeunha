@@ -11,7 +11,7 @@ html,body{margin:0!important;overscroll-behavior:none!important;-webkit-text-siz
 /* scroll fully locked (except while the owner editor is open) */
 html:not(:has(#editor:not([hidden]))),html:not(:has(#editor:not([hidden]))) body{overflow:hidden!important;height:100%!important}
 #page{touch-action:pan-x!important}
-#page{box-sizing:border-box!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:auto!important;height:100vh!important;height:100dvh!important;min-height:0!important;margin-left:auto!important;margin-right:auto!important;display:flex!important;flex-direction:column!important;justify-content:center!important;padding-top:16px!important;padding-bottom:16px!important;margin-top:0!important;margin-bottom:0!important;--fit:min(100%,calc((100dvh - 40px)/1.48))}
+#page{box-sizing:border-box!important;position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:auto!important;height:100vh!important;height:100dvh!important;min-height:0!important;display:flex!important;flex-direction:column!important;justify-content:center!important;padding-top:16px!important;padding-bottom:16px!important;margin-top:0!important;margin-bottom:0!important;--fit:min(100%,calc((100dvh - 40px)/1.48))}
 
 /* 01 PROFILE */
 #profile{all:unset!important;display:block!important;position:relative!important;width:var(--fit)!important;margin:0 auto!important}
