@@ -8,6 +8,9 @@ body{background-image:none!important}
 #glow,#bgimg{display:none!important}
 /* whole page fits one screen on every browser/app: no scroll, centered vertically */
 html,body{margin:0!important;overscroll-behavior:none!important;-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}
+/* scroll fully locked (except while the owner editor is open) */
+html:not(:has(#editor:not([hidden]))),html:not(:has(#editor:not([hidden]))) body{overflow:hidden!important;height:100%!important}
+#page{touch-action:pan-x!important}
 #page{box-sizing:border-box!important;min-height:100vh!important;min-height:100dvh!important;display:flex!important;flex-direction:column!important;justify-content:center!important;padding-top:16px!important;padding-bottom:16px!important;margin-top:0!important;margin-bottom:0!important;--fit:min(100%,calc((100dvh - 40px)/1.48))}
 
 /* 01 PROFILE */
