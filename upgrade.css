@@ -30,9 +30,9 @@ body{background-image:none!important}
 #stage .card:nth-child(4){background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-link4.png")!important}
 #stage .card:nth-child(5){background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-link5.png")!important}
 /* page dots — tiny grey, current one blue and a bit bigger */
-#controls{display:flex!important;justify-content:center!important;align-items:center!important;min-height:0!important;margin:14px 0 0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
-#dots{display:flex!important;align-items:center!important;gap:7px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+#controls{display:flex!important;justify-content:center!important;align-items:center!important;height:7px!important;min-height:0!important;margin:14px 0 0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+#dots{display:flex!important;align-items:center!important;gap:7px!important;height:7px!important;min-height:7px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
 #dots .dot{all:unset!important;display:block!important;width:4px!important;height:4px!important;border-radius:50%!important;background:#c3c8ce!important;font-size:0!important;cursor:pointer!important;transition:width .3s,height .3s,background .3s!important}
 #dots .dot.is-active{width:7px!important;height:7px!important;background:#3a9af3!important}
-@media(max-width:640px){#profile{width:85%!important;margin:0 auto 18px!important}}
+@media(max-width:640px){#profile{width:85%!important;margin:0 auto 18px!important}#stage{aspect-ratio:100/57!important}#stage .card{left:25%!important;width:50%!important}}
 @media(prefers-reduced-motion:reduce){#profile .pcard::after{animation:none!important}}
