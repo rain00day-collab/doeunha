@@ -36,7 +36,7 @@ body{background-image:none!important}
 #stage .card:nth-child(2){background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-link2.png")!important}
 #stage .card:nth-child(3){background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-link3.png")!important}
 #stage .card:nth-child(4){background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-link4.png")!important}
-#stage .card:nth-child(5){background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-link5.png")!important}
+#stage .card:nth-child(5){background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-link5b.png")!important}
 /* page dots — tiny grey, current one blue and a bit bigger */
 #controls{display:flex!important;justify-content:center!important;align-items:center!important;height:7px!important;min-height:0!important;margin:10px 0 0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
 #dots{display:flex!important;align-items:center!important;gap:7px!important;height:7px!important;min-height:7px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
