@@ -6,9 +6,12 @@
 html,body{background:#efeff0!important}
 body{background-image:none!important}
 #glow,#bgimg{display:none!important}
+/* whole page fits one screen on every browser/app: no scroll, centered vertically */
+html,body{margin:0!important;overscroll-behavior:none!important;-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}
+#page{box-sizing:border-box!important;min-height:100vh!important;min-height:100dvh!important;display:flex!important;flex-direction:column!important;justify-content:center!important;padding-top:16px!important;padding-bottom:16px!important;margin-top:0!important;margin-bottom:0!important;--fit:min(100%,calc((100dvh - 40px)/1.48))}
 
 /* 01 PROFILE */
-#profile{all:unset!important;display:block!important;position:relative!important;width:100%!important;margin:0!important}
+#profile{all:unset!important;display:block!important;position:relative!important;width:var(--fit)!important;margin:0 auto!important}
 #profile>:not(.pcard),#profile .pcard>*,#profile .pcard::before{display:none!important}
 #profile .pcard{all:unset!important;display:block!important;position:relative!important;width:100%!important;aspect-ratio:843/450!important}
 /* profile image follows the link page (1–5), only the changed numbers/bar cross-fade (no dimming) */
@@ -23,7 +26,7 @@ body{background-image:none!important}
 #profile .pcard::after{content:""!important;display:block!important;position:absolute!important;left:94.187%!important;top:8.222%!important;width:4.508%!important;aspect-ratio:38/51!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-butterfly.png") 0 0/100% 100% no-repeat!important;pointer-events:none!important;transform-origin:39% 60%!important;animation:upFly 2.2s ease-in-out infinite!important}
 @keyframes upFly{0%,72%,100%{transform:perspective(90px) rotate(-21deg) rotateY(0) rotate(21deg)}84%{transform:perspective(90px) rotate(-21deg) rotateY(58deg) rotate(21deg)}}
 /* 02 LINKS — 5 posters in order; center + one each side, flat */
-#page .carousel{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:-8px 0 8px!important;overflow:visible!important}
+#page .carousel{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;width:var(--fit)!important;margin:-8px auto 8px!important;overflow:visible!important}
 #page .carousel::before,#page .carousel::after,#stage .card>*,#stage .card::before,#stage .card::after,#prev,#next,#dots .dot::after{display:none!important}
 #stage{position:relative!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:100/64!important;margin:0!important;padding:0!important;overflow:visible!important;perspective:none!important;transform-style:flat!important}
 #stage .card{all:unset!important;position:absolute!important;display:block!important;box-sizing:border-box!important;left:20%!important;top:3%!important;width:60%!important;aspect-ratio:588/587!important;cursor:pointer!important;background:#f7f8f9 0 0/100% 100% no-repeat!important;box-shadow:0 10px 24px rgba(29,39,48,.1)!important;opacity:0!important;pointer-events:none!important;z-index:0!important;transform:translateX(40%) scale(.82)!important;transition:transform .45s ease,opacity .45s ease!important}
@@ -45,7 +48,7 @@ body{background-image:none!important}
 #dots .dot::before{content:""!important;display:block!important;position:absolute!important;inset:-8px -3px!important}
 #dots .dot.is-active{width:7px!important;height:7px!important;background:#3a9af3!important}
 /* 03 BROWSER — bottom link window: image per page, link title/description on top (edit them in the site editor) */
-#now{all:unset!important;display:block!important;position:relative!important;width:100%!important;aspect-ratio:843/167!important;box-sizing:content-box!important;padding:0 0 10.5%!important;margin:-12px 0 0!important;container-type:inline-size!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b1.png") 0 0/100% 100% no-repeat content-box!important;transition:background-image .35s ease!important;animation:none!important}
+#now{all:unset!important;display:block!important;position:relative!important;width:var(--fit)!important;aspect-ratio:843/255.5!important;box-sizing:border-box!important;padding:0!important;margin:-12px auto 0!important;container-type:inline-size!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b1.png") 0 0/100% 65.36% no-repeat!important;transition:background-image .35s ease!important;animation:none!important}
 #now *{animation:none!important}
 #page:has(#stage .card:nth-child(2).is-active) #now{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b2.png")!important}
 #page:has(#stage .card:nth-child(3).is-active) #now{background-image:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b3.png")!important}
@@ -59,12 +62,9 @@ body{background-image:none!important}
 #now .url{all:unset!important;position:absolute!important;left:10.795%!important;top:10.06cqw!important;max-width:80%!important;font-size:max(1.7cqw,6.5px)!important;line-height:1!important;font-weight:500!important;letter-spacing:-.01em!important;color:#f7f9fa!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
 #now .desc{all:unset!important;color:#f7f9fa!important}
 /* small line under the window */
-#now .badge{all:unset!important;position:absolute!important;left:0!important;right:0!important;bottom:0!important;height:3.6cqw!important;display:flex!important;justify-content:center!important;align-items:center!important;white-space:pre!important;font-size:max(1.48cqw,5px)!important;font-weight:600!important;letter-spacing:-.01em!important;line-height:1!important;color:#b5b5b5!important;pointer-events:none!important}
-#now .badge::before{content:"BLUE FAIRY . Since 2012 . "!important}
-#now .badge .ms{all:unset!important;font-size:0!important}
-#now .badge .ms::before{content:"TAP"!important;font-size:max(1.48cqw,5px)!important;color:#3a9af3!important}
-#now .badge .ms::after{content:" To Custom"!important;font-size:max(1.48cqw,5px)!important;color:#b5b5b5!important}
+#now .badge{all:unset!important;position:absolute!important;left:0!important;right:0!important;bottom:0!important;height:3.6cqw!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-tagline.png") center/auto max(1.6cqw,5.4px) no-repeat!important;pointer-events:none!important}
+#now .badge>*{display:none!important}
 /* preload the other bottom images */
 #now .text::after{content:""!important;position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;background:url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b2.png"),url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b3.png"),url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b4.png"),url("https://raw.githubusercontent.com/rain00day-collab/doeunha/claude/stoic-euler-v1wox8/assets/upgrade-b5.png")!important}
-@media(max-width:640px){#profile{width:85%!important;margin:0 auto!important}#now{width:85%!important;margin:-12px auto 0!important;padding-bottom:8.9%!important}#stage{aspect-ratio:100/54!important}#dots{gap:6px!important;height:5px!important;min-height:5px!important}#controls{height:5px!important}#dots .dot{width:3px!important;height:3px!important}#dots .dot.is-active{width:5px!important;height:5px!important}#stage .card{left:25%!important;width:50%!important}}
+@media(max-width:640px){#page{--fit:min(100%,calc((100dvh - 40px)/1.26))}#profile{width:calc(var(--fit)*.85)!important}#now{width:calc(var(--fit)*.85)!important}#stage{aspect-ratio:100/54!important}#dots{gap:6px!important;height:5px!important;min-height:5px!important}#controls{height:5px!important}#dots .dot{width:3px!important;height:3px!important}#dots .dot.is-active{width:5px!important;height:5px!important}#stage .card{left:25%!important;width:50%!important}}
 @media(prefers-reduced-motion:reduce){#profile .pcard::after{animation:none!important}#profile::before,#now{transition:none!important}}
