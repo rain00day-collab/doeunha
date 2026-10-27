@@ -318,6 +318,9 @@
   display: block;
   animation: oc-fade-in 0.3s ease-out;
 }
+/* 글 선택(드래그 복사)은 회색 칸 본문 글만. 칸 밖·카드 이미지·캐릭터 버튼은 선택 안 됨 */
+.oc-wrap-outer { -webkit-user-select: none; user-select: none; }
+.oc-content p { -webkit-user-select: text; user-select: text; }
 @keyframes oc-fade-in {
   from { opacity: 0; transform: translateY(2px); }
   to { opacity: 1; transform: translateY(0); }
@@ -625,7 +628,7 @@ When everything comes crashing down</span>
           <p>arch - 윈터<br><span style="color:#727272">↳ 장르 특성상 불가 시 유입x</span><br>bluefairy - 빠삐코<br><span style="color:#727272">둘 다 서브도 수용 어렵습니다.</span></p>
         </div>
         <div class="oc-panel" data-panel="list">
-          <p>accord - 6<br>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>aftermess - 4<br>kokori - 서이현<br>dear my - 하인츠<br>@ - 우재경, 류이든<br>meon_meo - 에단<br>zzazang - 디트리히<br>ashpole - 헬렐, 에사오<br>fearless - 메이트, 지젤<br>Love_S2 - 레나토, 세트<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>bluefairy - 직살, 냐냐냥, 건닉<br>ohnyu - 서유준, 고유빈, 차재현<br>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 마르카, 카니발, 어비스</p>
+          <p>accord - 6<br>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>aftermess - 4<br>kokori - 서이현<br>bluefairy - 직살<br>dear my - 하인츠<br>@ - 우재경, 류이든<br>meon_meo - 에단<br>zzazang - 디트리히<br>ashpole - 헬렐, 에사오<br>fearless - 메이트, 지젤<br>Love_S2 - 레나토, 세트<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>ohnyu - 서유준, 고유빈, 차재현<br>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 곽두철, 카니발, 어비스</p>
         </div>
         <div class="oc-panel" data-panel="prompt">
           <div class="oc-char-select">
@@ -652,7 +655,7 @@ When everything comes crashing down</span>
             <p><span style="color:#727272">oversized black military uniform, ::short sleeves::, silver trim, 1.5::black cape, short cape::, black short gloves, black shorts, white socks, 1.5::white sneakers::, -1::headwear::,</span></p>
           </div>
           <div class="oc-pr" data-pr="eunha">
-            <p>boy, young man, pale skin, light yellow eyes, 0.4::tsurime::, 0.8::jitome::, sharp eyes, short hair, 0.4::hair over eyes::, deep blue hair, -1::long hair::, 0.5::voluminous hair, layered hair::, 0.4::cowlick, spiky straight hair::, -0.5::mullet, forehead::, hair vents, lip piercing, expressionless,</p>
+            <p>boy, young man, pale skin, light yellow eyes, 0.4::tsurime::, 0.8::jitome::, sharp eyes, short hair, 0.4::hair over eyes::, deep blue hair, -1::long hair, mullet, hairpin::, 0.5::voluminous hair, layered hair::, 0.4::cowlick, spiky straight hair::, -0.5::forehead::, hair vents, lip piercing, expressionless,</p>
             <p><span style="color:#727272">oversized blue and white racing jacket, 1.3::zipped up::, wide black pants,</span></p>
           </div>
           <div class="oc-pr" data-pr="yeoneun">
@@ -999,6 +1002,85 @@ When everything comes crashing down</span>
       p.classList.toggle('is-shown', p.dataset.panel === page);
     });
   }
+
+  // 회색 칸 글 드래그 선택: 마우스가 칸 밖으로 나가도 선택은 칸 안 글에서 제일 가까운 글자까지만.
+  // (칸 밖은 선택 불가라 브라우저 기본 동작이면 선택이 풀려버림) 칸 위/아래로 나가면 칸을 스크롤
+  if (contentBox) (function() {
+    var dragging = false, anchor = null, mx = 0, my = 0, raf = null, prev = 0;
+    function caretAt(x, y) {
+      if (document.caretPositionFromPoint) {
+        var c = document.caretPositionFromPoint(x, y);
+        return c && { node: c.offsetNode, offset: c.offset };
+      }
+      if (document.caretRangeFromPoint) {
+        var r = document.caretRangeFromPoint(x, y);
+        return r && { node: r.startContainer, offset: r.startOffset };
+      }
+      return null;
+    }
+    function focusFor(x, y) {
+      var b = contentBox.getBoundingClientRect();
+      var ps = Array.prototype.filter.call(contentBox.querySelectorAll('.oc-panel.is-shown p'), function(p) { return p.offsetParent !== null; });
+      // 칸 아래로 나갔고 더 내릴 게 없으면 글 맨 끝까지
+      if (y > b.bottom && ps.length && contentBox.scrollTop >= contentBox.scrollHeight - contentBox.clientHeight - 1) {
+        var end = ps[ps.length - 1];
+        return { node: end, offset: end.childNodes.length };
+      }
+      x = Math.max(b.left + 1, Math.min(b.right - 1, x));
+      y = Math.max(b.top + 1, Math.min(b.bottom - 1, y));
+      var last = null;
+      for (var i = 0; i < ps.length; i++) {
+        var r = ps[i].getBoundingClientRect();
+        if (y < r.top) return last ? { node: last, offset: last.childNodes.length } : { node: ps[i], offset: 0 };
+        if (y <= r.bottom) {
+          var c = caretAt(Math.max(r.left + 1, Math.min(r.right - 1, x)), y);
+          return (c && ps[i].contains(c.node)) ? c : { node: ps[i], offset: ps[i].childNodes.length };
+        }
+        last = ps[i];
+      }
+      return last && { node: last, offset: last.childNodes.length };
+    }
+    function tick(now) {
+      raf = null;
+      if (!dragging) return;
+      var dt = Math.min(50, now - prev); prev = now;
+      var el = document.elementFromPoint(mx, my);
+      if (el && el.closest('.oc-content p')) return;   // 글 위: 브라우저 기본 그대로
+      var b = contentBox.getBoundingClientRect();
+      var over = my > b.bottom ? my - b.bottom : (my < b.top ? my - b.top : 0);
+      if (over) contentBox.scrollTop += Math.max(-1, Math.min(1, over / 60)) * dt * 0.6;
+      var f = focusFor(mx, my);
+      if (f) window.getSelection().setBaseAndExtent(anchor.node, anchor.offset, f.node, f.offset);
+      if (over) raf = requestAnimationFrame(tick);
+    }
+    var downX = 0, downY = 0, moved = false, swallowClick = false;
+    contentBox.addEventListener('mousedown', function(e) {
+      if (e.button !== 0 || !e.target.closest('.oc-content p')) return;
+      anchor = caretAt(e.clientX, e.clientY);
+      dragging = !!anchor;
+      downX = e.clientX; downY = e.clientY; moved = false;
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      mx = e.clientX; my = e.clientY;
+      if (Math.abs(mx - downX) + Math.abs(my - downY) > 4) moved = true;
+      if (!raf) { prev = performance.now(); raf = requestAnimationFrame(tick); }
+    });
+    document.addEventListener('mouseup', function() {
+      // 드래그 끝나고 손 뗀 곳이 카드 밖이어도 팝업이 닫히지 않게 바로 뒤 클릭 한 번 무시
+      if (dragging && moved) { swallowClick = true; setTimeout(function() { swallowClick = false; }, 0); }
+      dragging = false;
+    });
+    window.addEventListener('click', function(e) {
+      if (swallowClick) { swallowClick = false; e.stopPropagation(); }
+    }, true);
+    // 글 밖(선택 안 되는 곳)을 누르면 브라우저가 선택을 안 풀어줘서 직접 해제
+    wrapOuter.addEventListener('mousedown', function(e) {
+      if (e.target.closest('.oc-content p')) return;
+      var sel = window.getSelection();
+      if (sel.rangeCount && !sel.isCollapsed && contentBox.contains(sel.anchorNode)) sel.removeAllRanges();
+    });
+  })();
 
   wrap.querySelectorAll('.oc-char').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
