@@ -126,6 +126,10 @@
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
 }
 .oc-wrap.is-modal-open .oc-modal { opacity: 1; visibility: visible; }
+/* 패드(사파리) 떨림 방지: 깜빡이는 | 커서·상단 글씨가 페이드될 때마다 사파리가 위에 겹친 팝업을
+   잠깐 따로 떼서 그렸다 되돌리면서 1px씩 튐 → 팝업과 페이드되는 글씨를 처음부터 계속 따로 그리게 고정 */
+.oc-modal { will-change: opacity; }
+.oc-top-left span, .oc-top-center span, .oc-top-right .oc-caret { will-change: opacity; }
 
 .oc-modal-wrap {
   position: relative;
@@ -624,11 +628,11 @@ When everything comes crashing down</span>
       <div class="oc-content">
         <div class="oc-panel" data-panel="about">
           <p><b>잇</b> <span style="color:#727272">로그 Ai이미지 재연결ok</span></p>
-          <p>계정 편히 씁니다. 트청 자주 해요.<br><b>ONLY</b>, 1t1d 성향이신 분만 연결해 주세요. n페어 배려합니다.</p>
-          <p>arch - 윈터<br><span style="color:#727272">↳ 장르 특성상 불가 시 유입x</span><br>bluefairy - 빠삐코<br><span style="color:#727272">둘 다 서브도 수용 어렵습니다.</span></p>
+          <p>계정 편히 씁니다. 트청 자주 해요.<br><b>ONLY</b>, 1t1d 성향만 모십니다.</p>
+          <p>arch - 윈터<br>bluefairy - 빠삐코<br><span style="color:#727272">투메인 (한 쪽 서브 X) 같은 배려 필요하며, 저도 n페어 배려합니다.</span></p>
         </div>
         <div class="oc-panel" data-panel="list">
-          <p>accord - 6<br>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>aftermess - 4<br>kokori - 서이현<br>bluefairy - 직살<br>dear my - 하인츠<br>@ - 우재경, 류이든<br>meon_meo - 에단<br>zzazang - 디트리히<br>ashpole - 헬렐, 에사오<br>fearless - 메이트, 지젤<br>Love_S2 - 레나토, 세트<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>ohnyu - 서유준, 고유빈, 차재현<br>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 곽두철, 카니발, 어비스</p>
+          <p>accord - 6<br>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>kokori - 서이현<br>bluefairy - 직살<br>dear my - 하인츠<br>meon_meo - 에단<br>aftermess - 4, Oz<br>zzazang - 디트리히<br>prism - 네벨, 글레이브<br>Love_S2 - 레나토, 세트<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>fearless - 메이트, 지젤, 코튼<br>ashpole - 헬렐, 에사오, 비르투<br>ohnyu - 서유준, 고유빈, 차재현<br>@ - 우재경, 류이든, 마츠오 유타, 세르게이<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 곽두철, 카니발, 어비스, 이브<br/>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬, Dr. 밴스, 블루</p>
         </div>
         <div class="oc-panel" data-panel="prompt">
           <div class="oc-char-select">
@@ -647,15 +651,15 @@ When everything comes crashing down</span>
             </div>
           </div>
           <div class="oc-pr is-shown" data-pr="winter">
-            <p>boy, slender, pale skin, teens, short white hair, long bangs covering the space between eyes, hair vents, delicate strands, half-closed blue eyes, droopy eyes, sleepy gaze,</p>
+            <p>boy, solo, slender, teen, beautiful, cool beauty, pale skin, short white hair, long bangs covering the space between eyes, hair vents, delicate strands, layered hair, fluffy hair, messy hair, detailed hair, blue eyes, half-closed eyes, narrowed eyes, droopy eyes, eyebrows, cute, loose strands, languid impression, expressionless, -2::long hair, mullet, hairpin::,</p>
             <p><span style="color:#727272">plain flat fabric light grey scarf, 0.4::mouth slightly peeking over the scarf::, white military uniform, silver trim, white trousers tucked into black combat boots, -1.1::short sleeves, gloves::,</span></p>
           </div>
           <div class="oc-pr" data-pr="hydro">
-            <p>girl, slender, pale skin, teens, cute, 1.6::light blue hair::, straight medium hair, see-through bangs, long bangs covering the space between eyes, hair vents, white eyes, 1.3::tareme::, droopy eyes, smile, flat chest, -2::hairpin::,</p>
+            <p>girl, solo, slender, teen, cool beauty, pale skin, 1.6::light blue hair::, straight medium hair, see-through bangs, long bangs covering the space between eyes, hair vents, delicate strands, layered hair, fluffy hair, messy hair, detailed hair, white eyes, 1.3::tareme::, droopy eyes, cute, smile, flat chest, -2::hairpin::,</p>
             <p><span style="color:#727272">oversized black military uniform, ::short sleeves::, silver trim, 1.5::black cape, short cape::, black short gloves, black shorts, white socks, 1.5::white sneakers::, -1::headwear::,</span></p>
           </div>
           <div class="oc-pr" data-pr="eunha">
-            <p>boy, young man, pale skin, light yellow eyes, 0.4::tsurime::, 0.8::jitome::, sharp eyes, short hair, 0.4::hair over eyes::, deep blue hair, -1::long hair, mullet, hairpin::, 0.5::voluminous hair, layered hair::, 0.4::cowlick, spiky straight hair::, -0.5::forehead::, hair vents, lip piercing, expressionless,</p>
+            <p>boy, young man, pale skin, light yellow eyes, 0.4::tsurime::, 0.8::jitome::, sharp eyes, short hair, 0.4::hair over eyes::, deep blue hair, -2::long hair, mullet, hairpin::, 0.5::voluminous hair, layered hair::, 0.4::cowlick, spiky straight hair::, -0.5::forehead::, hair vents, lip piercing, expressionless,</p>
             <p><span style="color:#727272">oversized blue and white racing jacket, 1.3::zipped up::, wide black pants,</span></p>
           </div>
           <div class="oc-pr" data-pr="yeoneun">
@@ -663,7 +667,7 @@ When everything comes crashing down</span>
             <p><span style="color:#727272">1.5::black short sleeved hoodie::, open hoodie, hood up, 0.9::hood pulled over head::, white t-shirt, blue graphic, wide leg denim pants hiding shoes, black converse shoes, -2::hairpin, cat ears::, -0.5::sleeveless::,</span></p>
           </div>
           <div class="oc-pr" data-pr="papico">
-            <p>boy, tall, pale skin, black eyes, 1.2::tsurime::, big eyes, short hair, cowlick, 0.5::messy hair::, long bangs, black hair, hair vents, delicate strands, expressionless,</p>
+            <p>boy, tall, pale skin, black eyes, 1.2::tsurime::, big eyes, short hair, cowlick, 0.5::messy hair::, long bangs, black hair, hair vents, delicate strands, -2::long hair, mullet, hairpin::, expressionless,</p>
             <p><span style="color:#727272">black techwear windbreaker jacket with multiple hanging straps and buckles, high collar, zipped up, tactical harness layered over the jacket, baggy puddled black tactical cargo pants with multiple pockets and straps, sleek black cyberpunk mask covering lower face, -1::revolver::,</span></p>
             <p><span style="color:#727272">shield, white kiteshield, holy knight,</span></p>
           </div>
