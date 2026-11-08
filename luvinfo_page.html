@@ -1014,6 +1014,28 @@ When everything comes crashing down</span>
   // (칸 밖은 선택 불가라 브라우저 기본 동작이면 선택이 풀려버림) 칸 위/아래로 나가면 칸을 스크롤
   if (contentBox) (function() {
     var dragging = false, anchor = null, mx = 0, my = 0, raf = null, prev = 0;
+    var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    // 폰·패드: 본문 글을 칸마다(About / List / 캐릭터별 프롬프트) 따로 떼어 둠(섀도 DOM).
+    // 그러면 '모두 선택'이 처음부터 그 글만 잡아서 처음·끝 표시(핸들)도 글에 딱 붙음.
+    // (선택을 나중에 잘라주면 브라우저가 핸들을 안 옮겨서 엉뚱한 데 떠 있었음) 보이는 모양은 그대로
+    var isoHosts = [];
+    if (coarse && document.body.attachShadow) {
+      Array.prototype.forEach.call(contentBox.querySelectorAll('.oc-panel:not([data-panel="prompt"]), .oc-pr'), function(host) {
+        try {
+          var sr = host.attachShadow({ mode: 'open' });
+          var st = document.createElement('style');
+          st.textContent = '*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}' +
+            'p{margin:0 0 8px 0;-webkit-user-select:text;user-select:text}p:last-child{margin-bottom:0}';
+          var group = document.createElement('div');   // 문단 묶음 (이게 있어야 '모두 선택'이 문단 전부를 잡음)
+          while (host.firstChild) group.appendChild(host.firstChild);
+          sr.appendChild(st);
+          sr.appendChild(group);
+          host.classList.add('oc-iso');
+          isoHosts.push(host);
+        } catch (err) {}
+      });
+    }
+    var isolated = isoHosts.length > 0;
     function caretAt(x, y) {
       if (document.caretPositionFromPoint) {
         var c = document.caretPositionFromPoint(x, y);
@@ -1027,6 +1049,11 @@ When everything comes crashing down</span>
     }
     // 지금 보이는 본문 문단들 (Prompt면 선택된 캐릭터 글만)
     function shownParas() {
+      if (isolated) {
+        var out = [];
+        isoHosts.forEach(function(h) { if (h.offsetParent !== null) out.push.apply(out, h.shadowRoot.querySelectorAll('p')); });
+        return out;
+      }
       return Array.prototype.filter.call(contentBox.querySelectorAll('.oc-panel.is-shown p'), function(p) { return p.offsetParent !== null; });
     }
     function focusFor(x, y) {
@@ -1087,14 +1114,35 @@ When everything comes crashing down</span>
     }, true);
     // 글 밖(선택 안 되는 곳)을 누르면 브라우저가 선택을 안 풀어줘서 직접 해제
     wrapOuter.addEventListener('mousedown', function(e) {
-      if (e.target.closest('.oc-content p')) return;
+      if (e.target.closest('.oc-content p, .oc-iso')) return;
       var sel = window.getSelection();
-      if (sel.rangeCount && !sel.isCollapsed && contentBox.contains(sel.anchorNode)) sel.removeAllRanges();
+      if (isolated ? isoSel(sel) : (sel.rangeCount && !sel.isCollapsed && contentBox.contains(sel.anchorNode))) sel.removeAllRanges();
     });
 
-    // 폰: '모두 선택'이나 핸들을 칸 밖으로 끌어서 선택이 사진·다른 글까지 번지면
-    // 지금 보이는 본문 글 처음~끝으로 잘라줌 (복사하면 글만 들어가게)
-    var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    // 폰·패드에서 떼어 둔 글 안의 선택 (앵커·끝점). 없으면 null
+    function isoSel(sel) {
+      for (var i = 0; i < isoHosts.length; i++) {
+        var h = isoHosts[i], sr = h.shadowRoot;
+        if (h.offsetParent === null) continue;
+        if (sr.getSelection) {
+          var ss = sr.getSelection();
+          if (ss && ss.rangeCount && !ss.isCollapsed && sr.contains(ss.focusNode)) return { an: ss.anchorNode, ao: ss.anchorOffset, fn: ss.focusNode, fo: ss.focusOffset };
+        } else if (sel.getComposedRanges) {
+          var rs = null;
+          try { rs = sel.getComposedRanges({ shadowRoots: [sr] }); } catch (err) { try { rs = sel.getComposedRanges(sr); } catch (err2) {} }
+          var r = rs && rs[0];
+          if (r && !r.collapsed && sr.contains(r.endContainer)) {
+            return sel.direction === 'backward'
+              ? { an: r.endContainer, ao: r.endOffset, fn: r.startContainer, fo: r.startOffset }
+              : { an: r.startContainer, ao: r.startOffset, fn: r.endContainer, fo: r.endOffset };
+          }
+        }
+      }
+      return null;
+    }
+
+    // PC: Ctrl+A 등으로 선택이 사진·다른 글까지 번지면 지금 보이는 본문 글 처음~끝으로 잘라줌
+    // (폰·패드는 글을 떼어 둬서 처음부터 글 안에서만 선택됨)
     var lastAnchor = null, lastFocusTop = null;
     function clampSelection(sel, ps) {
       var r = sel.getRangeAt(0);
@@ -1117,15 +1165,14 @@ When everything comes crashing down</span>
       return true;
     }
     // 폰: 핸들을 칸 맨 아래(위) 줄까지 끌면 칸을 두 줄씩 스크롤 → 손 안 떼고 이어서 끝까지 선택
-    function edgeScroll(sel) {
-      if (!contentBox.contains(sel.focusNode)) return;
-      var sameAnchor = lastAnchor && lastAnchor[0] === sel.anchorNode && lastAnchor[1] === sel.anchorOffset;
+    function edgeScroll(info) {
+      var sameAnchor = lastAnchor && lastAnchor[0] === info.an && lastAnchor[1] === info.ao;
       var fr = document.createRange();
-      fr.setStart(sel.focusNode, sel.focusOffset);
+      fr.setStart(info.fn, info.fo);
       fr.collapse(true);
       var rr = fr.getClientRects()[0] || fr.getBoundingClientRect();
       var prevTop = lastFocusTop;
-      lastAnchor = [sel.anchorNode, sel.anchorOffset];
+      lastAnchor = [info.an, info.ao];
       lastFocusTop = rr.top;
       if (!sameAnchor || prevTop === null || !rr.height) return;   // 처음 꾹 눌러 잡은 선택은 그대로
       var b = contentBox.getBoundingClientRect();
@@ -1136,11 +1183,16 @@ When everything comes crashing down</span>
     }
     document.addEventListener('selectionchange', function() {
       var sel = window.getSelection();
-      if (!sel.rangeCount || sel.isCollapsed) { lastAnchor = null; lastFocusTop = null; return; }
-      var ps = shownParas();
-      if (!ps.length || !wrap.classList.contains('is-modal-open')) return;
-      if (clampSelection(sel, ps)) return;
-      if (coarse && !dragging) edgeScroll(sel);
+      if (!sel || !wrap.classList.contains('is-modal-open')) return;
+      var info = null;
+      if (isolated) info = isoSel(sel);
+      else if (sel.rangeCount && !sel.isCollapsed) {
+        var ps = shownParas();
+        if (ps.length && clampSelection(sel, ps)) return;
+        if (contentBox.contains(sel.focusNode)) info = { an: sel.anchorNode, ao: sel.anchorOffset, fn: sel.focusNode, fo: sel.focusOffset };
+      }
+      if (!info) { lastAnchor = null; lastFocusTop = null; return; }
+      if (coarse && !dragging) edgeScroll(info);
     });
   })();
 
