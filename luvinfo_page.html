@@ -325,6 +325,9 @@
 /* 글 선택(드래그 복사)은 회색 칸 본문 글만. 칸 밖·카드 이미지·캐릭터 버튼은 선택 안 됨 */
 .oc-wrap-outer { -webkit-user-select: none; user-select: none; }
 .oc-content p { -webkit-user-select: text; user-select: text; }
+/* 폰: 사진을 꾹 누르면 사진 메뉴가 떠서 글 선택·스크롤을 뺏음 → 사진은 꾹 눌러도 반응 없게 */
+.oc-wrap-outer img { -webkit-touch-callout: none; -webkit-user-drag: none; }
+.oc-card { pointer-events: none; }
 @keyframes oc-fade-in {
   from { opacity: 0; transform: translateY(2px); }
   to { opacity: 1; transform: translateY(0); }
@@ -632,7 +635,7 @@ When everything comes crashing down</span>
           <p>arch - 윈터<br>bluefairy - 빠삐코<br><span style="color:#727272">투메인 (한 쪽 서브 X) 같은 배려 필요하며, 저도 n페어 배려합니다.</span></p>
         </div>
         <div class="oc-panel" data-panel="list">
-          <p>accord - 6<br>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>kokori - 서이현<br>bluefairy - 직살<br>dear my - 하인츠<br>meon_meo - 에단<br>aftermess - 4, Oz<br>zzazang - 디트리히<br>prism - 네벨, 글레이브<br>Love_S2 - 레나토, 세트<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>fearless - 메이트, 지젤, 코튼<br>ashpole - 헬렐, 에사오, 비르투<br>ohnyu - 서유준, 고유빈, 차재현<br>@ - 우재경, 류이든, 마츠오 유타, 세르게이<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 곽두철, 카니발, 어비스, 이브<br/>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬, Dr. 밴스, 블루</p>
+          <p>accord - 6<br>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>calltaku - 재하<br>kokori - 서이현<br>bluefairy - 직살<br>dear my - 하인츠<br>meon_meo - 에단<br>aftermess - 4, Oz<br>zzazang - 디트리히<br>prism - 네벨, 글레이브<br>Love_S2 - 레나토, 세트<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>fearless - 메이트, 지젤, 코튼<br>ashpole - 헬렐, 에사오, 비르투<br>ohnyu - 서유준, 고유빈, 차재현<br>@ - 우재경, 류이든, 마츠오 유타, 세르게이<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 곽두철, 카니발, 어비스, 이브<br/>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬, Dr. 밴스, 블루</p>
         </div>
         <div class="oc-panel" data-panel="prompt">
           <div class="oc-char-select">
@@ -651,11 +654,11 @@ When everything comes crashing down</span>
             </div>
           </div>
           <div class="oc-pr is-shown" data-pr="winter">
-            <p>boy, solo, slender, teen, beautiful, cool beauty, pale skin, short white hair, long bangs covering the space between eyes, hair vents, delicate strands, layered hair, fluffy hair, messy hair, detailed hair, blue eyes, half-closed eyes, narrowed eyes, droopy eyes, eyebrows, cute, loose strands, languid impression, expressionless, -2::long hair, mullet, hairpin::,</p>
-            <p><span style="color:#727272">plain flat fabric light grey scarf, 0.4::mouth slightly peeking over the scarf::, white military uniform, silver trim, white trousers tucked into black combat boots, -1.1::short sleeves, gloves::,</span></p>
+            <p>boy, slender, teen, pale skin, short white hair, long bangs covering the space between eyes, hair vents, delicate strands, ::layered hair, fluffy hair, messy hair::, detailed hair, blue eyes, half-closed eyes, narrowed eyes, droopy eyes, eyebrows, cute, loose strands, languid impression, -2::long hair, mullet, hairpin::, expressionless,</p>
+            <p><span style="color:#727272">plain flat fabric light grey scarf, 0.4::mouth slightly peeking over the scarf::, white military uniform, silver trim, white trousers tucked into black combat boots,</span></p>
           </div>
           <div class="oc-pr" data-pr="hydro">
-            <p>girl, solo, slender, teen, cool beauty, pale skin, 1.6::light blue hair::, straight medium hair, see-through bangs, long bangs covering the space between eyes, hair vents, delicate strands, layered hair, fluffy hair, messy hair, detailed hair, white eyes, 1.3::tareme::, droopy eyes, cute, smile, flat chest, -2::hairpin::,</p>
+            <p>girl, slender, teen, cute, pale skin, 1.6::light blue hair::, straight medium hair, see-through bangs, long bangs covering the space between eyes, hair vents, delicate strands, ::layered hair, fluffy hair, messy hair::, detailed hair, white eyes, 1.3::tareme::, droopy eyes, flat chest, -2::hairpin::, smile,</p>
             <p><span style="color:#727272">oversized black military uniform, ::short sleeves::, silver trim, 1.5::black cape, short cape::, black short gloves, black shorts, white socks, 1.5::white sneakers::, -1::headwear::,</span></p>
           </div>
           <div class="oc-pr" data-pr="eunha">
@@ -663,20 +666,20 @@ When everything comes crashing down</span>
             <p><span style="color:#727272">oversized blue and white racing jacket, 1.3::zipped up::, wide black pants,</span></p>
           </div>
           <div class="oc-pr" data-pr="yeoneun">
-            <p>girl, slender, pale skin, teens, cute, dark grey hair, see-through bangs, 0.6::bob hair, mullet::, -0.5::hime cut, blunt bangs::, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, blue eyes, 1.3::tareme::, flat chest, expressionless,</p>
-            <p><span style="color:#727272">1.5::black short sleeved hoodie::, open hoodie, hood up, 0.9::hood pulled over head::, white t-shirt, blue graphic, wide leg denim pants hiding shoes, black converse shoes, -2::hairpin, cat ears::, -0.5::sleeveless::,</span></p>
+            <p>girl, slender, pale skin, teen, cute, dark grey hair, see-through bangs, 0.6::bob hair, mullet::, -0.5::hime cut, blunt bangs::, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, blue eyes, 1.3::tareme::, medium breasts, expressionless,</p>
+            <p><span style="color:#727272">1.5::black short sleeved hoodie::, open hoodie, hood up, 0.9::hood pulled over head::, oversized white t-shirt, blue graphic, wide leg denim pants hiding shoes, black converse shoes, -2::hairpin, cat ears::, -0.5::sleeveless::,</span></p>
           </div>
           <div class="oc-pr" data-pr="papico">
             <p>boy, tall, pale skin, black eyes, 1.2::tsurime::, big eyes, short hair, cowlick, 0.5::messy hair::, long bangs, black hair, hair vents, delicate strands, -2::long hair, mullet, hairpin::, expressionless,</p>
-            <p><span style="color:#727272">black techwear windbreaker jacket with multiple hanging straps and buckles, high collar, zipped up, tactical harness layered over the jacket, baggy puddled black tactical cargo pants with multiple pockets and straps, sleek black cyberpunk mask covering lower face, -1::revolver::,</span></p>
+            <p><span style="color:#727272">black techwear windbreaker jacket with multiple hanging straps and buckles, high collar, zipped up, tactical harness layered over the jacket, baggy puddled black tactical cargo pants with multiple pockets and straps, sleek black cyberpunk mask covering lower face,</span></p>
             <p><span style="color:#727272">shield, white kiteshield, holy knight,</span></p>
           </div>
           <div class="oc-pr" data-pr="happy1">
-            <p>girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, expressionless, -1.1::braid, tied hair, twintails::, -1.6::long hair::, 1.2::white eyes::, blue pupils, 1.3::tareme::, flat chest,</p>
+            <p>girl, slender, pale skin, teen, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, -1.1::braid, tied hair, twintails::, -1.6::long hair::, 1.2::white eyes::, blue pupils, 1.3::tareme::, flat chest, expressionless,</p>
             <p><span style="color:#727272">white earmuffs, white goggles around neck, 2::oversized track jacket::, color block jacket, white and light blue jacket, white leg warmers, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</span></p>
           </div>
           <div class="oc-pr" data-pr="happy2">
-            <p>girl, slender, pale skin, teens, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, expressionless, flat chest,</p>
+            <p>girl, slender, pale skin, teen, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, flat chest, expressionless,</p>
             <p><span style="color:#727272">1.5::white earmuffs around neck, oversized blue gray blazer::, -1.5::ribbed cuffs, sweatshirt::, serafuku, white shirt, sailor black collar, white stripes, light blue ribbon, striped ribbon, white pleated skirt, 1.5::loose blue gray track pants::, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</span></p>
           </div>
         </div>
@@ -1022,9 +1025,13 @@ When everything comes crashing down</span>
       }
       return null;
     }
+    // 지금 보이는 본문 문단들 (Prompt면 선택된 캐릭터 글만)
+    function shownParas() {
+      return Array.prototype.filter.call(contentBox.querySelectorAll('.oc-panel.is-shown p'), function(p) { return p.offsetParent !== null; });
+    }
     function focusFor(x, y) {
       var b = contentBox.getBoundingClientRect();
-      var ps = Array.prototype.filter.call(contentBox.querySelectorAll('.oc-panel.is-shown p'), function(p) { return p.offsetParent !== null; });
+      var ps = shownParas();
       // 칸 아래로 나갔고 더 내릴 게 없으면 글 맨 끝까지
       if (y > b.bottom && ps.length && contentBox.scrollTop >= contentBox.scrollHeight - contentBox.clientHeight - 1) {
         var end = ps[ps.length - 1];
@@ -1083,6 +1090,57 @@ When everything comes crashing down</span>
       if (e.target.closest('.oc-content p')) return;
       var sel = window.getSelection();
       if (sel.rangeCount && !sel.isCollapsed && contentBox.contains(sel.anchorNode)) sel.removeAllRanges();
+    });
+
+    // 폰: '모두 선택'이나 핸들을 칸 밖으로 끌어서 선택이 사진·다른 글까지 번지면
+    // 지금 보이는 본문 글 처음~끝으로 잘라줌 (복사하면 글만 들어가게)
+    var coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    var lastAnchor = null, lastFocusTop = null;
+    function clampSelection(sel, ps) {
+      var r = sel.getRangeAt(0);
+      var first = ps[0], last = ps[ps.length - 1];
+      var text = document.createRange();
+      text.setStart(first, 0);
+      text.setEnd(last, last.childNodes.length);
+      var s, e;
+      try {
+        s = text.comparePoint(r.startContainer, r.startOffset);
+        e = text.comparePoint(r.endContainer, r.endOffset);
+      } catch (err) { return false; }
+      if (s === 0 && e === 0) return false;   // 이미 글 안
+      if (e < 0 || s > 0) return false;       // 보이는 글과 안 겹침
+      var sn = s < 0 ? first : r.startContainer, so = s < 0 ? 0 : r.startOffset;
+      var en = e > 0 ? last : r.endContainer, eo = e > 0 ? last.childNodes.length : r.endOffset;
+      var backward = sel.anchorNode === r.endContainer && sel.anchorOffset === r.endOffset;
+      if (backward) sel.setBaseAndExtent(en, eo, sn, so);
+      else sel.setBaseAndExtent(sn, so, en, eo);
+      return true;
+    }
+    // 폰: 핸들을 칸 맨 아래(위) 줄까지 끌면 칸을 두 줄씩 스크롤 → 손 안 떼고 이어서 끝까지 선택
+    function edgeScroll(sel) {
+      if (!contentBox.contains(sel.focusNode)) return;
+      var sameAnchor = lastAnchor && lastAnchor[0] === sel.anchorNode && lastAnchor[1] === sel.anchorOffset;
+      var fr = document.createRange();
+      fr.setStart(sel.focusNode, sel.focusOffset);
+      fr.collapse(true);
+      var rr = fr.getClientRects()[0] || fr.getBoundingClientRect();
+      var prevTop = lastFocusTop;
+      lastAnchor = [sel.anchorNode, sel.anchorOffset];
+      lastFocusTop = rr.top;
+      if (!sameAnchor || prevTop === null || !rr.height) return;   // 처음 꾹 눌러 잡은 선택은 그대로
+      var b = contentBox.getBoundingClientRect();
+      var line = rr.height, before = contentBox.scrollTop;
+      if (rr.top > prevTop && rr.bottom > b.bottom - line && rr.top < b.bottom) contentBox.scrollTop += line * 2;
+      else if (rr.top < prevTop && rr.top < b.top + line && rr.bottom > b.top) contentBox.scrollTop -= line * 2;
+      lastFocusTop -= contentBox.scrollTop - before;   // 스크롤로 글이 움직인 만큼 기준도 같이
+    }
+    document.addEventListener('selectionchange', function() {
+      var sel = window.getSelection();
+      if (!sel.rangeCount || sel.isCollapsed) { lastAnchor = null; lastFocusTop = null; return; }
+      var ps = shownParas();
+      if (!ps.length || !wrap.classList.contains('is-modal-open')) return;
+      if (clampSelection(sel, ps)) return;
+      if (coarse && !dragging) edgeScroll(sel);
     });
   })();
 
