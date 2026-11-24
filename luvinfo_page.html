@@ -356,6 +356,18 @@
 }
 .oc-char:hover { color: #3a9af3; }
 .oc-char.is-selected { font-weight: 700; }
+/* copy: 프롬 목록 버튼과 같은 글씨, 색만 옷 프롬 회색 — 보고 있는 프롬 전체 복사 */
+.oc-copy {
+  font-family: inherit;
+  font-size: clamp(6.5px, 0.55vw, 8px);
+  color: #727272;
+  font-weight: 400;
+  cursor: pointer;
+  letter-spacing: -0.005em;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
 .oc-pr { display: none; }
 .oc-pr.is-shown {
   display: block;
@@ -635,7 +647,7 @@ When everything comes crashing down</span>
           <p>arch - 윈터<br>bluefairy - 빠삐코<br><span style="color:#727272">투메인 (한 쪽 서브 X) 같은 배려 필요하며, 저도 n페어 배려합니다.</span></p>
         </div>
         <div class="oc-panel" data-panel="list">
-          <p>accord - 6<br>atmt - 에단<br>u-bal - 팔월<br>P.ro - 킬리언<br>calltaku - 재하<br>kokori - 서이현<br>bluefairy - 직살<br>dear my - 하인츠<br>meon_meo - 에단<br>aftermess - 4, Oz<br>zzazang - 디트리히<br>prism - 네벨, 글레이브<br>Love_S2 - 레나토, 세트<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>bastion - 스파이크, 오닉스<br>fearless - 메이트, 지젤, 코튼<br>ashpole - 헬렐, 에사오, 비르투<br>ohnyu - 서유준, 고유빈, 차재현<br>@ - 우재경, 류이든, 마츠오 유타, 세르게이<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 곽두철, 카니발, 어비스, 이브<br/>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬, Dr. 밴스, 블루</p>
+          <p>kit - 서미르<br>atmt - 에단<br>atlas - 네모<br>P.ro - 킬리언<br>hearts - 한야<br>accord - 6, 4<br>calltaku - 재하<br>kokori - 서이현<br>bluefairy - 직살<br>dear my - 하인츠<br>meon_meo - 에단<br>zzazang - 디트리히<br>sizz - 우재경, 류이든<br>aftermess - 4, Oz, 7<br>odetowinter - 조한결<br>prism - 네벨, 글레이브<br>Love_S2 - 레나토, 세트<br>bbungegg - 비반 피어스<br>メン地下 - 시노노메 유우<br>frontline - 로언, 에드리언<br>@ - 마츠오 유타, 세르게이<br>bastion - 스파이크, 오닉스<br>fearless - 메이트, 지젤, 코튼<br>ashpole - 헬렐, 에사오, 비르투<br>ohnyu - 서유준, 고유빈, 차재현<br>誕生日ケーキ - 이노우에 소우마<br>seraphix - 넵튠, 젠, 에테르, 오비탈, 캐리온, 디비언트, 곽두철, 카니발, 어비스, 이브, 스펙터<br/>arch - 에덴, 코드, 이카로스, 바이브, 샤드, 헬리오스, 휴고, 신드롬, Dr. 밴스, 블루</p>
         </div>
         <div class="oc-panel" data-panel="prompt">
           <div class="oc-char-select">
@@ -650,7 +662,7 @@ When everything comes crashing down</span>
             <div class="oc-char-row">
               <button class="oc-char" type="button" data-char="papico">papico</button>
               <button class="oc-char" type="button" data-char="happy1">happy¹</button>
-              <button class="oc-char" type="button" data-char="happy2">happy²</button>
+              <button class="oc-copy" type="button">copy</button>
             </div>
           </div>
           <div class="oc-pr is-shown" data-pr="winter">
@@ -666,8 +678,8 @@ When everything comes crashing down</span>
             <p><span style="color:#727272">oversized blue and white racing jacket, 1.3::zipped up::, wide black pants,</span></p>
           </div>
           <div class="oc-pr" data-pr="yeoneun">
-            <p>girl, slender, pale skin, teen, cute, dark grey hair, see-through bangs, 0.6::bob hair, mullet::, -0.5::hime cut, blunt bangs::, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, blue eyes, 1.3::tareme::, medium breasts, expressionless,</p>
-            <p><span style="color:#727272">1.5::black short sleeved hoodie::, open hoodie, hood up, 0.9::hood pulled over head::, oversized white t-shirt, blue graphic, wide leg denim pants hiding shoes, black converse shoes, -2::hairpin, cat ears::, -0.5::sleeveless::,</span></p>
+            <p>girl, slender, pale skin, teen, cute, dark grey hair, see-through bangs, 0.6::bob hair, mullet::, -0.5::hime cut, blunt bangs::, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, blue eyes, 1.3::tareme::, small breasts, -2::hairpin::, expressionless,</p>
+            <p><span style="color:#727272">1.5::black short sleeved hoodie::, open hoodie, hood up, 0.9::hood pulled over head::, oversized white t-shirt, blue graphic, wide leg denim pants hiding shoes, black converse shoes, -2::cat ears::, -0.5::sleeveless::,</span></p>
           </div>
           <div class="oc-pr" data-pr="papico">
             <p>boy, tall, pale skin, black eyes, 1.2::tsurime::, big eyes, short hair, cowlick, 0.5::messy hair::, long bangs, black hair, hair vents, delicate strands, -2::long hair, mullet, hairpin::, expressionless,</p>
@@ -677,10 +689,6 @@ When everything comes crashing down</span>
           <div class="oc-pr" data-pr="happy1">
             <p>girl, slender, pale skin, teen, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, -1.1::braid, tied hair, twintails::, -1.6::long hair::, 1.2::white eyes::, blue pupils, 1.3::tareme::, flat chest, expressionless,</p>
             <p><span style="color:#727272">white earmuffs, white goggles around neck, 2::oversized track jacket::, color block jacket, white and light blue jacket, white leg warmers, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</span></p>
-          </div>
-          <div class="oc-pr" data-pr="happy2">
-            <p>girl, slender, pale skin, teen, cute, white hair, wispy hair, see-through bangs, medium hair, long bangs covering the space between eyes, hair vents, delicate strands, 1.5::low twintails, light blue hair streak::, -1.1::braid::, white eyes, 1.3::tareme::, flat chest, expressionless,</p>
-            <p><span style="color:#727272">1.5::white earmuffs around neck, oversized blue gray blazer::, -1.5::ribbed cuffs, sweatshirt::, serafuku, white shirt, sailor black collar, white stripes, light blue ribbon, striped ribbon, white pleated skirt, 1.5::loose blue gray track pants::, white sneakers, dual wielding white slender revolver, -1.1::thick frame, hanging straps::,</span></p>
           </div>
         </div>
       </div>
@@ -1207,6 +1215,38 @@ When everything comes crashing down</span>
         p.classList.toggle('is-shown', p.dataset.pr === char);
       });
     });
+  });
+
+  // copy: 보고 있는 캐릭터 프롬프트 전체를 복사 (문단 사이는 손으로 복사할 때처럼 빈 줄)
+  // 러브인포 프레임 안이라 클립보드 API가 막힐 수 있어서 숨긴 입력칸 복사를 먼저, 안 되면 API로
+  var copyBtn = wrap.querySelector('.oc-copy');
+  var copyTimer = null;
+  if (copyBtn) copyBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    var pr = wrap.querySelector('.oc-pr.is-shown');
+    if (!pr) return;
+    var ps = (pr.shadowRoot || pr).querySelectorAll('p');   // 폰·패드는 글이 섀도 DOM 안
+    var text = Array.prototype.map.call(ps, function(p) { return (p.innerText || p.textContent).trim(); }).join('\n\n');
+    function done() {
+      copyBtn.textContent = 'copied';
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(function() { copyBtn.textContent = 'copy'; }, 1200);
+    }
+    var ok = false;
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:absolute;left:0;top:' + (window.pageYOffset || 0) + 'px;width:1px;height:1px;opacity:0;font-size:16px;padding:0;border:0;';
+    document.body.appendChild(ta);
+    try { ta.focus({ preventScroll: true }); } catch (err) { ta.focus(); }
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    try { ok = document.execCommand('copy'); } catch (err) {}
+    document.body.removeChild(ta);
+    window.getSelection().removeAllRanges();
+    copyBtn.blur();
+    if (ok) { done(); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function() {});
   });
 
   // 하트 토글 + BGM 재생/정지
